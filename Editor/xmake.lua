@@ -1,4 +1,4 @@
-add_deps("Engine", {public = true})
+add_deps("Engine")
 
 target("Editor")
     set_kind("binary")

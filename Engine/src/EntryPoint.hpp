@@ -1,5 +1,12 @@
-class EntryPoint
+#pragma once
+
+#include "pch.hpp"
+
+#include "Application.hpp"
+
+int main(int argc, char **argv)
 {
-  public:
-    int A = 4;
-};
+    auto app = CreateApplication();
+    app->Run();
+    return 0;
+}
