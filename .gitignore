@@ -1,3 +1,9 @@
+# CLion
+.idea/
+
+# VSCode
+.vscode/
+
 # Xmake cache
 .xmake/
 build/
