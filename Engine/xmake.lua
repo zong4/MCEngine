@@ -1,8 +1,13 @@
+add_requires("glfw", "glad")
+
 target("Engine")
     set_kind("shared")
 
     add_includedirs("src", {public = true})
     add_headerfiles("src/*.hpp")
+    add_files("src/*.cpp")
+
+    add_packages("glfw", "glad", {public = true})
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

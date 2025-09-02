@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "EntryPoint.hpp"
+#include "Window.hpp"
 
 class Editor : public Application
 {
