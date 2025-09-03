@@ -1,6 +1,4 @@
-#include "Application.hpp"
-#include "EntryPoint.hpp"
-#include "Window.hpp"
+#include "Function.hpp"
 
 class Editor : public Application
 {
@@ -9,7 +7,7 @@ public:
     {
         std::cout << "Editor created." << std::endl;
     }
-    ~Editor() override
+    ~Editor() final
     {
         std::cout << "Editor destroyed." << std::endl;
     }

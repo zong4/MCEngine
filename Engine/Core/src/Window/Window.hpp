@@ -2,7 +2,8 @@
 
 #include "pch.hpp"
 
-class GLFWwindow;
+class VertexArray;
+class Shader;
 
 class Window
 {
@@ -14,5 +15,10 @@ public:
     bool ShouldClose() const;
 
 private:
-    GLFWwindow *m_Window;
+    void *m_Window = nullptr;
+
+    // todo
+    VertexArray *m_VertexArray = nullptr;
+    Shader *m_Shader = nullptr;
+    unsigned int VAO;
 };
