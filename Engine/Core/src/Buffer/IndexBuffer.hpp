@@ -10,6 +10,9 @@ public:
     IndexBuffer(const std::vector<uint32_t> &indices);
     virtual ~IndexBuffer() override;
 
+    IndexBuffer(IndexBuffer &&other) noexcept;
+    IndexBuffer &operator=(IndexBuffer &&other) noexcept;
+
     virtual void Bind() const override;
     virtual void Unbind() const override;
 

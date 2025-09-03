@@ -7,6 +7,8 @@ class Buffer
 public:
     Buffer() = default;
     virtual ~Buffer() = default;
+    Buffer(const Buffer &) = delete;
+    Buffer &operator=(const Buffer &) = delete;
 
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;

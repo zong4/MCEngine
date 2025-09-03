@@ -22,7 +22,7 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    void SetIndexBuffer(const IndexBuffer &indexBuffer);
+    void SetIndexBuffer(IndexBuffer &&indexBuffer);
     void AddVertexBuffer(VertexBuffer &&vertexBuffer);
     void AddVertexAttribute(const VertexAttribute &attribute);
 

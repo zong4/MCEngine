@@ -20,5 +20,4 @@ private:
     // todo
     VertexArray *m_VertexArray = nullptr;
     Shader *m_Shader = nullptr;
-    unsigned int VAO;
 };

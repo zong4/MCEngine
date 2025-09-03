@@ -9,8 +9,6 @@ public:
     VertexBuffer(const std::vector<float> &vertices);
     virtual ~VertexBuffer() override;
 
-    VertexBuffer(const VertexBuffer &) = delete;
-    VertexBuffer &operator=(const VertexBuffer &) = delete;
     VertexBuffer(VertexBuffer &&other) noexcept;
     VertexBuffer &operator=(VertexBuffer &&other) noexcept;
 

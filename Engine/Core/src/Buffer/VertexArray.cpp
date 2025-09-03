@@ -22,12 +22,12 @@ void VertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-void VertexArray::SetIndexBuffer(const IndexBuffer &indexBuffer)
+void VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 {
     Bind();
     indexBuffer.Bind();
 
-    m_IndexBuffer = indexBuffer;
+    m_IndexBuffer = std::move(indexBuffer);
 
     GLint error = glGetError();
     if (error != GL_NO_ERROR)

@@ -17,6 +17,27 @@ IndexBuffer::~IndexBuffer()
     glDeleteBuffers(1, &m_RendererID);
 }
 
+IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
+{
+    m_RendererID = other.m_RendererID;
+    other.m_RendererID = 0;
+}
+
+IndexBuffer &IndexBuffer::operator=(IndexBuffer &&other) noexcept
+{
+    if (this != &other)
+    {
+        if (m_RendererID != 0)
+        {
+            glDeleteBuffers(1, &m_RendererID);
+        }
+
+        m_RendererID = other.m_RendererID;
+        other.m_RendererID = 0;
+    }
+    return *this;
+}
+
 void IndexBuffer::Bind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
