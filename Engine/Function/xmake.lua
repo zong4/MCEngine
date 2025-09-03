@@ -1,5 +1,5 @@
 target("Function")
-    set_kind("shared")
+    set_kind("static")
     
     add_headerfiles("src/**/*.hpp")
     add_files("src/**/*.cpp")
