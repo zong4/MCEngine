@@ -4,8 +4,6 @@
 
 void Application::Run()
 {
-    EASY_FUNCTION(profiler::colors::Cyan);
-
     m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
     while (!m_Window->ShouldClose())
     {

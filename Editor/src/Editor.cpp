@@ -1,4 +1,4 @@
-#include "Function.hpp"
+#include <Function.hpp>
 
 class Editor : public Application
 {

@@ -1,3 +1,3 @@
 #pragma once
 
-#include "Application/EntryPoint.hpp"
+#include "Application/Application.hpp"

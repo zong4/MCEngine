@@ -1,4 +1,4 @@
-add_requires("easy_profiler")
+add_requires("gperftools")
 
 -- Graphics
 add_requires("glfw", "glad")
@@ -10,7 +10,7 @@ target("Core")
     add_files("src/**/*.cpp")
     add_includedirs("src", {public = true})
 
-    add_packages("easy_profiler", {public = true})
+    add_packages("gperftools", {public = true})
 
     -- Graphics
     add_packages("glfw", "glad")

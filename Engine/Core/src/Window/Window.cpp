@@ -5,7 +5,6 @@
 #include "Buffer/VertexBuffer.hpp"
 #include "Shader/Shader.hpp"
 #include <GLFW/glfw3.h>
-#include <easy/profiler.h>
 #include <glad/glad.h>
 
 Window::Window(int width, int height, std::string title)
