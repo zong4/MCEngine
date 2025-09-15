@@ -15,19 +15,30 @@ VertexArray::~VertexArray()
 void VertexArray::Bind() const
 {
     glBindVertexArray(m_RendererID);
+
+    m_IndexBuffer.Bind();
+    for (const auto &vertexBuffer : m_VertexBuffers)
+    {
+        vertexBuffer.Bind();
+    }
 }
 
 void VertexArray::Unbind() const
 {
     glBindVertexArray(0);
+
+    m_IndexBuffer.Unbind();
+    for (const auto &vertexBuffer : m_VertexBuffers)
+    {
+        vertexBuffer.Unbind();
+    }
 }
 
 void VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 {
     Bind();
-    indexBuffer.Bind();
-
     m_IndexBuffer = std::move(indexBuffer);
+    m_IndexBuffer.Bind();
 
     GLint error = glGetError();
     if (error != GL_NO_ERROR)
@@ -35,7 +46,7 @@ void VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
         std::cerr << "OpenGL Error: " << error << " in SetIndexBuffer" << std::endl;
     }
 
-    // m_IndexBuffer.Unbind();
+    m_IndexBuffer.Unbind();
     Unbind();
 }
 

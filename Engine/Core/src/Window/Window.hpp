@@ -3,7 +3,7 @@
 #include "pch.hpp"
 
 class VertexArray;
-class Shader;
+class ShaderLibrary;
 
 class Window
 {
@@ -14,10 +14,13 @@ public:
     void Update();
     bool ShouldClose() const;
 
+protected:
+    void Init(int width, int height, std::string title);
+    void Shutdown();
+
 private:
     void *m_Window = nullptr;
 
-    // todo
-    VertexArray *m_VertexArray = nullptr;
-    Shader *m_Shader = nullptr;
+    std::unique_ptr<VertexArray> m_VertexArray;
+    std::unique_ptr<ShaderLibrary> m_ShaderLibrary;
 };
