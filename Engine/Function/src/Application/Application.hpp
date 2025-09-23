@@ -2,7 +2,8 @@
 
 #include "pch.hpp"
 
-class Window;
+namespace MCEngine
+{
 
 class Application
 {
@@ -15,3 +16,5 @@ private:
 };
 
 extern std::unique_ptr<Application> CreateApplication();
+
+} // namespace MCEngine

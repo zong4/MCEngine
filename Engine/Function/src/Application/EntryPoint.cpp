@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto app = CreateApplication();
+    auto app = MCEngine::CreateApplication();
     app->Run();
     return 0;
 }

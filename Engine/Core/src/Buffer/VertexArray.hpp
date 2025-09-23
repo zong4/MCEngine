@@ -3,6 +3,9 @@
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 
+namespace MCEngine
+{
+
 struct VertexAttribute
 {
     unsigned int location;
@@ -32,3 +35,5 @@ private:
     std::vector<VertexBuffer> m_VertexBuffers;
     std::vector<VertexAttribute> m_VertexAttributes;
 };
+
+} // namespace MCEngine

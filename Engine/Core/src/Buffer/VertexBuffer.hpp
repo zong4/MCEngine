@@ -2,6 +2,9 @@
 
 #include "Buffer.hpp"
 
+namespace MCEngine
+{
+
 class VertexBuffer : public Buffer
 {
 public:
@@ -20,3 +23,5 @@ public:
 protected:
     virtual void CreateBuffer(const void *data, size_t size) override;
 };
+
+} // namespace MCEngine

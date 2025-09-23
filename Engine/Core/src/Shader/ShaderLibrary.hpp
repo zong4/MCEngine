@@ -2,6 +2,9 @@
 
 #include "Shader.hpp"
 
+namespace MCEngine
+{
+
 class ShaderLibrary
 {
 public:
@@ -19,3 +22,5 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
 };
+
+} // namespace MCEngine

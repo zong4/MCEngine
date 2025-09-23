@@ -2,6 +2,9 @@
 
 #include "pch.hpp"
 
+namespace MCEngine
+{
+
 class Buffer
 {
 public:
@@ -16,8 +19,10 @@ public:
     virtual void SetData(const void *data, size_t size) = 0;
 
 protected:
-    virtual void CreateBuffer(const void *data, size_t size) = 0;
+    unsigned int m_RendererID = 0;
 
 protected:
-    unsigned int m_RendererID = 0;
+    virtual void CreateBuffer(const void *data, size_t size) = 0;
 };
+
+} // namespace MCEngine

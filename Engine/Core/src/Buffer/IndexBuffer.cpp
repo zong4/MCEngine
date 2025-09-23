@@ -2,28 +2,28 @@
 
 #include <glad/glad.h>
 
-IndexBuffer::IndexBuffer(const void *data, size_t size)
+MCEngine::IndexBuffer::IndexBuffer(const void *data, size_t size)
 {
     CreateBuffer(data, size);
 }
 
-IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices)
+MCEngine::IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices)
 {
     CreateBuffer(indices.data(), indices.size() * sizeof(uint32_t));
 }
 
-IndexBuffer::~IndexBuffer()
+MCEngine::IndexBuffer::~IndexBuffer()
 {
     glDeleteBuffers(1, &m_RendererID);
 }
 
-IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
+MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
 {
     m_RendererID = other.m_RendererID;
     other.m_RendererID = 0;
 }
 
-IndexBuffer &IndexBuffer::operator=(IndexBuffer &&other) noexcept
+MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noexcept
 {
     if (this != &other)
     {
@@ -38,23 +38,23 @@ IndexBuffer &IndexBuffer::operator=(IndexBuffer &&other) noexcept
     return *this;
 }
 
-void IndexBuffer::Bind() const
+void MCEngine::IndexBuffer::Bind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 }
 
-void IndexBuffer::Unbind() const
+void MCEngine::IndexBuffer::Unbind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void IndexBuffer::SetData(const void *data, size_t size)
+void MCEngine::IndexBuffer::SetData(const void *data, size_t size)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
 }
 
-void IndexBuffer::CreateBuffer(const void *data, size_t size)
+void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
 {
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);

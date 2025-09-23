@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
+MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
 {
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     CompileShader(vertexShader, vertexSource);
@@ -21,22 +21,22 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
     glDeleteShader(fragmentShader);
 }
 
-Shader::~Shader()
+MCEngine::Shader::~Shader()
 {
     glDeleteProgram(m_RendererID);
 }
 
-void Shader::Bind() const
+void MCEngine::Shader::Bind() const
 {
     glUseProgram(m_RendererID);
 }
 
-void Shader::Unbind() const
+void MCEngine::Shader::Unbind() const
 {
     glUseProgram(0);
 }
 
-void Shader::CompileShader(unsigned int shaderID, const std::string &source)
+void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)
 {
     const char *sourceCStr = source.c_str();
     glShaderSource(shaderID, 1, &sourceCStr, nullptr);
@@ -52,7 +52,7 @@ void Shader::CompileShader(unsigned int shaderID, const std::string &source)
     }
 }
 
-void Shader::LinkProgram(unsigned int programID)
+void MCEngine::Shader::LinkProgram(unsigned int programID)
 {
     glLinkProgram(programID);
 

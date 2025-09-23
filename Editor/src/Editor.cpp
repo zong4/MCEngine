@@ -1,19 +1,6 @@
-#include <Function.hpp>
+#include "Editor.hpp"
 
-class Editor : public Application
+std::unique_ptr<MCEngine::Application> MCEngine::CreateApplication()
 {
-public:
-    Editor()
-    {
-        std::cout << "Editor created." << std::endl;
-    }
-    ~Editor() final
-    {
-        std::cout << "Editor destroyed." << std::endl;
-    }
-};
-
-std::unique_ptr<Application> CreateApplication()
-{
-    return std::make_unique<Editor>();
+    return std::make_unique<MCEditor::Editor>();
 }

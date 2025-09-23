@@ -2,6 +2,9 @@
 
 #include "pch.hpp"
 
+namespace MCEngine
+{
+
 class Shader
 {
 public:
@@ -12,9 +15,11 @@ public:
     void Unbind() const;
 
 private:
-    void CompileShader(unsigned int shaderID, const std::string &source);
-    void LinkProgram(unsigned int programID);
+    unsigned int m_RendererID = 0;
 
 private:
-    unsigned int m_RendererID = 0;
+    void CompileShader(unsigned int shaderID, const std::string &source);
+    void LinkProgram(unsigned int programID);
 };
+
+} // namespace MCEngine

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "pch.hpp"
+#include "Buffer/VertexArray.hpp"
+#include "Shader/ShaderLibrary.hpp"
 
-class VertexArray;
-class ShaderLibrary;
+namespace MCEngine
+{
 
 class Window
 {
@@ -24,3 +25,5 @@ private:
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<ShaderLibrary> m_ShaderLibrary;
 };
+
+} // namespace MCEngine

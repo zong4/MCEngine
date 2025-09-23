@@ -2,17 +2,17 @@
 
 #include <glad/glad.h>
 
-VertexArray::VertexArray()
+MCEngine::VertexArray::VertexArray()
 {
     glGenVertexArrays(1, &m_RendererID);
 }
 
-VertexArray::~VertexArray()
+MCEngine::VertexArray::~VertexArray()
 {
     glDeleteVertexArrays(1, &m_RendererID);
 }
 
-void VertexArray::Bind() const
+void MCEngine::VertexArray::Bind() const
 {
     glBindVertexArray(m_RendererID);
 
@@ -23,7 +23,7 @@ void VertexArray::Bind() const
     }
 }
 
-void VertexArray::Unbind() const
+void MCEngine::VertexArray::Unbind() const
 {
     glBindVertexArray(0);
 
@@ -34,7 +34,7 @@ void VertexArray::Unbind() const
     }
 }
 
-void VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
+void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 {
     Bind();
     m_IndexBuffer = std::move(indexBuffer);
@@ -50,7 +50,7 @@ void VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
     Unbind();
 }
 
-void VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer)
+void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer)
 {
     m_VertexBuffers.push_back(std::move(vertexBuffer));
 
@@ -67,7 +67,7 @@ void VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer)
     Unbind();
 }
 
-void VertexArray::AddVertexAttribute(const VertexAttribute &attribute)
+void MCEngine::VertexArray::AddVertexAttribute(const VertexAttribute &attribute)
 {
     Bind();
 

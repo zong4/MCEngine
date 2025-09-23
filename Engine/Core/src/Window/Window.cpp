@@ -1,13 +1,9 @@
 #include "Window.hpp"
 
-#include "Buffer/IndexBuffer.hpp"
-#include "Buffer/VertexArray.hpp"
-#include "Buffer/VertexBuffer.hpp"
-#include "Shader/ShaderLibrary.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-Window::Window(int width, int height, std::string title)
+MCEngine::Window::Window(int width, int height, std::string title)
 {
     Init(width, height, title);
 
@@ -45,12 +41,12 @@ Window::Window(int width, int height, std::string title)
     m_VertexArray->SetIndexBuffer(IndexBuffer(indices, sizeof(indices)));
 }
 
-Window::~Window()
+MCEngine::Window::~Window()
 {
     Shutdown();
 }
 
-void Window::Update()
+void MCEngine::Window::Update()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -67,12 +63,12 @@ void Window::Update()
     glfwPollEvents();
 }
 
-bool Window::ShouldClose() const
+bool MCEngine::Window::ShouldClose() const
 {
     return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window));
 }
 
-void Window::Init(int width, int height, std::string title)
+void MCEngine::Window::Init(int width, int height, std::string title)
 {
     glfwInit();
 
@@ -100,7 +96,7 @@ void Window::Init(int width, int height, std::string title)
     glEnable(GL_DEPTH_TEST);
 }
 
-void Window::Shutdown()
+void MCEngine::Window::Shutdown()
 {
     glfwDestroyWindow(static_cast<GLFWwindow *>(m_Window));
     glfwTerminate();
