@@ -6,10 +6,6 @@
 namespace MCEngine
 {
 
-// OpenGL specific
-#define ENGINE_FLOAT 0x1406
-#define ENGINE_FALSE 0
-
 struct VertexAttribute
 {
     unsigned int location;
@@ -23,7 +19,7 @@ struct VertexAttribute
 class VertexArray
 {
 public:
-    VertexArray();
+    VertexArray(IndexBuffer &&indexBuffer, VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
     ~VertexArray();
 
     VertexArray(const VertexArray &) = delete;
@@ -36,13 +32,13 @@ public:
     void Unbind() const;
 
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
-    void AddVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
+    void SetVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
 
 private:
     unsigned int m_RendererID = 0;
+
     IndexBuffer m_IndexBuffer;
-    std::vector<VertexBuffer> m_VertexBuffers;
-    std::vector<VertexAttribute> m_VertexAttributes;
+    VertexBuffer m_VertexBuffer;
 };
 
 } // namespace MCEngine

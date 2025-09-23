@@ -13,7 +13,7 @@ public:
     Buffer(const Buffer &) = delete;
     Buffer &operator=(const Buffer &) = delete;
 
-    unsigned int GetRendererID() const;
+    unsigned int GetRendererID() const { return m_RendererID; }
 
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;

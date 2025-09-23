@@ -1,5 +1,7 @@
 #include "Application.hpp"
 
+#include "Object/Square.hpp"
+
 MCEngine::Application::Application() { Init(); }
 
 void MCEngine::Application::Run()
@@ -13,8 +15,8 @@ void MCEngine::Application::Run()
         m_Window->Update();
         for (auto &object : m_Objects)
         {
-            object.Update();
-            object.Render();
+            object->Update();
+            object->Render();
         }
 
         m_ShaderLibrary->Get("Standard")->Unbind();
@@ -44,7 +46,5 @@ void MCEngine::Application::Init()
     m_ShaderLibrary = std::make_unique<ShaderLibrary>();
     m_ShaderLibrary->Load("Standard", vertexShaderSource, fragmentShaderSource);
 
-    AddObject(Square(1.0f));
+    AddObject(Square::GetIdentitySquare());
 }
-
-void MCEngine::Application::AddObject(Square &&object) { m_Objects.push_back(std::move(object)); }

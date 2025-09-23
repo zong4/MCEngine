@@ -2,22 +2,7 @@
 
 MCEngine::Square::Square(float size) : Object(), m_size(size) { SetupSquare(); }
 
-MCEngine::Square::Square(Square &&other) : m_size(other.m_size), m_VertexArray(std::move(other.m_VertexArray)) {}
-
-MCEngine::Square &MCEngine::Square::operator=(Square &&other)
-{
-    if (this != &other)
-    {
-        m_size = other.m_size;
-        m_VertexArray = std::move(other.m_VertexArray);
-    }
-    return *this;
-}
-
-void MCEngine::Square::Update()
-{
-    // Update logic for the square (if any)
-}
+void MCEngine::Square::Update() {}
 
 void MCEngine::Square::Render()
 {
@@ -28,10 +13,14 @@ void MCEngine::Square::Render()
 
 void MCEngine::Square::SetupSquare()
 {
-    m_VertexArray = std::make_unique<VertexArray>();
+    m_VertexArray = std::make_shared<VertexArray>(
+        MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)),
+        MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
+        MCEngine::VertexAttribute{0, 3, ENGINE_FLOAT, ENGINE_FALSE, 3 * sizeof(float), (const void *)0});
+}
 
-    m_VertexArray->AddVertexBuffer(
-        std::move(VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices))),
-        {0, 3, ENGINE_FLOAT, ENGINE_FALSE, 3 * sizeof(float), (const void *)0});
-    m_VertexArray->SetIndexBuffer(IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)));
+std::shared_ptr<MCEngine::Square> &MCEngine::Square::GetIdentitySquare()
+{
+    static std::shared_ptr<Square> identitySquare = std::make_shared<Square>(1.0f);
+    return identitySquare;
 }

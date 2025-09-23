@@ -16,7 +16,7 @@ public:
     IndexBuffer(IndexBuffer &&other) noexcept;
     IndexBuffer &operator=(IndexBuffer &&other) noexcept;
 
-    int GetCount() const;
+    int GetCount() const { return m_Count; }
 
     virtual void Bind() const override;
     virtual void Unbind() const override;

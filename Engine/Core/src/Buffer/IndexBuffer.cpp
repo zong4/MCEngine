@@ -4,27 +4,25 @@
 
 MCEngine::IndexBuffer::IndexBuffer(const void *data, size_t size)
 {
-    CreateBuffer(data, size);
-
     m_Count = static_cast<int>(size / sizeof(uint32_t));
+
+    CreateBuffer(data, size);
 }
 
 MCEngine::IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices)
 {
-    CreateBuffer(indices.data(), indices.size() * sizeof(uint32_t));
-
     m_Count = static_cast<int>(indices.size());
+
+    CreateBuffer(indices.data(), indices.size() * sizeof(uint32_t));
 }
 
-MCEngine::IndexBuffer::~IndexBuffer()
-{
-    glDeleteBuffers(1, &m_RendererID);
-}
+MCEngine::IndexBuffer::~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 
 MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
 {
     m_RendererID = other.m_RendererID;
     other.m_RendererID = 0;
+
     m_Count = other.m_Count;
 }
 
@@ -39,25 +37,15 @@ MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noe
 
         m_RendererID = other.m_RendererID;
         other.m_RendererID = 0;
+
         m_Count = other.m_Count;
     }
     return *this;
 }
 
-int MCEngine::IndexBuffer::GetCount() const
-{
-    return m_Count;
-}
+void MCEngine::IndexBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID); }
 
-void MCEngine::IndexBuffer::Bind() const
-{
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-}
-
-void MCEngine::IndexBuffer::Unbind() const
-{
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
+void MCEngine::IndexBuffer::Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 
 void MCEngine::IndexBuffer::SetData(const void *data, size_t size)
 {
