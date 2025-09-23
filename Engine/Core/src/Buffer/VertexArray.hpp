@@ -22,12 +22,17 @@ public:
     VertexArray();
     ~VertexArray();
 
+    VertexArray(const VertexArray &) = delete;
+    VertexArray &operator=(const VertexArray &) = delete;
+    VertexArray(VertexArray &&);
+    VertexArray &operator=(VertexArray &&);
+
     void Bind() const;
+    void Render() const;
     void Unbind() const;
 
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
-    void AddVertexBuffer(VertexBuffer &&vertexBuffer);
-    void AddVertexAttribute(const VertexAttribute &attribute);
+    void AddVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
 
 private:
     unsigned int m_RendererID = 0;

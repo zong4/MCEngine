@@ -16,6 +16,8 @@ public:
     IndexBuffer(IndexBuffer &&other) noexcept;
     IndexBuffer &operator=(IndexBuffer &&other) noexcept;
 
+    int GetCount() const;
+
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
@@ -23,6 +25,9 @@ public:
 
 protected:
     virtual void CreateBuffer(const void *data, size_t size) override;
+
+protected:
+    int m_Count = 0;
 };
 
 } // namespace MCEngine

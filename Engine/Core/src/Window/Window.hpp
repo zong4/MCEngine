@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Buffer/VertexArray.hpp"
-#include "Shader/ShaderLibrary.hpp"
+#include "pch.hpp"
+
+// todo
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace MCEngine
 {
@@ -12,7 +15,9 @@ public:
     Window(int width, int height, std::string title);
     virtual ~Window();
 
+    void PreUpdate();
     void Update();
+    void PostUpdate();
     bool ShouldClose() const;
 
 protected:
@@ -21,9 +26,6 @@ protected:
 
 private:
     void *m_Window = nullptr;
-
-    std::unique_ptr<VertexArray> m_VertexArray;
-    std::unique_ptr<ShaderLibrary> m_ShaderLibrary;
 };
 
 } // namespace MCEngine

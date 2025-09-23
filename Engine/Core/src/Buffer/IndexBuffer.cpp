@@ -5,11 +5,15 @@
 MCEngine::IndexBuffer::IndexBuffer(const void *data, size_t size)
 {
     CreateBuffer(data, size);
+
+    m_Count = static_cast<int>(size / sizeof(uint32_t));
 }
 
 MCEngine::IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices)
 {
     CreateBuffer(indices.data(), indices.size() * sizeof(uint32_t));
+
+    m_Count = static_cast<int>(indices.size());
 }
 
 MCEngine::IndexBuffer::~IndexBuffer()
@@ -21,6 +25,7 @@ MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
 {
     m_RendererID = other.m_RendererID;
     other.m_RendererID = 0;
+    m_Count = other.m_Count;
 }
 
 MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noexcept
@@ -34,8 +39,14 @@ MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noe
 
         m_RendererID = other.m_RendererID;
         other.m_RendererID = 0;
+        m_Count = other.m_Count;
     }
     return *this;
+}
+
+int MCEngine::IndexBuffer::GetCount() const
+{
+    return m_Count;
 }
 
 void MCEngine::IndexBuffer::Bind() const

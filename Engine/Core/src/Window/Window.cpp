@@ -6,39 +6,6 @@
 MCEngine::Window::Window(int width, int height, std::string title)
 {
     Init(width, height, title);
-
-    const char *vertexShaderSource = "#version 330 core\n"
-                                     "layout (location = 0) in vec3 aPos;\n"
-                                     "void main()\n"
-                                     "{\n"
-                                     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                     "}\0";
-    const char *fragmentShaderSource = "#version 330 core\n"
-                                       "out vec4 FragColor;\n"
-                                       "void main()\n"
-                                       "{\n"
-                                       "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                       "}\n\0";
-    m_ShaderLibrary = std::make_unique<ShaderLibrary>();
-    m_ShaderLibrary->Load("Standard", vertexShaderSource, fragmentShaderSource);
-
-    float vertices[] = {
-        0.5f,  0.5f,  0.0f, // top right
-        0.5f,  -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f,  0.0f  // top left
-    };
-    unsigned int indices[] = {
-        // note that we start from 0!
-        0, 1, 3, // first Triangle
-        1, 2, 3  // second Triangle
-    };
-
-    m_VertexArray = std::make_unique<VertexArray>();
-
-    m_VertexArray->AddVertexBuffer(std::move(VertexBuffer(vertices, sizeof(vertices))));
-    m_VertexArray->AddVertexAttribute({0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0});
-    m_VertexArray->SetIndexBuffer(IndexBuffer(indices, sizeof(indices)));
 }
 
 MCEngine::Window::~Window()
@@ -46,19 +13,18 @@ MCEngine::Window::~Window()
     Shutdown();
 }
 
-void MCEngine::Window::Update()
+void MCEngine::Window::PreUpdate()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
-    m_ShaderLibrary->Get("Standard")->Bind();
-    m_VertexArray->Bind();
+void MCEngine::Window::Update()
+{
+}
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    m_VertexArray->Unbind();
-    m_ShaderLibrary->Get("Standard")->Unbind();
-
+void MCEngine::Window::PostUpdate()
+{
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_Window));
     glfwPollEvents();
 }

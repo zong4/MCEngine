@@ -9,4 +9,4 @@ target("Core")
     add_includedirs("src", {public = true})
 
     -- Graphics
-    add_packages("glfw", "glad")
+    add_packages("glfw", "glad", {public = true})

@@ -12,6 +12,29 @@ MCEngine::VertexArray::~VertexArray()
     glDeleteVertexArrays(1, &m_RendererID);
 }
 
+MCEngine::VertexArray::VertexArray(VertexArray &&other)
+    : m_RendererID(other.m_RendererID), m_IndexBuffer(std::move(other.m_IndexBuffer)),
+      m_VertexBuffers(std::move(other.m_VertexBuffers)), m_VertexAttributes(std::move(other.m_VertexAttributes))
+{
+    other.m_RendererID = 0;
+}
+
+MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
+{
+    if (this != &other)
+    {
+        glDeleteVertexArrays(1, &m_RendererID);
+
+        m_RendererID = other.m_RendererID;
+        m_IndexBuffer = std::move(other.m_IndexBuffer);
+        m_VertexBuffers = std::move(other.m_VertexBuffers);
+        m_VertexAttributes = std::move(other.m_VertexAttributes);
+
+        other.m_RendererID = 0;
+    }
+    return *this;
+}
+
 void MCEngine::VertexArray::Bind() const
 {
     glBindVertexArray(m_RendererID);
@@ -21,6 +44,11 @@ void MCEngine::VertexArray::Bind() const
     {
         vertexBuffer.Bind();
     }
+}
+
+void MCEngine::VertexArray::Render() const
+{
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void MCEngine::VertexArray::Unbind() const
@@ -46,11 +74,10 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
         std::cerr << "OpenGL Error: " << error << " in SetIndexBuffer" << std::endl;
     }
 
-    m_IndexBuffer.Unbind();
     Unbind();
 }
 
-void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer)
+void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute)
 {
     m_VertexBuffers.push_back(std::move(vertexBuffer));
 
@@ -63,15 +90,6 @@ void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer)
         std::cerr << "OpenGL Error: " << error << " in AddVertexBuffer" << std::endl;
     }
 
-    m_VertexBuffers.back().Unbind();
-    Unbind();
-}
-
-void MCEngine::VertexArray::AddVertexAttribute(const VertexAttribute &attribute)
-{
-    Bind();
-
-    m_VertexBuffers.back().Bind();
     glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
                           static_cast<GLsizei>(attribute.stride), attribute.offset);
     glEnableVertexAttribArray(attribute.location);
@@ -79,7 +97,7 @@ void MCEngine::VertexArray::AddVertexAttribute(const VertexAttribute &attribute)
 
     m_VertexAttributes.push_back(attribute);
 
-    GLint error = glGetError();
+    error = glGetError();
     if (error != GL_NO_ERROR)
     {
         std::cerr << "OpenGL Error: " << error << " in AddVertexAttribute" << std::endl;
