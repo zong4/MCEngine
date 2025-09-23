@@ -3,5 +3,5 @@
 #include "pch.hpp"
 
 #include "Buffer/VertexArray.hpp"
-#include "Shader/ShaderLibrary.hpp"
+#include "Shader/Shader.hpp"
 #include "Window/Window.hpp"

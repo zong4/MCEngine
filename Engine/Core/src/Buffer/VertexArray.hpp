@@ -6,6 +6,10 @@
 namespace MCEngine
 {
 
+// OpenGL specific
+#define ENGINE_FLOAT 0x1406
+#define ENGINE_FALSE 0
+
 struct VertexAttribute
 {
     unsigned int location;

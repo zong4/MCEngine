@@ -3,15 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-MCEngine::Window::Window(int width, int height, std::string title)
-{
-    Init(width, height, title);
-}
+MCEngine::Window::Window(int width, int height, std::string title) { Init(width, height, title); }
 
-MCEngine::Window::~Window()
-{
-    Shutdown();
-}
+MCEngine::Window::~Window() { Shutdown(); }
 
 void MCEngine::Window::PreUpdate()
 {
@@ -19,9 +13,7 @@ void MCEngine::Window::PreUpdate()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void MCEngine::Window::Update()
-{
-}
+void MCEngine::Window::Update() {}
 
 void MCEngine::Window::PostUpdate()
 {
@@ -29,10 +21,7 @@ void MCEngine::Window::PostUpdate()
     glfwPollEvents();
 }
 
-bool MCEngine::Window::ShouldClose() const
-{
-    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window));
-}
+bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window)); }
 
 void MCEngine::Window::Init(int width, int height, std::string title)
 {
@@ -48,7 +37,7 @@ void MCEngine::Window::Init(int width, int height, std::string title)
     m_Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     if (!m_Window)
     {
-        std::cerr << "Failed to create GLFW window." << std::endl;
+        LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 // #include "Object/Object.hpp"
+#include "Library/ShaderLibrary.hpp"
 #include "Object/Square.hpp"
 
 namespace MCEngine

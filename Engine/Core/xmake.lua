@@ -1,3 +1,6 @@
+-- Common
+add_requires("spdlog")
+
 -- Graphics
 add_requires("glfw", "glad")
 
@@ -8,5 +11,8 @@ target("Core")
     add_files("src/**/*.cpp")
     add_includedirs("src", {public = true})
 
+    -- Common
+    add_packages("spdlog")
+
     -- Graphics
-    add_packages("glfw", "glad", {public = true})
+    add_packages("glfw", "glad")

@@ -2,15 +2,9 @@
 
 #include <glad/glad.h>
 
-MCEngine::VertexArray::VertexArray()
-{
-    glGenVertexArrays(1, &m_RendererID);
-}
+MCEngine::VertexArray::VertexArray() { glGenVertexArrays(1, &m_RendererID); }
 
-MCEngine::VertexArray::~VertexArray()
-{
-    glDeleteVertexArrays(1, &m_RendererID);
-}
+MCEngine::VertexArray::~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
 
 MCEngine::VertexArray::VertexArray(VertexArray &&other)
     : m_RendererID(other.m_RendererID), m_IndexBuffer(std::move(other.m_IndexBuffer)),
@@ -46,10 +40,7 @@ void MCEngine::VertexArray::Bind() const
     }
 }
 
-void MCEngine::VertexArray::Render() const
-{
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-}
+void MCEngine::VertexArray::Render() const { glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); }
 
 void MCEngine::VertexArray::Unbind() const
 {
@@ -71,7 +62,7 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
     GLint error = glGetError();
     if (error != GL_NO_ERROR)
     {
-        std::cerr << "OpenGL Error: " << error << " in SetIndexBuffer" << std::endl;
+        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in SetIndexBuffer");
     }
 
     Unbind();
@@ -87,7 +78,7 @@ void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer, const V
     GLint error = glGetError();
     if (error != GL_NO_ERROR)
     {
-        std::cerr << "OpenGL Error: " << error << " in AddVertexBuffer" << std::endl;
+        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in AddVertexBuffer");
     }
 
     glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
@@ -100,7 +91,7 @@ void MCEngine::VertexArray::AddVertexBuffer(VertexBuffer &&vertexBuffer, const V
     error = glGetError();
     if (error != GL_NO_ERROR)
     {
-        std::cerr << "OpenGL Error: " << error << " in AddVertexAttribute" << std::endl;
+        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in AddVertexAttribute");
     }
 
     m_VertexBuffers.back().Unbind();

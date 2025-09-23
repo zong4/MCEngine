@@ -21,20 +21,11 @@ MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fra
     glDeleteShader(fragmentShader);
 }
 
-MCEngine::Shader::~Shader()
-{
-    glDeleteProgram(m_RendererID);
-}
+MCEngine::Shader::~Shader() { glDeleteProgram(m_RendererID); }
 
-void MCEngine::Shader::Bind() const
-{
-    glUseProgram(m_RendererID);
-}
+void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }
 
-void MCEngine::Shader::Unbind() const
-{
-    glUseProgram(0);
-}
+void MCEngine::Shader::Unbind() const { glUseProgram(0); }
 
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)
 {
@@ -48,7 +39,7 @@ void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &s
     if (!success)
     {
         glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+        LOG_ENGINE_ERROR("ERROR::SHADER::COMPILATION_FAILED\n" + std::string(infoLog));
     }
 }
 
@@ -62,6 +53,6 @@ void MCEngine::Shader::LinkProgram(unsigned int programID)
     if (!success)
     {
         glGetProgramInfoLog(programID, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        LOG_ENGINE_ERROR("ERROR::SHADER::PROGRAM::LINKING_FAILED\n" + std::string(infoLog));
     }
 }

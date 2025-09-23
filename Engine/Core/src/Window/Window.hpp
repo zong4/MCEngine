@@ -2,10 +2,6 @@
 
 #include "pch.hpp"
 
-// todo
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-
 namespace MCEngine
 {
 
@@ -18,6 +14,7 @@ public:
     void PreUpdate();
     void Update();
     void PostUpdate();
+
     bool ShouldClose() const;
 
 protected:

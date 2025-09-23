@@ -5,11 +5,9 @@
 #include <chrono>
 #include <functional>
 #include <initializer_list>
-#include <memory>
-#include <string>
 #include <thread>
 #include <utility>
 #include <vector>
 
-// todo
-#include <iostream>
+// Third Party
+#include "Logger/Logger.hpp"

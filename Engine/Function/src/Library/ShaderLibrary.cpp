@@ -4,7 +4,7 @@ void MCEngine::ShaderLibrary::Add(const std::string &name, const std::shared_ptr
 {
     if (Exists(name))
     {
-        std::cerr << "Shader already exists: " << name << std::endl;
+        LOG_ENGINE_ERROR("Shader already exists: " + name);
         return;
     }
     m_Shaders[name] = shader;
@@ -23,13 +23,10 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Get(const std::string
 {
     if (!Exists(name))
     {
-        std::cerr << "Shader not found: " << name << std::endl;
+        LOG_ENGINE_ERROR("Shader not found: " + name);
         return nullptr;
     }
     return m_Shaders[name];
 }
 
-bool MCEngine::ShaderLibrary::Exists(const std::string &name) const
-{
-    return m_Shaders.find(name) != m_Shaders.end();
-}
+bool MCEngine::ShaderLibrary::Exists(const std::string &name) const { return m_Shaders.find(name) != m_Shaders.end(); }

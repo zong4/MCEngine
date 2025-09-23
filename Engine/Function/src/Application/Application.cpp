@@ -1,9 +1,6 @@
 #include "Application.hpp"
 
-MCEngine::Application::Application()
-{
-    Init();
-}
+MCEngine::Application::Application() { Init(); }
 
 void MCEngine::Application::Run()
 {
@@ -28,6 +25,8 @@ void MCEngine::Application::Run()
 
 void MCEngine::Application::Init()
 {
+    MCEngine::Logger::Init();
+
     m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
 
     const char *vertexShaderSource = "#version 330 core\n"
@@ -48,7 +47,4 @@ void MCEngine::Application::Init()
     AddObject(Square(1.0f));
 }
 
-void MCEngine::Application::AddObject(Square &&object)
-{
-    m_Objects.push_back(std::move(object));
-}
+void MCEngine::Application::AddObject(Square &&object) { m_Objects.push_back(std::move(object)); }
