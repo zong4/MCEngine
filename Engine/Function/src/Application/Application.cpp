@@ -10,16 +10,21 @@ void MCEngine::Application::Run()
     {
         m_Window->PreUpdate();
 
-        m_ShaderLibrary->Get("Standard")->Bind();
+        for (auto &pipelinePair : m_RendererPipelines)
+        {
+            m_ShaderLibrary->Get(pipelinePair.first)->Bind();
+            for (const auto &object : pipelinePair.second)
+            {
+                object->Render();
+            }
+            m_ShaderLibrary->Get(pipelinePair.first)->Unbind();
+        }
 
         m_Window->Update();
         for (auto &object : m_Objects)
         {
             object->Update();
-            object->Render();
         }
-
-        m_ShaderLibrary->Get("Standard")->Unbind();
 
         m_Window->PostUpdate();
     }
@@ -43,8 +48,11 @@ void MCEngine::Application::Init()
                                        "{\n"
                                        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
                                        "}\n\0";
+
     m_ShaderLibrary = std::make_unique<ShaderLibrary>();
     m_ShaderLibrary->Load("Standard", vertexShaderSource, fragmentShaderSource);
 
-    AddObject(Square::GetIdentitySquare());
+    m_RendererPipelines["Standard"].push_back(Square::GetIdentitySquare());
 }
+
+void MCEngine::Application::AddObject(const std::shared_ptr<Object> &object) { m_Objects.push_back(object); }

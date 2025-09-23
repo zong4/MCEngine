@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Library/ShaderLibrary.hpp"
-#include "Object/Object.hpp"
+#include "Renderer/RendererPipeline.hpp"
+#include "Renderer/ShaderLibrary.hpp"
 
 namespace MCEngine
 {
@@ -14,12 +14,13 @@ public:
 
     void Run();
 
-    void AddObject(const std::shared_ptr<Object> &object) { m_Objects.push_back(object); }
+    void AddObject(const std::shared_ptr<Object> &object);
 
 private:
     std::unique_ptr<Window> m_Window = nullptr;
     std::vector<std::shared_ptr<Object>> m_Objects;
     std::unique_ptr<ShaderLibrary> m_ShaderLibrary = nullptr;
+    std::map<std::string, std::vector<std::shared_ptr<Object>>> m_RendererPipelines;
 
 private:
     void Init();
