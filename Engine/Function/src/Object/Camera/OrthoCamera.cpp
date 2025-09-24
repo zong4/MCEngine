@@ -9,3 +9,9 @@ MCEngine::OrthoCamera::OrthoCamera(glm::vec2 center, glm::vec2 size)
 }
 
 void MCEngine::OrthoCamera::Update() {}
+
+void MCEngine::OrthoCamera::SetPosition(const glm::vec3 &position)
+{
+    m_Position = position;
+    m_View = glm::translate(glm::mat4(1.0f), -m_Position);
+}

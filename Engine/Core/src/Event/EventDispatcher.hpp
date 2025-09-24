@@ -14,9 +14,9 @@ public:
     {
         if (T *ev = dynamic_cast<T *>(&m_Event))
         {
-            func(*ev);
-            m_Event.SetHandled(true);
-            return true;
+            bool result = func(*ev);
+            m_Event.SetHandled(result);
+            return result;
         }
         return false;
     }

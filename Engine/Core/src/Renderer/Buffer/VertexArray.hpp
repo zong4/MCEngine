@@ -27,6 +27,7 @@ public:
     VertexArray(VertexArray &&);
     VertexArray &operator=(VertexArray &&);
 
+public:
     void Bind() const;
     void Render() const;
     void Unbind() const;

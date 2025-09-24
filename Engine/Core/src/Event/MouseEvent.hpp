@@ -8,10 +8,10 @@ namespace MCEngine
 class MouseMoveEvent : public MCEngine::Event
 {
 public:
-    MouseMoveEvent(float x, float y) : m_X(x), m_Y(y) {}
+    MouseMoveEvent(double x, double y) : m_X(x), m_Y(y) {}
 
-    inline float GetX() const { return m_X; }
-    inline float GetY() const { return m_Y; }
+    inline double GetX() const { return m_X; }
+    inline double GetY() const { return m_Y; }
 
     std::string ToString() const override
     {
@@ -21,8 +21,8 @@ public:
     }
 
 private:
-    float m_X;
-    float m_Y;
+    double m_X;
+    double m_Y;
 };
 
 class MouseButtonEvent : public MCEngine::Event

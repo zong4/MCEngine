@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sstream>
+#include <string>
+
 namespace MCEngine
 {
 
@@ -9,13 +12,13 @@ public:
     Event() = default;
     virtual ~Event() = default;
 
-    bool IsHandled() const { return Handled; }
-    void SetHandled(bool handled) { Handled = handled; }
+    bool IsHandled() const { return m_Handled; }
+    void SetHandled(bool handled) { m_Handled = handled; }
 
     virtual std::string ToString() const = 0;
 
 protected:
-    bool Handled = false;
+    bool m_Handled = false;
 };
 
 } // namespace MCEngine

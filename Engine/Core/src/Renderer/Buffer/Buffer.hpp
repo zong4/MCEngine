@@ -15,6 +15,7 @@ public:
 
     unsigned int GetRendererID() const { return m_RendererID; }
 
+public:
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
 

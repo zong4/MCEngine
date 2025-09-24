@@ -13,6 +13,7 @@ public:
 
     unsigned int GetRendererID() const { return m_RendererID; }
 
+public:
     void Bind() const;
     void Unbind() const;
 

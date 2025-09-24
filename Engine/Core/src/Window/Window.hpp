@@ -2,29 +2,38 @@
 
 #include "pch.hpp"
 
+#include "Layer/LayerStack.hpp"
+
 namespace MCEngine
 {
 
 class Window
 {
 public:
-    Window(int width, int height, std::string title);
-    virtual ~Window();
+    Window(int width, int height, std::string title) { Init(width, height, title); }
+    ~Window() { Shutdown(); }
 
     bool IsVSync() const { return m_VSync; }
     void SetVSync(bool enabled);
 
+public:
+    bool ShouldClose() const;
+
+    void OnEvent(Event &e) { m_LayerStack->OnEvent(e); }
+
     void PreUpdate();
-    void Update();
+    void Update() { m_LayerStack->Update(); }
     void PostUpdate();
 
-    void OnEvent(Event &e);
-
-    bool ShouldClose() const;
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PushLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PopLayer(layer); }
 
 private:
     void *m_Window = nullptr;
+
+    // Parameters
     bool m_VSync = true;
+    std::unique_ptr<LayerStack> m_LayerStack = nullptr;
 
 protected:
     void Init(int width, int height, std::string title);

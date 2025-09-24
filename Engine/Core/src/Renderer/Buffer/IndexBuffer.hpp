@@ -18,6 +18,7 @@ public:
 
     int GetCount() const { return m_Count; }
 
+public:
     virtual void Bind() const override;
     virtual void Unbind() const override;
 

@@ -1,11 +1,9 @@
 #include "Window.hpp"
 
+#include "Event/KeyEvent.hpp"
+#include "Event/MouseEvent.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-
-MCEngine::Window::Window(int width, int height, std::string title) { Init(width, height, title); }
-
-MCEngine::Window::~Window() { Shutdown(); }
 
 void MCEngine::Window::SetVSync(bool enabled)
 {
@@ -19,6 +17,8 @@ void MCEngine::Window::SetVSync(bool enabled)
     {
         glfwSwapInterval(0);
     }
+
+    LOG_ENGINE_INFO("VSync " + std::string(m_VSync ? "enabled" : "disabled"));
 }
 
 void MCEngine::Window::PreUpdate()
@@ -27,20 +27,10 @@ void MCEngine::Window::PreUpdate()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void MCEngine::Window::Update() {}
-
 void MCEngine::Window::PostUpdate()
 {
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_Window));
     glfwPollEvents();
-}
-
-void MCEngine::Window::OnEvent(Event &e)
-{
-    EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) { LOG_ENGINE_TRACE(event.ToString()); });
-    dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) { LOG_ENGINE_TRACE(event.ToString()); });
-    dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) { LOG_ENGINE_TRACE(event.ToString()); });
 }
 
 bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window)); }
@@ -65,12 +55,11 @@ void MCEngine::Window::Init(int width, int height, std::string title)
 
     glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_Window));
     SetCallbacks();
-
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
     glEnable(GL_DEPTH_TEST);
 
     SetVSync(true);
+    m_LayerStack = std::make_unique<LayerStack>();
 
     LOG_ENGINE_INFO("Window initialized: " + title + " (" + std::to_string(width) + "x" + std::to_string(height) + ")");
 }

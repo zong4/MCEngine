@@ -12,12 +12,6 @@
 #include <utility>
 #include <vector>
 
-// Global header
-#include "Event/EventDispatcher.hpp"
-#include "Event/EventHandler.hpp"
-#include "Event/KeyEvent.hpp"
-#include "Event/MouseEvent.hpp"
-
 // Third Party
 #include "Logger/Logger.hpp"
 #include <glm/glm.hpp>

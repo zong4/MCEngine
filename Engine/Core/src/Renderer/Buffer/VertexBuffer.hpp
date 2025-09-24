@@ -15,6 +15,7 @@ public:
     VertexBuffer(VertexBuffer &&other) noexcept;
     VertexBuffer &operator=(VertexBuffer &&other) noexcept;
 
+public:
     virtual void Bind() const override;
     virtual void Unbind() const override;
 

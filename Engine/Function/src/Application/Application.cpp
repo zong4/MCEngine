@@ -2,6 +2,7 @@
 
 #include "Object/Square.hpp"
 #include "Renderer/ShaderLibrary.hpp"
+#include "Scene/CameraLayer.hpp"
 
 MCEngine::Application::Application() { Init(); }
 
@@ -40,6 +41,7 @@ void MCEngine::Application::Init()
     MCEngine::Logger::Init();
 
     m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
+    m_Window->AddLayer(std::make_shared<CameraLayer>());
 
     m_Camera = std::make_unique<OrthoCamera>(glm::vec2(0.5f, 0.0f), glm::vec2(8.0f, 6.0f));
 
