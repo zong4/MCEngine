@@ -1,5 +1,6 @@
 #include "Window.hpp"
 
+#include "Event/EventDispatcher.hpp"
 #include "Event/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include <GLFW/glfw3.h>
@@ -19,6 +20,25 @@ void MCEngine::Window::SetVSync(bool enabled)
     }
 
     LOG_ENGINE_INFO("VSync " + std::string(m_VSync ? "enabled" : "disabled"));
+}
+
+void MCEngine::Window::OnEvent(Event &e)
+{
+    // EventDispatcher dispatcher(e);
+    // dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
+    //     LOG_ENGINE_TRACE(event.ToString());
+    //     return false;
+    // });
+    // dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
+    //     LOG_ENGINE_TRACE(event.ToString());
+    //     return false;
+    // });
+    // dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
+    //     LOG_ENGINE_TRACE(event.ToString());
+    //     return false;
+    // });
+
+    m_LayerStack->OnEvent(e);
 }
 
 void MCEngine::Window::PreUpdate()

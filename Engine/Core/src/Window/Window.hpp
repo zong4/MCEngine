@@ -19,7 +19,7 @@ public:
 public:
     bool ShouldClose() const;
 
-    void OnEvent(Event &e) { m_LayerStack->OnEvent(e); }
+    void OnEvent(Event &e);
 
     void PreUpdate();
     void Update() { m_LayerStack->Update(); }

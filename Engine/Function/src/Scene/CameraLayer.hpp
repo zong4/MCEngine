@@ -16,8 +16,10 @@ public:
     void OnUpdate() override;
 
 private:
-    std::shared_ptr<OrthoCamera> m_Camera;
     float m_CameraMoveSpeed = 0.1f;
+    std::shared_ptr<OrthoCamera> m_Camera;
+
+    std::vector<std::shared_ptr<Object>> m_Objects;
 };
 
 } // namespace MCEngine

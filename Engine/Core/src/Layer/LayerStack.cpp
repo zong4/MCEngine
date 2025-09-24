@@ -11,13 +11,13 @@ MCEngine::LayerStack::~LayerStack()
 
 void MCEngine::LayerStack::OnEvent(Event &e)
 {
-    for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
+    for (auto &layer : m_Layers)
     {
-        (*it)->OnEvent(e);
         if (e.IsHandled())
         {
             break;
         }
+        layer->OnEvent(e);
     }
 }
 

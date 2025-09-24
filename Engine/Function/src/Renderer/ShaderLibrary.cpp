@@ -13,6 +13,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Get(const std::string
         LOG_ENGINE_ERROR("Shader not found: " + name);
         return nullptr;
     }
+
     return m_Shaders[name];
 }
 
@@ -23,7 +24,10 @@ void MCEngine::ShaderLibrary::Add(const std::string &name, const std::shared_ptr
         LOG_ENGINE_ERROR("Shader already exists: " + name);
         return;
     }
+
     m_Shaders[name] = shader;
+
+    LOG_ENGINE_INFO("Shader added: " + name);
 }
 
 std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Load(const std::string &name,
@@ -59,7 +63,6 @@ MCEngine::ShaderLibrary::ShaderLibrary()
 
                 std::string shaderName = entry.path().stem().string();
                 Load(shaderName, vertexSource, fragmentSource);
-                LOG_ENGINE_INFO("Loaded shader: " + shaderName);
             }
             else
             {
@@ -67,6 +70,8 @@ MCEngine::ShaderLibrary::ShaderLibrary()
             }
         }
     }
+
+    LOG_ENGINE_INFO("ShaderLibrary initialized.");
 }
 
 bool MCEngine::ShaderLibrary::Exists(const std::string &name) const { return m_Shaders.find(name) != m_Shaders.end(); }
