@@ -19,6 +19,8 @@ MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fra
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    LOG_ENGINE_INFO("Shader program created with ID: " + std::to_string(m_RendererID));
 }
 
 MCEngine::Shader::~Shader() { glDeleteProgram(m_RendererID); }

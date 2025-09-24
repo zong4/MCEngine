@@ -41,6 +41,7 @@ void MCEngine::Logger::Init()
     }
 }
 
+void MCEngine::Logger::LogEngineTrace(const std::string &message) { s_EngineLogger->trace(message); }
 void MCEngine::Logger::LogEngineInfo(const std::string &message) { s_EngineLogger->info(message); }
 void MCEngine::Logger::LogEngineError(const std::string &message) { s_EngineLogger->error(message); }
 

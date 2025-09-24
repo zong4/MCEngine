@@ -14,6 +14,10 @@ void MCEngine::Application::Run()
         for (auto &pipelinePair : m_RendererPipelines)
         {
             ShaderLibrary::GetInstance().Get(pipelinePair.first)->Bind();
+            ShaderLibrary::GetInstance().Get(pipelinePair.first)->SetUniformMat4("u_View", m_Camera->GetView());
+            ShaderLibrary::GetInstance()
+                .Get(pipelinePair.first)
+                ->SetUniformMat4("u_Projection", m_Camera->GetProjection());
             for (const auto &object : pipelinePair.second)
             {
                 object->Render(pipelinePair.first);
@@ -36,6 +40,8 @@ void MCEngine::Application::Init()
     MCEngine::Logger::Init();
 
     m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
+
+    m_Camera = std::make_unique<OrthoCamera>(glm::vec2(0.5f, 0.0f), glm::vec2(8.0f, 6.0f));
 
     AddObject(Square::GetIdentitySquare(), "Standard");
 }

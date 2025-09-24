@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object/Object.hpp"
+#include "Object/Camera/OrthoCamera.hpp"
 
 namespace MCEngine
 {
@@ -17,6 +17,7 @@ public:
 
 private:
     std::unique_ptr<Window> m_Window = nullptr;
+    std::unique_ptr<OrthoCamera> m_Camera = nullptr;
     std::vector<std::shared_ptr<Object>> m_Objects;
     std::map<std::string, std::vector<std::shared_ptr<Object>>> m_RendererPipelines;
 

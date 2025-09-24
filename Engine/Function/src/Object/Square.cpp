@@ -10,6 +10,8 @@ void MCEngine::Square::SetupSquare()
         MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)),
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
         MCEngine::VertexAttribute{0, 3, ENGINE_FLOAT, ENGINE_FALSE, 3 * sizeof(float), (const void *)0});
+
+    LOG_ENGINE_INFO("Square object created with size: " + std::to_string(m_size));
 }
 
 std::shared_ptr<MCEngine::Square> &MCEngine::Square::GetIdentitySquare()

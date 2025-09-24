@@ -24,6 +24,9 @@ MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
     other.m_RendererID = 0;
 
     m_Count = other.m_Count;
+
+    LOG_ENGINE_INFO("IndexBuffer moved with ID: " + std::to_string(m_RendererID) +
+                    " and count: " + std::to_string(m_Count));
 }
 
 MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noexcept
@@ -40,6 +43,10 @@ MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other) noe
 
         m_Count = other.m_Count;
     }
+
+    LOG_ENGINE_INFO("IndexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
+                    " and count: " + std::to_string(m_Count));
+
     return *this;
 }
 
@@ -51,6 +58,9 @@ void MCEngine::IndexBuffer::SetData(const void *data, size_t size)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+
+    LOG_ENGINE_INFO("IndexBuffer data updated for ID: " + std::to_string(m_RendererID) +
+                    " with new count: " + std::to_string(m_Count));
 }
 
 void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
@@ -58,4 +68,7 @@ void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+    LOG_ENGINE_INFO("IndexBuffer created with ID: " + std::to_string(m_RendererID) +
+                    " and count: " + std::to_string(m_Count));
 }

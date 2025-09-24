@@ -8,7 +8,7 @@ namespace MCEngine
 class IndexBuffer : public Buffer
 {
 public:
-    IndexBuffer() = default;
+    // IndexBuffer() = default;
     IndexBuffer(const void *data, size_t size);
     IndexBuffer(const std::vector<uint32_t> &indices);
     virtual ~IndexBuffer() override;

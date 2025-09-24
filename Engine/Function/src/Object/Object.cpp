@@ -2,6 +2,11 @@
 
 #include "Renderer/ShaderLibrary.hpp"
 
+MCEngine::Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    : m_Position(position), m_Rotation(rotation), m_Scale(scale)
+{
+}
+
 void MCEngine::Object::Render(const std::string &pipeline)
 {
     if (m_VertexArray)

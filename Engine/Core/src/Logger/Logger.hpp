@@ -16,6 +16,7 @@ class Logger
 public:
     static void Init();
 
+    static void LogEngineTrace(const std::string &message);
     static void LogEngineInfo(const std::string &message);
     static void LogEngineError(const std::string &message);
 
@@ -28,6 +29,7 @@ public:
 
 #ifdef DEBUG
 
+#define LOG_ENGINE_TRACE(msg) MCEngine::Logger::LogEngineTrace(msg)
 #define LOG_ENGINE_INFO(msg) MCEngine::Logger::LogEngineInfo(msg)
 #define LOG_ENGINE_ERROR(msg) MCEngine::Logger::LogEngineError(msg)
 
