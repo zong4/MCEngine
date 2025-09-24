@@ -27,6 +27,12 @@ void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }
 
 void MCEngine::Shader::Unbind() const { glUseProgram(0); }
 
+void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix)
+{
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+}
+
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)
 {
     const char *sourceCStr = source.c_str();

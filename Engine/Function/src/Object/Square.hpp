@@ -30,7 +30,6 @@ public:
     virtual ~Square() override = default;
 
     void Update() override;
-    void Render() override;
 
     static std::shared_ptr<Square> &GetIdentitySquare();
 

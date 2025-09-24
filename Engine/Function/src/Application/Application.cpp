@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include "Object/Square.hpp"
+#include "Renderer/ShaderLibrary.hpp"
 
 MCEngine::Application::Application() { Init(); }
 
@@ -12,12 +13,12 @@ void MCEngine::Application::Run()
 
         for (auto &pipelinePair : m_RendererPipelines)
         {
-            m_ShaderLibrary->Get(pipelinePair.first)->Bind();
+            ShaderLibrary::GetInstance().Get(pipelinePair.first)->Bind();
             for (const auto &object : pipelinePair.second)
             {
-                object->Render();
+                object->Render(pipelinePair.first);
             }
-            m_ShaderLibrary->Get(pipelinePair.first)->Unbind();
+            ShaderLibrary::GetInstance().Get(pipelinePair.first)->Unbind();
         }
 
         m_Window->Update();
@@ -36,23 +37,11 @@ void MCEngine::Application::Init()
 
     m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
 
-    const char *vertexShaderSource = "#version 330 core\n"
-                                     "layout (location = 0) in vec3 aPos;\n"
-                                     "void main()\n"
-                                     "{\n"
-                                     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                     "}\0";
-    const char *fragmentShaderSource = "#version 330 core\n"
-                                       "out vec4 FragColor;\n"
-                                       "void main()\n"
-                                       "{\n"
-                                       "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                       "}\n\0";
-
-    m_ShaderLibrary = std::make_unique<ShaderLibrary>();
-    m_ShaderLibrary->Load("Standard", vertexShaderSource, fragmentShaderSource);
-
-    m_RendererPipelines["Standard"].push_back(Square::GetIdentitySquare());
+    AddObject(Square::GetIdentitySquare(), "Standard");
 }
 
-void MCEngine::Application::AddObject(const std::shared_ptr<Object> &object) { m_Objects.push_back(object); }
+void MCEngine::Application::AddObject(const std::shared_ptr<Object> &object, const std::string &pipeline)
+{
+    m_Objects.push_back(object);
+    m_RendererPipelines[pipeline].push_back(object);
+}

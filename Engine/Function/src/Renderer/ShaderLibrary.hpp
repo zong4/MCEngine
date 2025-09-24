@@ -8,12 +8,7 @@ namespace MCEngine
 class ShaderLibrary
 {
 public:
-    ShaderLibrary() = default;
-    ~ShaderLibrary() = default;
-    ShaderLibrary(const ShaderLibrary &) = delete;
-    ShaderLibrary &operator=(const ShaderLibrary &) = delete;
-
-    bool Exists(const std::string &name) const;
+    static ShaderLibrary &GetInstance();
 
     std::shared_ptr<Shader> Get(const std::string &name);
 
@@ -23,6 +18,12 @@ public:
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+
+private:
+    ShaderLibrary();
+    ~ShaderLibrary() = default;
+
+    bool Exists(const std::string &name) const;
 };
 
 } // namespace MCEngine

@@ -1,6 +1,10 @@
 #include "ShaderLibrary.hpp"
 
-bool MCEngine::ShaderLibrary::Exists(const std::string &name) const { return m_Shaders.find(name) != m_Shaders.end(); }
+MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
+{
+    static ShaderLibrary instance;
+    return instance;
+}
 
 std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Get(const std::string &name)
 {
@@ -30,3 +34,39 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Load(const std::strin
     Add(name, shader);
     return shader;
 }
+
+MCEngine::ShaderLibrary::ShaderLibrary()
+{
+    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Function/assets/shaders/");
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        if (entry.path().extension() == ".vert")
+        {
+            std::string vertexPath = entry.path().string();
+
+            auto fragPath = entry.path();
+            std::string fragmentPath = fragPath.replace_extension(".frag").string();
+
+            if (std::filesystem::exists(fragmentPath))
+            {
+                std::ifstream vertexFile(vertexPath);
+                std::ifstream fragmentFile(fragmentPath);
+
+                std::string vertexSource((std::istreambuf_iterator<char>(vertexFile)),
+                                         std::istreambuf_iterator<char>());
+                std::string fragmentSource((std::istreambuf_iterator<char>(fragmentFile)),
+                                           std::istreambuf_iterator<char>());
+
+                std::string shaderName = entry.path().stem().string();
+                Load(shaderName, vertexSource, fragmentSource);
+                LOG_ENGINE_INFO("Loaded shader: " + shaderName);
+            }
+            else
+            {
+                LOG_ENGINE_ERROR("Fragment shader not found for: " + vertexPath);
+            }
+        }
+    }
+}
+
+bool MCEngine::ShaderLibrary::Exists(const std::string &name) const { return m_Shaders.find(name) != m_Shaders.end(); }

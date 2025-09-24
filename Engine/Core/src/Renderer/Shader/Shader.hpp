@@ -11,10 +11,12 @@ public:
     Shader(const std::string &vertexSource, const std::string &fragmentSource);
     virtual ~Shader();
 
+    unsigned int GetRendererID() const { return m_RendererID; }
+
     void Bind() const;
     void Unbind() const;
 
-    unsigned int GetRendererID() const { return m_RendererID; }
+    void SetUniformMat4(const std::string &name, glm::mat4 matrix);
 
 private:
     unsigned int m_RendererID = 0;

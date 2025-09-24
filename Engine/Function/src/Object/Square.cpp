@@ -4,13 +4,6 @@ MCEngine::Square::Square(float size) : Object(), m_size(size) { SetupSquare(); }
 
 void MCEngine::Square::Update() {}
 
-void MCEngine::Square::Render()
-{
-    m_VertexArray->Bind();
-    m_VertexArray->Render();
-    m_VertexArray->Unbind();
-}
-
 void MCEngine::Square::SetupSquare()
 {
     m_VertexArray = std::make_shared<VertexArray>(

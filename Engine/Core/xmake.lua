@@ -1,5 +1,5 @@
 -- Common
-add_requires("spdlog")
+add_requires("spdlog", "glm")
 
 -- Graphics
 add_requires("glfw", "glad")
@@ -13,6 +13,7 @@ target("Core")
 
     -- Common
     add_packages("spdlog")
+    add_packages("glm", {public = true})
 
     -- Graphics
     add_packages("glfw", "glad")
