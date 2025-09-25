@@ -7,14 +7,29 @@
 namespace MCEngine
 {
 
+struct WindowProps
+{
+    std::string Title;
+
+    int Width;
+    int Height;
+
+    bool VSync;
+    float BackgroundColor[4];
+
+    WindowProps() = default;
+    WindowProps(int width, int height, std::string title, bool vsync, float backgroundColor[4]);
+
+    std::string ToString() const;
+};
+
 class Window
 {
 public:
-    Window(int width, int height, std::string title) { Init(width, height, title); }
-    ~Window() { Shutdown(); }
+    Window(WindowProps props);
+    ~Window();
 
-    bool IsVSync() const { return m_VSync; }
-    void SetVSync(bool enabled);
+    const void *GetNativeWindow() const { return m_Window; }
 
 public:
     bool ShouldClose() const;
@@ -30,16 +45,16 @@ public:
 
 private:
     void *m_Window = nullptr;
+    WindowProps m_Props;
 
-    // Parameters
-    bool m_VSync = true;
     std::unique_ptr<LayerStack> m_LayerStack = nullptr;
 
-protected:
-    void Init(int width, int height, std::string title);
-    void Shutdown();
-
+private:
+    void Init();
     void SetCallbacks();
+    void SetVSync(bool enabled);
+
+    void Shutdown();
 };
 
 } // namespace MCEngine

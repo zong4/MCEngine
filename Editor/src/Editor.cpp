@@ -1,3 +1,16 @@
 #include "Editor.hpp"
 
-std::unique_ptr<MCEngine::Application> MCEngine::CreateApplication() { return std::make_unique<MCEditor::Editor>(); }
+MCEditor::Editor::Editor(MCEngine::WindowProps props) : Application(props)
+{
+    AddLayer(std::make_shared<MCEngine::CameraLayer>());
+
+    LOG_EDITOR_INFO("Editor created.");
+}
+
+MCEditor::Editor::~Editor() { LOG_EDITOR_INFO("Editor destroyed."); }
+
+std::unique_ptr<MCEngine::Application> MCEngine::CreateApplication()
+{
+    return std::make_unique<MCEditor::Editor>(
+        MCEngine::WindowProps(800, 600, "Minecraft Engine", true, new float[4]{0.1f, 0.1f, 0.1f, 1.0f}));
+}

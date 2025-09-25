@@ -12,6 +12,9 @@ public:
     Object(glm::vec3 position, glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
     virtual ~Object() = default;
 
+    glm::vec3 GetPosition() const { return m_Position; }
+    virtual void SetPosition(const glm::vec3 &position) { m_Position = position; }
+
     virtual void Update() = 0;
     virtual void Render(const std::string &pipeline);
 

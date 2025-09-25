@@ -13,6 +13,12 @@ MCEngine::CameraLayer::CameraLayer() : Layer("CameraLayer")
 void MCEngine::CameraLayer::OnEvent(Event &event)
 {
     EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &e) {
+        m_Camera->SetSize(glm::vec2(e.GetWidth() / 100.0f, e.GetHeight() / 100.0f));
+        return true;
+    });
+
     dispatcher.Dispatch<KeyEvent>([this](KeyEvent &e) {
         if (e.GetAction() == 1 || e.GetAction() == 2)
         {

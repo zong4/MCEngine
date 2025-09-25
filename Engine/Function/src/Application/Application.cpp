@@ -1,7 +1,5 @@
 #include "Application.hpp"
 
-#include "Scene/CameraLayer.hpp"
-
 void MCEngine::Application::Run()
 {
     while (!m_Window->ShouldClose())
@@ -12,13 +10,11 @@ void MCEngine::Application::Run()
     }
 }
 
-void MCEngine::Application::Init()
+void MCEngine::Application::Init(WindowProps props)
 {
     MCEngine::Logger::Init();
 
-    m_Window = std::make_unique<Window>(800, 600, "Minecraft Engine");
-
-    AddLayer(std::make_shared<CameraLayer>());
+    m_Window = std::make_unique<Window>(props);
 
     LOG_ENGINE_INFO("Application initialized.");
 }
