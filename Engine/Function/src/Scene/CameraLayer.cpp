@@ -5,20 +5,19 @@
 
 MCEngine::CameraLayer::CameraLayer() : Layer("CameraLayer")
 {
-    m_Camera = std::make_shared<OrthoCamera>(glm::vec3(0.5f, 0.0f, 0.0f), glm::vec2(8.0f, 6.0f));
+    m_OrthoCamera = std::make_shared<OrthoCamera>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(8.0f, 6.0f));
+    m_PerspectiveCamera =
+        std::make_shared<PerspectiveCamera>(glm::vec3(0.0f, 0.0f, 3.0f), 45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    m_Camera = m_OrthoCamera;
 
     m_Objects.push_back(Square::GetIdentitySquare());
 }
 
 void MCEngine::CameraLayer::OnEvent(Event &event)
 {
+    m_Camera->OnEvent(event);
+
     EventDispatcher dispatcher(event);
-
-    dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &e) {
-        m_Camera->SetSize(glm::vec2(e.GetWidth() / 100.0f, e.GetHeight() / 100.0f));
-        return true;
-    });
-
     dispatcher.Dispatch<KeyEvent>([this](KeyEvent &e) {
         if (e.GetAction() == 1 || e.GetAction() == 2)
         {
@@ -35,6 +34,38 @@ void MCEngine::CameraLayer::OnEvent(Event &event)
                 return true;
             case ENGINE_KEY_D:
                 m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(m_CameraMoveSpeed, 0.0f, 0.0f));
+                return true;
+            case ENGINE_KEY_Q:
+                m_Camera->SetPosition(m_Camera->GetPosition() - glm::vec3(0.0f, 0.0f, m_CameraMoveSpeed));
+                return true;
+            case ENGINE_KEY_E:
+                m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, 0.0f, m_CameraMoveSpeed));
+                return true;
+            case ENGINE_KEY_1:
+                m_Camera = m_OrthoCamera;
+                LOG_ENGINE_INFO("Switched to OrthoCamera.");
+                return true;
+            case ENGINE_KEY_2:
+                m_Camera = m_PerspectiveCamera;
+                LOG_ENGINE_INFO("Switched to PerspectiveCamera.");
+                return true;
+            case ENGINE_KEY_I:
+                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(m_CameraRotateSpeed, 0.0f, 0.0f));
+                return true;
+            case ENGINE_KEY_K:
+                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(m_CameraRotateSpeed, 0.0f, 0.0f));
+                return true;
+            case ENGINE_KEY_J:
+                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(0.0f, m_CameraRotateSpeed, 0.0f));
+                return true;
+            case ENGINE_KEY_L:
+                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(0.0f, m_CameraRotateSpeed, 0.0f));
+                return true;
+            case ENGINE_KEY_U:
+                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed));
+                return true;
+            case ENGINE_KEY_O:
+                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed));
                 return true;
             default:
                 break;

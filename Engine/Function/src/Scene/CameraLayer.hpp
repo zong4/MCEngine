@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Object/Camera/Camera.hpp"
 #include "Object/Camera/OrthoCamera.hpp"
+#include "Object/Camera/PerspectiveCamera.hpp"
 
 namespace MCEngine
 {
@@ -19,8 +21,12 @@ public:
     void OnUpdate() override;
 
 private:
+    std::shared_ptr<Camera> m_Camera;
+    std::shared_ptr<OrthoCamera> m_OrthoCamera;
+    std::shared_ptr<PerspectiveCamera> m_PerspectiveCamera;
+
     float m_CameraMoveSpeed = 0.1f;
-    std::shared_ptr<OrthoCamera> m_Camera;
+    float m_CameraRotateSpeed = 10.0f;
 
     std::vector<std::shared_ptr<Object>> m_Objects;
 };

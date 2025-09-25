@@ -13,17 +13,24 @@ public:
     virtual ~Object() = default;
 
     glm::vec3 GetPosition() const { return m_Position; }
-    virtual void SetPosition(const glm::vec3 &position) { m_Position = position; }
+    glm::vec3 GetRotation() const { return m_Rotation; }
+    glm::vec3 GetScale() const { return m_Scale; }
 
+    virtual void SetPosition(const glm::vec3 &position) { m_Position = position; }
+    virtual void SetRotation(const glm::vec3 &rotation) { m_Rotation = rotation; }
+    virtual void SetScale(const glm::vec3 &scale) { m_Scale = scale; }
+
+public:
+    virtual void OnEvent(Event &event) = 0;
     virtual void Update() = 0;
     virtual void Render(const std::string &pipeline);
 
 protected:
-    int m_ID = 0;
+    int m_ID;
 
     // Transform
     glm::vec3 m_Position;
-    glm::vec3 m_Rotation;
+    glm::vec3 m_Rotation; // in degrees
     glm::vec3 m_Scale;
 
     // Rendering

@@ -29,6 +29,7 @@ public:
     Square(float size);
     virtual ~Square() override = default;
 
+    void OnEvent(Event &event) override {}
     void Update() override;
 
     static std::shared_ptr<Square> &GetIdentitySquare();
