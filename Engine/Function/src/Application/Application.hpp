@@ -11,13 +11,10 @@ public:
     Application(WindowProps props) { Init(props); }
     virtual ~Application() = default;
 
-    const Application &Get() const { return *this; }
-    const Window &GetWindow() const { return *m_Window; }
-
 public:
     virtual void Run();
 
-private:
+protected:
     std::unique_ptr<Window> m_Window = nullptr;
 
 protected:

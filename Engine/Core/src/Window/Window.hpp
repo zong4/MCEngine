@@ -29,7 +29,8 @@ public:
     Window(WindowProps props);
     ~Window();
 
-    const void *GetNativeWindow() const { return m_Window; }
+    void *GetNativeWindow() const { return m_NativeWindow; }
+    const WindowProps &GetProps() const { return m_Props; }
 
 public:
     bool ShouldClose() const;
@@ -44,7 +45,7 @@ public:
     void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PopLayer(layer); }
 
 private:
-    void *m_Window = nullptr;
+    void *m_NativeWindow = nullptr;
     WindowProps m_Props;
 
     std::unique_ptr<LayerStack> m_LayerStack = nullptr;

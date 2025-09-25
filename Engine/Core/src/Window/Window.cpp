@@ -37,11 +37,11 @@ void MCEngine::Window::PreUpdate()
 
 void MCEngine::Window::PostUpdate()
 {
-    glfwSwapBuffers(static_cast<GLFWwindow *>(m_Window));
+    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwPollEvents();
 }
 
-bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window)); }
+bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
 
 void MCEngine::Window::Init()
 {
@@ -54,14 +54,14 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    m_Window = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
-    if (!m_Window)
+    m_NativeWindow = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
+    if (!m_NativeWindow)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
 
-    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_Window));
+    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindow));
     SetCallbacks();
     SetVSync(m_Props.VSync);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -74,19 +74,20 @@ void MCEngine::Window::Init()
 
 void MCEngine::Window::SetCallbacks()
 {
-    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_Window), this);
+    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindow), this);
 
-    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_Window), [](GLFWwindow *window, int width, int height) {
-        glViewport(0, 0, width, height);
+    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+                                   [](GLFWwindow *window, int width, int height) {
+                                       glViewport(0, 0, width, height);
 
-        glfwGetWindowSize(window, &width, &height);
-        WindowResizeEvent event(width, height);
+                                       glfwGetWindowSize(window, &width, &height);
+                                       WindowResizeEvent event(width, height);
 
-        Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        win->OnEvent(event);
-    });
+                                       Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
+                                       win->OnEvent(event);
+                                   });
 
-    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_Window),
+    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                        [](GLFWwindow *window, int key, int scancode, int action, int mods) {
                            KeyEvent event(key, action);
 
@@ -94,7 +95,7 @@ void MCEngine::Window::SetCallbacks()
                            win->OnEvent(event);
                        });
 
-    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_Window),
+    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                                [](GLFWwindow *window, int button, int action, int mods) {
                                    MouseButtonEvent event(button, action);
 
@@ -102,12 +103,13 @@ void MCEngine::Window::SetCallbacks()
                                    win->OnEvent(event);
                                });
 
-    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_Window), [](GLFWwindow *window, double xpos, double ypos) {
-        MouseMoveEvent event(xpos, ypos);
+    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+                             [](GLFWwindow *window, double xpos, double ypos) {
+                                 MouseMoveEvent event(xpos, ypos);
 
-        Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        win->OnEvent(event);
-    });
+                                 Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
+                                 win->OnEvent(event);
+                             });
 }
 
 void MCEngine::Window::SetVSync(bool enabled)
@@ -124,6 +126,6 @@ void MCEngine::Window::SetVSync(bool enabled)
 
 void MCEngine::Window::Shutdown()
 {
-    glfwDestroyWindow(static_cast<GLFWwindow *>(m_Window));
+    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwTerminate();
 }
