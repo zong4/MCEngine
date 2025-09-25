@@ -9,7 +9,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(Window *window) : Layer("ImGuiLayer"), m_Window(window) {}
+MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> window) : Layer("ImGuiLayer"), m_Window(window)
+{
+    m_GuiFilePath = std::string(PROJECT_ROOT) + "/Editor/configs/imgui.ini";
+}
 
 void MCEngine::ImGuiLayer::OnAttach()
 {
@@ -24,8 +27,8 @@ void MCEngine::ImGuiLayer::OnAttach()
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    // ImGui::StyleColorsClassic();
+    // ImGui::StyleColorsDark();
+    ImGui::StyleColorsClassic();
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
     // ones.
@@ -39,10 +42,15 @@ void MCEngine::ImGuiLayer::OnAttach()
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImGui::GetIO().IniFilename = m_GuiFilePath.c_str();
+    ImGui::LoadIniSettingsFromDisk(m_GuiFilePath.c_str());
 }
 
 void MCEngine::ImGuiLayer::OnDetach()
 {
+    ImGui::SaveIniSettingsToDisk(m_GuiFilePath.c_str());
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -74,9 +82,13 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 void MCEngine::ImGuiLayer::OnUpdate()
 {
     Begin();
+    BeginDockSpace();
 
-    ImGui::ShowDemoWindow();
+    ImGui::Begin("Text");
+    ImGui::Text("Hello, ImGui!");
+    ImGui::End();
 
+    EndDockSpace();
     End();
 }
 
@@ -85,6 +97,30 @@ void MCEngine::ImGuiLayer::Begin()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+}
+
+void MCEngine::ImGuiLayer::BeginDockSpace()
+{
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+    ImGui::Begin("DockSpace", nullptr, window_flags);
+    ImGui::PopStyleColor();
+
+    ImGui::PopStyleVar(2);
+
+    ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 }
 
 void MCEngine::ImGuiLayer::End()
@@ -105,3 +141,5 @@ void MCEngine::ImGuiLayer::End()
         glfwMakeContextCurrent(backup_current_context);
     }
 }
+
+void MCEngine::ImGuiLayer::EndDockSpace() { ImGui::End(); }

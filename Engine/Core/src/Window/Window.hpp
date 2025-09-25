@@ -41,8 +41,8 @@ public:
     void Update() { m_LayerStack->Update(); }
     void PostUpdate();
 
-    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PushLayer(layer); }
-    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PopLayer(layer); }
+    void AddLayer(const std::shared_ptr<Layer> &layer);
+    void RemoveLayer(const std::shared_ptr<Layer> &layer);
 
 private:
     void *m_NativeWindow = nullptr;

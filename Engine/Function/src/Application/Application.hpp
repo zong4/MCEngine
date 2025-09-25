@@ -15,7 +15,7 @@ public:
     virtual void Run();
 
 protected:
-    std::unique_ptr<Window> m_Window = nullptr;
+    std::shared_ptr<Window> m_Window = nullptr;
 
 protected:
     void AddLayer(const std::shared_ptr<Layer> &layer) { m_Window->AddLayer(layer); }

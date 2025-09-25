@@ -8,22 +8,26 @@ namespace MCEngine
 class ImGuiLayer : public Layer
 {
 public:
-    ImGuiLayer(Window *window);
+    ImGuiLayer(std::shared_ptr<Window> window);
     ~ImGuiLayer() override = default;
+
+    void OnAttach() override;
+    void OnDetach() override;
 
 public:
     void OnEvent(Event &event) override;
-
-    void OnAttach() override;
     void OnUpdate() override;
-    void OnDetach() override;
 
 private:
-    Window *m_Window;
+    std::shared_ptr<Window> m_Window;
+    std::string m_GuiFilePath;
 
 private:
     void Begin();
+    void BeginDockSpace();
+
     void End();
+    void EndDockSpace();
 };
 
 } // namespace MCEngine

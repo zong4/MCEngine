@@ -26,6 +26,8 @@ MCEngine::Window::Window(WindowProps props) : m_Props(props) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
+bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
+
 void MCEngine::Window::OnEvent(Event &e) { m_LayerStack->OnEvent(e); }
 
 void MCEngine::Window::PreUpdate()
@@ -41,7 +43,17 @@ void MCEngine::Window::PostUpdate()
     glfwPollEvents();
 }
 
-bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
+void MCEngine::Window::AddLayer(const std::shared_ptr<Layer> &layer)
+{
+    m_LayerStack->PushLayer(layer);
+    LOG_ENGINE_INFO("Layer added: " + layer->GetName());
+}
+
+void MCEngine::Window::RemoveLayer(const std::shared_ptr<Layer> &layer)
+{
+    m_LayerStack->PopLayer(layer);
+    LOG_ENGINE_INFO("Layer removed: " + layer->GetName());
+}
 
 void MCEngine::Window::Init()
 {

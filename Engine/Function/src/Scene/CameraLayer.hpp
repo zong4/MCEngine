@@ -12,6 +12,9 @@ public:
     CameraLayer();
     virtual ~CameraLayer() = default;
 
+    void OnAttach() override {}
+    void OnDetach() override {}
+
     void OnEvent(Event &event) override;
     void OnUpdate() override;
 

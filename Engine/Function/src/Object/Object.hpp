@@ -8,8 +8,8 @@ namespace MCEngine
 class Object
 {
 public:
-    Object() = default;
-    Object(glm::vec3 position, glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
+    Object(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f),
+           glm::vec3 scale = glm::vec3(1.0f));
     virtual ~Object() = default;
 
     glm::vec3 GetPosition() const { return m_Position; }
@@ -19,10 +19,12 @@ public:
     virtual void Render(const std::string &pipeline);
 
 protected:
+    int m_ID = 0;
+
     // Transform
-    glm::vec3 m_Position{0.0f, 0.0f, 0.0f};
-    glm::vec3 m_Rotation{0.0f, 0.0f, 0.0f};
-    glm::vec3 m_Scale{1.0f, 1.0f, 1.0f};
+    glm::vec3 m_Position;
+    glm::vec3 m_Rotation;
+    glm::vec3 m_Scale;
 
     // Rendering
     std::shared_ptr<VertexArray> m_VertexArray = nullptr;

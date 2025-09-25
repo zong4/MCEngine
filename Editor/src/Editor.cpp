@@ -2,8 +2,9 @@
 
 MCEditor::Editor::Editor(MCEngine::WindowProps props) : Application(props)
 {
-    AddLayer(std::make_shared<MCEngine::ImGuiLayer>(m_Window.get()));
     AddLayer(std::make_shared<MCEngine::CameraLayer>());
+
+    AddLayer(std::make_shared<MCEngine::ImGuiLayer>(m_Window));
 
     LOG_EDITOR_INFO("Editor created.");
 }
