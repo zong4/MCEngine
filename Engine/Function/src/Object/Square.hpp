@@ -30,7 +30,7 @@ public:
     virtual ~Square() override = default;
 
     void OnEvent(Event &event) override {}
-    void Update() override;
+    void Update(float deltaTime) override;
 
     static std::shared_ptr<Square> &GetIdentitySquare();
 

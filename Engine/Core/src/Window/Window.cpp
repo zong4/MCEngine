@@ -37,6 +37,12 @@ void MCEngine::Window::PreUpdate()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void MCEngine::Window::Update(float deltaTime)
+{
+    LOG_ENGINE_TRACE("Frame Time: " + std::to_string(deltaTime) + "ms");
+    m_LayerStack->Update(deltaTime);
+}
+
 void MCEngine::Window::PostUpdate()
 {
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));

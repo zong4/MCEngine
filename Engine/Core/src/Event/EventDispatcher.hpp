@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.hpp"
-#include "Logger/Logger.hpp"
+#include "Recorder/Logger/Logger.hpp"
 
 namespace MCEngine
 {

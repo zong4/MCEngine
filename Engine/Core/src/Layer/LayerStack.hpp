@@ -13,7 +13,7 @@ public:
 
 public:
     void OnEvent(Event &e);
-    void Update();
+    void Update(float deltaTime);
 
     void PushLayer(const std::shared_ptr<Layer> &layer);
     void PopLayer(const std::shared_ptr<Layer> &layer);

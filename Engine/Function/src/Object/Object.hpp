@@ -22,7 +22,7 @@ public:
 
 public:
     virtual void OnEvent(Event &event) = 0;
-    virtual void Update() = 0;
+    virtual void Update(float deltaTime) = 0;
     virtual void Render(const std::string &pipeline);
 
 protected:

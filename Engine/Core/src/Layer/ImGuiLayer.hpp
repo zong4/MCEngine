@@ -16,7 +16,7 @@ public:
 
 public:
     void OnEvent(Event &event) override;
-    void OnUpdate() override;
+    void OnUpdate(float deltaTime) override;
 
 private:
     std::shared_ptr<Window> m_Window;

@@ -18,7 +18,7 @@ public:
     void SetRotation(const glm::vec3 &rotation) override;
 
 public:
-    virtual void Update() override = 0;
+    virtual void Update(float deltaTime) override = 0;
 
 protected:
     glm::mat4 m_View;

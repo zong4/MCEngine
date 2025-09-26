@@ -2,7 +2,7 @@
 
 MCEngine::Square::Square(float size) : Object(), m_size(size) { SetupSquare(); }
 
-void MCEngine::Square::Update() {}
+void MCEngine::Square::Update(float deltaTime) {}
 
 void MCEngine::Square::SetupSquare()
 {

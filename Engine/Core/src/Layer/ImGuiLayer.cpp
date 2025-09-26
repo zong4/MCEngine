@@ -79,7 +79,7 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
     });
 }
 
-void MCEngine::ImGuiLayer::OnUpdate()
+void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
 {
     Begin();
     BeginDockSpace();

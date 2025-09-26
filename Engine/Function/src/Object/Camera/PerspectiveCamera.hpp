@@ -18,7 +18,7 @@ public:
 
 public:
     void OnEvent(Event &event) override;
-    void Update() override;
+    void Update(float deltaTime) override;
 
 private:
     float m_FOV;

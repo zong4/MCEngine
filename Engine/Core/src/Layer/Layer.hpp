@@ -18,7 +18,7 @@ public:
 
 public:
     virtual void OnEvent(Event &event) = 0;
-    virtual void OnUpdate() = 0;
+    virtual void OnUpdate(float deltaTime) = 0;
 
 private:
     std::string m_Name;

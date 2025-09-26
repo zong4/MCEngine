@@ -27,4 +27,4 @@ void MCEngine::OrthoCamera::OnEvent(Event &event)
     });
 }
 
-void MCEngine::OrthoCamera::Update() {}
+void MCEngine::OrthoCamera::Update(float deltaTime) {}

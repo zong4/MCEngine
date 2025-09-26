@@ -5,93 +5,57 @@
 
 MCEngine::CameraLayer::CameraLayer() : Layer("CameraLayer")
 {
+    ENGINE_PROFILE_FUNCTION();
+
+    // Initialize cameras
     m_OrthoCamera = std::make_shared<OrthoCamera>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(8.0f, 6.0f));
     m_PerspectiveCamera =
         std::make_shared<PerspectiveCamera>(glm::vec3(0.0f, 0.0f, 3.0f), 45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     m_Camera = m_OrthoCamera;
 
+    // Initialize objects
     m_Objects.push_back(Square::GetIdentitySquare());
 }
 
 void MCEngine::CameraLayer::OnEvent(Event &event)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     m_Camera->OnEvent(event);
-
-    EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<KeyEvent>([this](KeyEvent &e) {
-        if (e.GetAction() == 1 || e.GetAction() == 2)
-        {
-            switch (e.GetKeyCode())
-            {
-            case ENGINE_KEY_W:
-                m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, m_CameraMoveSpeed, 0.0f));
-                return true;
-            case ENGINE_KEY_S:
-                m_Camera->SetPosition(m_Camera->GetPosition() - glm::vec3(0.0f, m_CameraMoveSpeed, 0.0f));
-                return true;
-            case ENGINE_KEY_A:
-                m_Camera->SetPosition(m_Camera->GetPosition() - glm::vec3(m_CameraMoveSpeed, 0.0f, 0.0f));
-                return true;
-            case ENGINE_KEY_D:
-                m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(m_CameraMoveSpeed, 0.0f, 0.0f));
-                return true;
-            case ENGINE_KEY_Q:
-                m_Camera->SetPosition(m_Camera->GetPosition() - glm::vec3(0.0f, 0.0f, m_CameraMoveSpeed));
-                return true;
-            case ENGINE_KEY_E:
-                m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, 0.0f, m_CameraMoveSpeed));
-                return true;
-            case ENGINE_KEY_1:
-                m_Camera = m_OrthoCamera;
-                LOG_ENGINE_INFO("Switched to OrthoCamera.");
-                return true;
-            case ENGINE_KEY_2:
-                m_Camera = m_PerspectiveCamera;
-                LOG_ENGINE_INFO("Switched to PerspectiveCamera.");
-                return true;
-            case ENGINE_KEY_I:
-                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(m_CameraRotateSpeed, 0.0f, 0.0f));
-                return true;
-            case ENGINE_KEY_K:
-                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(m_CameraRotateSpeed, 0.0f, 0.0f));
-                return true;
-            case ENGINE_KEY_J:
-                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(0.0f, m_CameraRotateSpeed, 0.0f));
-                return true;
-            case ENGINE_KEY_L:
-                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(0.0f, m_CameraRotateSpeed, 0.0f));
-                return true;
-            case ENGINE_KEY_U:
-                m_Camera->SetRotation(m_Camera->GetRotation() + glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed));
-                return true;
-            case ENGINE_KEY_O:
-                m_Camera->SetRotation(m_Camera->GetRotation() - glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed));
-                return true;
-            default:
-                break;
-            }
-        }
-
-        return false;
-    });
+    for (const auto &object : m_Objects)
+    {
+        object->OnEvent(event);
+    }
 }
 
-void MCEngine::CameraLayer::OnUpdate()
+void MCEngine::CameraLayer::OnUpdate(float deltaTime)
 {
-    auto &&shader = ShaderLibrary::GetInstance().Get("Standard");
+    ENGINE_PROFILE_FUNCTION();
 
-    shader->Bind();
-
-    shader->SetUniformMat4("u_View", m_Camera->GetView());
-    shader->SetUniformMat4("u_Projection", m_Camera->GetProjection());
-
-    for (const auto &object : m_Objects)
     {
-        object->Render("Standard");
+        ENGINE_PROFILE_SCOPE("CameraLayer::RenderObjects");
+
+        // Render objects
+        auto &&shader = ShaderLibrary::GetInstance().Get("Standard");
+        shader->Bind();
+        shader->SetUniformMat4("u_View", m_Camera->GetView());
+        shader->SetUniformMat4("u_Projection", m_Camera->GetProjection());
+        for (const auto &object : m_Objects)
+        {
+            object->Render("Standard");
+        }
     }
 
-    for (const auto &object : m_Objects)
     {
-        object->Update();
+        ENGINE_PROFILE_SCOPE("CameraLayer::UpdateObjects");
+
+        // Update camera
+        m_Camera->Update(deltaTime);
+
+        // Update objects
+        for (const auto &object : m_Objects)
+        {
+            object->Update(deltaTime);
+        }
     }
 }

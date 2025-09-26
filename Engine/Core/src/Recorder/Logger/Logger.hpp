@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string>
 
 namespace spdlog
 {
@@ -14,7 +13,7 @@ namespace MCEngine
 class Logger
 {
 public:
-    static void Init();
+    static void Init(std::string dirPath);
 
     static void LogEngineTrace(const std::string &message);
     static void LogEngineInfo(const std::string &message);

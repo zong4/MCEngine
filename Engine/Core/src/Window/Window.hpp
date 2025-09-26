@@ -38,7 +38,7 @@ public:
     void OnEvent(Event &e);
 
     void PreUpdate();
-    void Update() { m_LayerStack->Update(); }
+    void Update(float deltaTime);
     void PostUpdate();
 
     void AddLayer(const std::shared_ptr<Layer> &layer);

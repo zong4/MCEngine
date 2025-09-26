@@ -12,7 +12,12 @@
 #include <utility>
 #include <vector>
 
+// Recorder
+#include "Recorder/Instrumentor/InstrumentationTimer.hpp"
+#include "Recorder/Instrumentor/Instrumentor.hpp"
+#include "Recorder/Instrumentor/Timer.hpp"
+#include "Recorder/Logger/Logger.hpp"
+
 // Third Party
-#include "Logger/Logger.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

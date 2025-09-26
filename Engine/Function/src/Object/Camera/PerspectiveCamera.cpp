@@ -22,4 +22,4 @@ void MCEngine::PerspectiveCamera::OnEvent(Event &event)
     });
 }
 
-void MCEngine::PerspectiveCamera::Update() {}
+void MCEngine::PerspectiveCamera::Update(float deltaTime) {}

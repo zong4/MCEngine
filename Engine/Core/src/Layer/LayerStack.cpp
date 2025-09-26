@@ -21,11 +21,11 @@ void MCEngine::LayerStack::OnEvent(Event &e)
     }
 }
 
-void MCEngine::LayerStack::Update()
+void MCEngine::LayerStack::Update(float deltaTime)
 {
     for (auto &layer : m_Layers)
     {
-        layer->OnUpdate();
+        layer->OnUpdate(deltaTime);
     }
 }
 
