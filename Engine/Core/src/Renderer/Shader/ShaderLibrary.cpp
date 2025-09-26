@@ -6,7 +6,7 @@ MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
     return instance;
 }
 
-std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Get(const std::string &name)
+std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::GetShader(const std::string &name)
 {
     if (!Exists(name))
     {
@@ -17,7 +17,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Get(const std::string
     return m_Shaders[name];
 }
 
-void MCEngine::ShaderLibrary::Add(const std::string &name, const std::shared_ptr<Shader> &shader)
+void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shared_ptr<Shader> &shader)
 {
     if (Exists(name))
     {
@@ -30,18 +30,18 @@ void MCEngine::ShaderLibrary::Add(const std::string &name, const std::shared_ptr
     LOG_ENGINE_INFO("Shader added: " + name);
 }
 
-std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::Load(const std::string &name,
-                                                                const std::string &vertexSource,
-                                                                const std::string &fragmentSource)
+std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std::string &name,
+                                                                      const std::string &vertexSource,
+                                                                      const std::string &fragmentSource)
 {
     auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource);
-    Add(name, shader);
+    AddShader(name, shader);
     return shader;
 }
 
 MCEngine::ShaderLibrary::ShaderLibrary()
 {
-    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Function/assets/shaders/");
+    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
     for (const auto &entry : std::filesystem::directory_iterator(path))
     {
         if (entry.path().extension() == ".vert")
@@ -62,7 +62,7 @@ MCEngine::ShaderLibrary::ShaderLibrary()
                                            std::istreambuf_iterator<char>());
 
                 std::string shaderName = entry.path().stem().string();
-                Load(shaderName, vertexSource, fragmentSource);
+                LoadShader(shaderName, vertexSource, fragmentSource);
             }
             else
             {

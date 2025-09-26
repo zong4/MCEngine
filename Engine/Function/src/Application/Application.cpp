@@ -29,7 +29,7 @@ void MCEngine::Application::Run()
     while (!m_Window->ShouldClose())
     {
         m_Window->PreUpdate();
-        m_Window->Update(timer.GetElapsedMilliseconds());
+        m_Window->Update(timer.GetElapsedSeconds());
         m_Window->PostUpdate();
     }
 

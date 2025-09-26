@@ -1,7 +1,5 @@
 #include "Object.hpp"
 
-#include "Renderer/ShaderLibrary.hpp"
-
 MCEngine::Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
     : m_Position(position), m_Rotation(rotation), m_Scale(scale)
 {
@@ -11,7 +9,7 @@ void MCEngine::Object::Render(const std::string &pipeline)
 {
     if (m_VertexArray)
     {
-        ShaderLibrary::GetInstance().Get(pipeline)->SetUniformMat4("u_Model", GetTransform());
+        ShaderLibrary::GetInstance().GetShader(pipeline)->SetUniformMat4("u_Model", GetTransform());
 
         m_VertexArray->Bind();
         m_VertexArray->Render();

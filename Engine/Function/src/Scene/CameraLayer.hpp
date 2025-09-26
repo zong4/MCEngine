@@ -25,7 +25,7 @@ private:
     std::shared_ptr<OrthoCamera> m_OrthoCamera;
     std::shared_ptr<PerspectiveCamera> m_PerspectiveCamera;
 
-    float m_CameraMoveSpeed = 0.1f;
+    float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 10.0f;
 
     std::vector<std::shared_ptr<Object>> m_Objects;
