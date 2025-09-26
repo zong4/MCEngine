@@ -37,6 +37,7 @@ MCEngine::VertexArray::VertexArray(VertexArray &&other)
 {
     LOG_ENGINE_INFO("VertexArray moved with ID: " + std::to_string(m_RendererID));
 
+    // Invalidate the moved-from object
     other.m_RendererID = 0;
 }
 
@@ -51,6 +52,7 @@ MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
         m_VertexBuffer = std::move(other.m_VertexBuffer);
         LOG_ENGINE_INFO("VertexArray move-assigned with ID: " + std::to_string(m_RendererID));
 
+        // Invalidate the moved-from object
         other.m_RendererID = 0;
     }
     return *this;
@@ -58,6 +60,8 @@ MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
 
 void MCEngine::VertexArray::Bind() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glBindVertexArray(m_RendererID);
     m_VertexBuffer.Bind();
     m_IndexBuffer.Bind();
@@ -72,6 +76,8 @@ void MCEngine::VertexArray::Render() const
 
 void MCEngine::VertexArray::Unbind() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     m_IndexBuffer.Unbind();
     m_VertexBuffer.Unbind();
     glBindVertexArray(0);
@@ -79,8 +85,9 @@ void MCEngine::VertexArray::Unbind() const
 
 void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 {
-    Bind();
+    ENGINE_PROFILE_FUNCTION();
 
+    Bind();
     m_IndexBuffer = std::move(indexBuffer);
     m_IndexBuffer.Bind();
 
@@ -91,7 +98,6 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
     }
 
     m_IndexBuffer.Unbind();
-
     Unbind();
 
     LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) +
@@ -100,8 +106,9 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 
 void MCEngine::VertexArray::SetVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute)
 {
-    Bind();
+    ENGINE_PROFILE_FUNCTION();
 
+    Bind();
     m_VertexBuffer = std::move(vertexBuffer);
     m_VertexBuffer.Bind();
 

@@ -10,14 +10,12 @@ namespace MCEngine
 struct WindowProps
 {
     std::string Title;
-
     int Width;
     int Height;
-
     bool VSync;
     float BackgroundColor[4];
 
-    WindowProps() = default;
+public:
     WindowProps(int width, int height, std::string title, bool vsync, float backgroundColor[4]);
 
     std::string ToString() const;

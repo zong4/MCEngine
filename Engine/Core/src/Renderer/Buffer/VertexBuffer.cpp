@@ -16,6 +16,7 @@ MCEngine::VertexBuffer::VertexBuffer(VertexBuffer &&other)
     m_RendererID = other.m_RendererID;
     LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID));
 
+    // Invalidate the moved-from object
     other.m_RendererID = 0;
 }
 
@@ -31,6 +32,7 @@ MCEngine::VertexBuffer &MCEngine::VertexBuffer::operator=(VertexBuffer &&other)
         m_RendererID = other.m_RendererID;
         LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID));
 
+        // Invalidate the moved-from object
         other.m_RendererID = 0;
     }
     return *this;

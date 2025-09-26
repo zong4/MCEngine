@@ -11,13 +11,10 @@ MCEngine::WindowProps::WindowProps(int width, int height, std::string title, boo
     : Width(width), Height(height), Title(title), VSync(vsync),
       BackgroundColor{backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]}
 {
-    ENGINE_PROFILE_FUNCTION();
 }
 
 std::string MCEngine::WindowProps::ToString() const
 {
-    ENGINE_PROFILE_FUNCTION();
-
     std::stringstream ss;
     ss << "WindowProps: " << Title << " (" << Width << ", " << Height << "), VSync: " << (VSync ? "true" : "false")
        << ", BackgroundColor: (" << BackgroundColor[0] << ", " << BackgroundColor[1] << ", " << BackgroundColor[2]
@@ -29,12 +26,7 @@ MCEngine::Window::Window(WindowProps props) : m_Props(props) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
-bool MCEngine::Window::ShouldClose() const
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow));
-}
+bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
 
 void MCEngine::Window::OnEvent(Event &e)
 {

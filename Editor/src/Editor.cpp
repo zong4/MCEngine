@@ -10,12 +10,7 @@ MCEditor::Editor::Editor(MCEngine::WindowProps props) : Application(props)
     LOG_EDITOR_INFO("Editor created.");
 }
 
-MCEditor::Editor::~Editor()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    LOG_EDITOR_INFO("Editor destroyed.");
-}
+MCEditor::Editor::~Editor() { LOG_EDITOR_INFO("Editor destroyed."); }
 
 std::unique_ptr<MCEngine::Application> MCEngine::CreateApplication()
 {

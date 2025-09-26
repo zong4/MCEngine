@@ -20,6 +20,7 @@ MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) : m_Count(other.m_Count)
     LOG_ENGINE_INFO("IndexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
                     " and count: " + std::to_string(m_Count));
 
+    // Invalidate the moved-from object
     other.m_RendererID = 0;
 }
 
@@ -37,6 +38,7 @@ MCEngine::IndexBuffer &MCEngine::IndexBuffer::operator=(IndexBuffer &&other)
         LOG_ENGINE_INFO("IndexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
                         " and count: " + std::to_string(m_Count));
 
+        // Invalidate the moved-from object
         other.m_RendererID = 0;
     }
     return *this;

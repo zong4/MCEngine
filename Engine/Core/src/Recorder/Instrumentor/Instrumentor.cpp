@@ -17,6 +17,7 @@ void MCEngine::Instrumentor::EndSession()
     WriteFooter();
     m_OutputStream.close();
 
+    // Reset profile count for next session
     m_ProfileCount = 0;
 }
 

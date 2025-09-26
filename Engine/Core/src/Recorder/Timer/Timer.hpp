@@ -8,13 +8,13 @@ namespace MCEngine
 class Timer
 {
 public:
-    Timer();
-    ~Timer();
+    Timer() { Start(); }
+    virtual ~Timer() = default;
 
     float GetElapsedSeconds() { return GetElapsedTime(); }
     float GetElapsedMilliseconds() { return GetElapsedTime() * 1000.0f; }
 
-private:
+protected:
     std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
 
 private:

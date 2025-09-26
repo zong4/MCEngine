@@ -1,9 +1,5 @@
 #include "Timer.hpp"
 
-MCEngine::Timer::Timer() { Start(); }
-
-MCEngine::Timer::~Timer() {}
-
 void MCEngine::Timer::Start() { m_StartTime = std::chrono::high_resolution_clock::now(); }
 
 float MCEngine::Timer::GetElapsedTime()
