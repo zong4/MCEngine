@@ -8,7 +8,11 @@ void MCEngine::Application::Run()
     while (!m_Window->ShouldClose())
     {
         m_Window->PreUpdate();
-        m_Window->Update(timer.GetElapsedSeconds());
+
+        float deltaTime = timer.GetElapsedSeconds();
+        m_Window->Update(deltaTime);
+        m_Window->Render(deltaTime);
+
         m_Window->PostUpdate();
     }
 }

@@ -2,8 +2,6 @@
 
 MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
 {
-    ENGINE_PROFILE_FUNCTION();
-
     static ShaderLibrary instance;
     return instance;
 }
@@ -45,6 +43,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
         LOG_ENGINE_ERROR("Shader already exists: " + name);
         return m_Shaders[name];
     }
+
     auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource);
     AddShader(name, shader);
     return shader;

@@ -29,12 +29,32 @@ void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }
 
 void MCEngine::Shader::Unbind() const { glUseProgram(0); }
 
-void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix)
+void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4)
 {
     ENGINE_PROFILE_FUNCTION();
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
+
+    int error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        LOG_ENGINE_ERROR("OpenGL error while setting uniform mat4 '" + name + "': " + std::to_string(error));
+    }
+}
+
+void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform4fv(location, 1, &vector4[0]);
+
+    int error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        LOG_ENGINE_ERROR("OpenGL error while setting uniform vec4 '" + name + "': " + std::to_string(error));
+    }
 }
 
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)

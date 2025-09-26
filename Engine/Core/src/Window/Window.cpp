@@ -26,13 +26,16 @@ MCEngine::Window::Window(WindowProps props) : m_Props(props) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
-bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
+bool MCEngine::Window::ShouldClose() const
+{
+    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)) || !m_Running;
+}
 
 void MCEngine::Window::OnEvent(Event &e)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_LayerStack->OnEvent(e);
+    m_LayerStack.OnEvent(e);
 }
 
 void MCEngine::Window::PreUpdate()
@@ -48,7 +51,14 @@ void MCEngine::Window::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_LayerStack->Update(deltaTime);
+    m_LayerStack.Update(deltaTime);
+}
+
+void MCEngine::Window::Render(float deltaTime)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_LayerStack.Render(deltaTime);
 }
 
 void MCEngine::Window::PostUpdate()
@@ -83,8 +93,6 @@ void MCEngine::Window::Init()
     SetVSync(m_Props.VSync);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glEnable(GL_DEPTH_TEST);
-
-    m_LayerStack = std::make_unique<LayerStack>();
 
     LOG_ENGINE_INFO("Window created: " + m_Props.ToString());
 }
@@ -147,8 +155,6 @@ void MCEngine::Window::Shutdown()
 
     glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwTerminate();
-
-    m_LayerStack.reset();
 
     LOG_ENGINE_INFO("Window destroyed.");
 }

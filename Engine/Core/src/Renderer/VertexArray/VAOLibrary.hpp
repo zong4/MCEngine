@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.hpp"
+#include "VertexArray.hpp"
 
 namespace MCEngine
 {
@@ -23,19 +23,22 @@ struct IdentitySquareData
 
 inline const IdentitySquareData g_IdentitySquareData;
 
-class Square : public Object
+class VAOLibrary
 {
 public:
-    Square(float size);
-    virtual ~Square() override = default;
+    static VAOLibrary &GetInstance();
 
-    static std::shared_ptr<Square> &GetIdentitySquare();
+    std::shared_ptr<VertexArray> GetVAO(const std::string &name);
+    void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao); // Add or replace
 
-    void OnEvent(Event &event) override {}
-    void Update(float deltaTime) override {}
+private:
+    std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VAOs;
 
-protected:
-    float m_size;
+private:
+    VAOLibrary();
+    ~VAOLibrary() = default;
+
+    bool Exists(const std::string &name) const;
 };
 
 } // namespace MCEngine

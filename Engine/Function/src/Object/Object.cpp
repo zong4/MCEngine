@@ -16,10 +16,7 @@ void MCEngine::Object::Render(const std::string &pipeline)
     if (m_VertexArray)
     {
         ShaderLibrary::GetInstance().GetShader(pipeline)->SetUniformMat4("u_Model", GetTransform());
-
-        m_VertexArray->Bind();
         m_VertexArray->Render();
-        m_VertexArray->Unbind();
     }
 }
 

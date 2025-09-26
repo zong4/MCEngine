@@ -81,12 +81,13 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
     });
 }
 
-void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
+void MCEngine::ImGuiLayer::OnImGuiRender(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
     Begin();
-    BeginDockSpace();
+
+    RenderDockSpace();
 
     ImGui::Begin("Event Info");
     ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
@@ -95,7 +96,6 @@ void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
                 ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
     ImGui::End();
 
-    EndDockSpace();
     End();
 }
 
@@ -106,27 +106,6 @@ void MCEngine::ImGuiLayer::Begin()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-}
-
-void MCEngine::ImGuiLayer::BeginDockSpace()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-    ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(viewport->Size);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-    ImGui::Begin("DockSpace", nullptr, window_flags);
-    ImGui::PopStyleColor();
-
-    ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 }
 
 void MCEngine::ImGuiLayer::End()
@@ -149,9 +128,40 @@ void MCEngine::ImGuiLayer::End()
     }
 }
 
-void MCEngine::ImGuiLayer::EndDockSpace()
+void MCEngine::ImGuiLayer::RenderDockSpace()
 {
     ENGINE_PROFILE_FUNCTION();
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+                                    ImGuiWindowFlags_MenuBar;
+
+    ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+    ImGui::Begin("DockSpace", nullptr, window_flags);
+    ImGui::PopStyleColor();
+
+    ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    // Menu Bar
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Exit"))
+            {
+                m_Window->SetRunning(false);
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
 
     ImGui::End();
 }

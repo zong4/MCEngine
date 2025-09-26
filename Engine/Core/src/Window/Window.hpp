@@ -30,22 +30,26 @@ public:
     void *GetNativeWindow() const { return m_NativeWindow; }
     const WindowProps &GetProps() const { return m_Props; }
 
+    void SetRunning(bool running) { m_Running = running; }
+
 public:
     bool ShouldClose() const;
 
     void OnEvent(Event &e);
     void PreUpdate();
     void Update(float deltaTime);
+    void Render(float deltaTime);
     void PostUpdate();
 
-    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PushLayer(layer); }
-    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PopLayer(layer); }
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }
 
 private:
+    bool m_Running = true;
     void *m_NativeWindow = nullptr;
     WindowProps m_Props;
 
-    std::unique_ptr<LayerStack> m_LayerStack = nullptr;
+    LayerStack m_LayerStack;
 
 private:
     void Init();

@@ -35,6 +35,17 @@ void MCEngine::LayerStack::Update(float deltaTime)
     }
 }
 
+void MCEngine::LayerStack::Render(float deltaTime)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    for (auto &layer : m_Layers)
+    {
+        layer->OnRender();
+        layer->OnImGuiRender(deltaTime);
+    }
+}
+
 void MCEngine::LayerStack::PushLayer(const std::shared_ptr<Layer> &layer)
 {
     ENGINE_PROFILE_FUNCTION();

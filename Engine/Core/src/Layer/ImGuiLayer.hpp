@@ -16,7 +16,9 @@ public:
 
 public:
     void OnEvent(Event &event) override;
-    void OnUpdate(float deltaTime) override;
+    void OnUpdate(float deltaTime) override {}
+    void OnRender() override {}
+    void OnImGuiRender(float deltaTime) override;
 
 private:
     std::shared_ptr<Window> m_Window;
@@ -24,10 +26,9 @@ private:
 
 private:
     void Begin();
-    void BeginDockSpace();
-
     void End();
-    void EndDockSpace();
+
+    void RenderDockSpace();
 };
 
 } // namespace MCEngine

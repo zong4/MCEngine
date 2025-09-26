@@ -2,8 +2,6 @@
 
 MCEngine::KeyCodeLibrary &MCEngine::KeyCodeLibrary::GetInstance()
 {
-    ENGINE_PROFILE_FUNCTION();
-
     static KeyCodeLibrary instance;
     return instance;
 }

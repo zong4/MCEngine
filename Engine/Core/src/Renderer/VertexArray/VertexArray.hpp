@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
+#include "Renderer/Buffer/IndexBuffer.hpp"
+#include "Renderer/Buffer/VertexBuffer.hpp"
 
 namespace MCEngine
 {
@@ -27,19 +27,21 @@ public:
     VertexArray(VertexArray &&);
     VertexArray &operator=(VertexArray &&);
 
-public:
-    void Bind() const;
-    void Render() const;
-    void Unbind() const;
-
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
+
+public:
+    void Render() const;
 
 private:
     unsigned int m_RendererID = 0;
 
     IndexBuffer m_IndexBuffer;
     VertexBuffer m_VertexBuffer;
+
+protected:
+    void Bind() const;
+    void Unbind() const;
 };
 
 } // namespace MCEngine

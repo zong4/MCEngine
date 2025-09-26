@@ -1,24 +1,24 @@
 #pragma once
 
-#include "Object/Camera/Camera.hpp"
-#include "Object/Camera/OrthoCamera.hpp"
-#include "Object/Camera/PerspectiveCamera.hpp"
+#include <Function.hpp>
 
 namespace MCEngine
 {
 
-class CameraLayer : public Layer
+class EditorLayer : public Layer
 {
 
 public:
-    CameraLayer();
-    virtual ~CameraLayer() = default;
+    EditorLayer();
+    virtual ~EditorLayer() = default;
 
     void OnAttach() override {}
     void OnDetach() override {}
 
     void OnEvent(Event &event) override;
     void OnUpdate(float deltaTime) override;
+    void OnRender() override;
+    void OnImGuiRender(float deltaTime) override {}
 
 private:
     std::shared_ptr<Camera> m_Camera;
@@ -28,7 +28,7 @@ private:
     float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 10.0f;
 
-    std::vector<std::shared_ptr<Object>> m_Objects;
+    Scene m_Scene;
 };
 
 } // namespace MCEngine
