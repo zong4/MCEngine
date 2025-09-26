@@ -136,16 +136,9 @@ void MCEngine::Window::SetVSync(bool enabled)
     ENGINE_PROFILE_FUNCTION();
 
     m_Props.VSync = enabled;
-    if (enabled)
-    {
-        glfwSwapInterval(1);
-    }
-    else
-    {
-        glfwSwapInterval(0);
-    }
+    enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
 
-    LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
+    LOG_ENGINE_TRACE("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
 
 void MCEngine::Window::Shutdown()

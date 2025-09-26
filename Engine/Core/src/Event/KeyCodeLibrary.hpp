@@ -13,6 +13,9 @@ public:
     int GetKeyAction(int keyCode) const;
     void SetKeyAction(int keyCode, int action) { m_KeyStates[keyCode] = action; }
 
+public:
+    bool IsKeyDown(int keyCode) const;
+
 private:
     std::unordered_map<int, int> m_KeyStates;
 

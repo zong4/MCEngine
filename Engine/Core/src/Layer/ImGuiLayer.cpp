@@ -34,29 +34,23 @@ void MCEngine::ImGuiLayer::OnAttach()
     // ImGui::StyleColorsDark();
     ImGui::StyleColorsClassic();
 
-    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
-    // ones.
-    ImGuiStyle &style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+    // Read ini file
+    ImGui::GetIO().IniFilename = m_GuiFilePath.c_str();
+    ImGui::LoadIniSettingsFromDisk(m_GuiFilePath.c_str());
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
-    ImGui::GetIO().IniFilename = m_GuiFilePath.c_str();
-    ImGui::LoadIniSettingsFromDisk(m_GuiFilePath.c_str());
 }
 
 void MCEngine::ImGuiLayer::OnDetach()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // Save ini file
     ImGui::SaveIniSettingsToDisk(m_GuiFilePath.c_str());
 
+    // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -94,8 +88,11 @@ void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
     Begin();
     BeginDockSpace();
 
-    ImGui::Begin("Text");
-    ImGui::Text("Hello, ImGui!");
+    ImGui::Begin("Event Info");
+    ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
+    ImGui::Text("Mouse Position: (%.1f, %.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+    ImGui::Text("Mouse Buttons: Left(%d), Right(%d), Middle(%d)", ImGui::GetIO().MouseDown[0],
+                ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
     ImGui::End();
 
     EndDockSpace();
@@ -137,7 +134,6 @@ void MCEngine::ImGuiLayer::End()
     ENGINE_PROFILE_FUNCTION();
 
     ImGuiIO &io = ImGui::GetIO();
-
     io.DisplaySize = ImVec2((float)m_Window->GetProps().Width, (float)m_Window->GetProps().Height);
 
     // Rendering
