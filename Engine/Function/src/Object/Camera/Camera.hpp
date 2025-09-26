@@ -8,7 +8,7 @@ namespace MCEngine
 class Camera : public Object
 {
 public:
-    Camera(glm::vec3 position = glm::vec3(0.0f));
+    Camera(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f));
     virtual ~Camera() override = default;
 
     glm::mat4 GetView() const { return m_View; }
@@ -26,6 +26,7 @@ protected:
 
 protected:
     void UpdateViewMatrix();
+    virtual void UpdateProjectionMatrix() = 0;
 };
 
 } // namespace MCEngine

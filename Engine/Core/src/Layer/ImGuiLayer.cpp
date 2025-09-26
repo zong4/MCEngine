@@ -11,11 +11,15 @@
 
 MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> window) : Layer("ImGuiLayer"), m_Window(window)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     m_GuiFilePath = std::string(PROJECT_ROOT) + "/Editor/configs/imgui.ini";
 }
 
 void MCEngine::ImGuiLayer::OnAttach()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -49,6 +53,8 @@ void MCEngine::ImGuiLayer::OnAttach()
 
 void MCEngine::ImGuiLayer::OnDetach()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     ImGui::SaveIniSettingsToDisk(m_GuiFilePath.c_str());
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -58,6 +64,8 @@ void MCEngine::ImGuiLayer::OnDetach()
 
 void MCEngine::ImGuiLayer::OnEvent(Event &event)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &e) {
@@ -81,6 +89,8 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
 void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     Begin();
     BeginDockSpace();
 
@@ -94,6 +104,8 @@ void MCEngine::ImGuiLayer::OnUpdate(float deltaTime)
 
 void MCEngine::ImGuiLayer::Begin()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -101,6 +113,8 @@ void MCEngine::ImGuiLayer::Begin()
 
 void MCEngine::ImGuiLayer::BeginDockSpace()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
                                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                                     ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
@@ -120,6 +134,8 @@ void MCEngine::ImGuiLayer::BeginDockSpace()
 
 void MCEngine::ImGuiLayer::End()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     ImGuiIO &io = ImGui::GetIO();
 
     io.DisplaySize = ImVec2((float)m_Window->GetProps().Width, (float)m_Window->GetProps().Height);
@@ -137,4 +153,9 @@ void MCEngine::ImGuiLayer::End()
     }
 }
 
-void MCEngine::ImGuiLayer::EndDockSpace() { ImGui::End(); }
+void MCEngine::ImGuiLayer::EndDockSpace()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    ImGui::End();
+}

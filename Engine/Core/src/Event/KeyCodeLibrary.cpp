@@ -21,10 +21,3 @@ int MCEngine::KeyCodeLibrary::GetKeyAction(int keyCode) const
     // Default action if keyCode not found
     return 0;
 }
-
-void MCEngine::KeyCodeLibrary::SetKeyAction(int keyCode, int action)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_KeyStates[keyCode] = action;
-}

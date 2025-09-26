@@ -13,8 +13,8 @@ public:
     IndexBuffer(const std::vector<uint32_t> &indices);
     virtual ~IndexBuffer() override;
 
-    IndexBuffer(IndexBuffer &&other) noexcept;
-    IndexBuffer &operator=(IndexBuffer &&other) noexcept;
+    IndexBuffer(IndexBuffer &&other);
+    IndexBuffer &operator=(IndexBuffer &&other);
 
     int GetCount() const { return m_Count; }
 

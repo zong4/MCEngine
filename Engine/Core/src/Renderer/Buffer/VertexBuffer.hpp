@@ -12,8 +12,8 @@ public:
     VertexBuffer(const std::vector<float> &vertices);
     virtual ~VertexBuffer() override;
 
-    VertexBuffer(VertexBuffer &&other) noexcept;
-    VertexBuffer &operator=(VertexBuffer &&other) noexcept;
+    VertexBuffer(VertexBuffer &&other);
+    VertexBuffer &operator=(VertexBuffer &&other);
 
 public:
     virtual void Bind() const override;

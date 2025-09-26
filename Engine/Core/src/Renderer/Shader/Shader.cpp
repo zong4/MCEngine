@@ -4,6 +4,8 @@
 
 MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     CompileShader(vertexShader, vertexSource);
 
@@ -11,10 +13,8 @@ MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fra
     CompileShader(fragmentShader, fragmentSource);
 
     m_RendererID = glCreateProgram();
-
     glAttachShader(m_RendererID, vertexShader);
     glAttachShader(m_RendererID, fragmentShader);
-
     LinkProgram(m_RendererID);
 
     glDeleteShader(vertexShader);
@@ -37,6 +37,8 @@ void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix)
 
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     const char *sourceCStr = source.c_str();
     glShaderSource(shaderID, 1, &sourceCStr, nullptr);
     glCompileShader(shaderID);
@@ -53,6 +55,8 @@ void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &s
 
 void MCEngine::Shader::LinkProgram(unsigned int programID)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glLinkProgram(programID);
 
     int success;

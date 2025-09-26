@@ -18,5 +18,5 @@ MCEngine::InstrumentationTimer::~InstrumentationTimer()
 
     uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-    Instrumentor::Get().WriteProfile({m_Name, startTime, endTime, threadID});
+    Instrumentor::GetInstance().WriteProfile({m_Name, startTime, endTime, threadID});
 }

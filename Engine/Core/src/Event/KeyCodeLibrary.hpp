@@ -11,7 +11,7 @@ public:
     static KeyCodeLibrary &GetInstance();
 
     int GetKeyAction(int keyCode) const;
-    void SetKeyAction(int keyCode, int action);
+    void SetKeyAction(int keyCode, int action) { m_KeyStates[keyCode] = action; }
 
 private:
     std::unordered_map<int, int> m_KeyStates;

@@ -29,16 +29,13 @@ public:
     Square(float size);
     virtual ~Square() override = default;
 
-    void OnEvent(Event &event) override {}
-    void Update(float deltaTime) override;
-
     static std::shared_ptr<Square> &GetIdentitySquare();
+
+    void OnEvent(Event &event) override {}
+    void Update(float deltaTime) override {}
 
 protected:
     float m_size;
-
-private:
-    void SetupSquare();
 };
 
 } // namespace MCEngine

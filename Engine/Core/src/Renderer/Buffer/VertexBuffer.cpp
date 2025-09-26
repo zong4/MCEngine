@@ -11,15 +11,15 @@ MCEngine::VertexBuffer::VertexBuffer(const std::vector<float> &vertices)
 
 MCEngine::VertexBuffer::~VertexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 
-MCEngine::VertexBuffer::VertexBuffer(VertexBuffer &&other) noexcept
+MCEngine::VertexBuffer::VertexBuffer(VertexBuffer &&other)
 {
     m_RendererID = other.m_RendererID;
-    other.m_RendererID = 0;
+    LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID));
 
-    LOG_ENGINE_INFO("VertexBuffer moved with ID: " + std::to_string(m_RendererID));
+    other.m_RendererID = 0;
 }
 
-MCEngine::VertexBuffer &MCEngine::VertexBuffer::operator=(VertexBuffer &&other) noexcept
+MCEngine::VertexBuffer &MCEngine::VertexBuffer::operator=(VertexBuffer &&other)
 {
     if (this != &other)
     {
@@ -29,11 +29,10 @@ MCEngine::VertexBuffer &MCEngine::VertexBuffer::operator=(VertexBuffer &&other) 
         }
 
         m_RendererID = other.m_RendererID;
+        LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID));
+
         other.m_RendererID = 0;
     }
-
-    LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID));
-
     return *this;
 }
 
@@ -43,6 +42,8 @@ void MCEngine::VertexBuffer::Unbind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
 void MCEngine::VertexBuffer::SetData(const void *data, size_t size)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 
@@ -51,6 +52,8 @@ void MCEngine::VertexBuffer::SetData(const void *data, size_t size)
 
 void MCEngine::VertexBuffer::CreateBuffer(const void *data, size_t size)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);

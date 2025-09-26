@@ -8,10 +8,10 @@ namespace MCEngine
 class Application
 {
 public:
-    Application(WindowProps props);
-    virtual ~Application();
+    Application(WindowProps props) { Init(props); }
+    virtual ~Application() { Shutdown(); }
 
-    virtual void Run();
+    void Run();
 
 protected:
     std::shared_ptr<Window> m_Window = nullptr;
@@ -21,7 +21,8 @@ protected:
     void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_Window->RemoveLayer(layer); }
 
 private:
-    void Setup(WindowProps props);
+    void Init(WindowProps props);
+    void Shutdown();
 };
 
 extern std::unique_ptr<Application> CreateApplication();

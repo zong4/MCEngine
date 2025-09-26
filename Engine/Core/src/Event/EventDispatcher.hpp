@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Event.hpp"
-#include "Recorder/Logger/Logger.hpp"
 
 namespace MCEngine
 {
@@ -18,15 +17,8 @@ public:
             bool result = func(*ev);
             m_Event.SetHandled(result);
 
-            if (result == false)
-            {
-                LOG_ENGINE_WARN("Event not handled: " + m_Event.ToString());
-            }
-            else
-            {
-                LOG_ENGINE_TRACE("Event handled: " + m_Event.ToString());
-            }
-
+            result ? LOG_ENGINE_TRACE("Event dispatched: " + m_Event.ToString())
+                   : LOG_ENGINE_WARN("Event not handled: " + m_Event.ToString());
             return result;
         }
         return false;

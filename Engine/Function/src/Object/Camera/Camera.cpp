@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-MCEngine::Camera::Camera(glm::vec3 position) : Object(position) { UpdateViewMatrix(); }
+MCEngine::Camera::Camera(glm::vec3 position, glm::vec3 rotation) : Object(position, rotation) { UpdateViewMatrix(); }
 
 void MCEngine::Camera::SetPosition(const glm::vec3 &position)
 {
@@ -16,6 +16,8 @@ void MCEngine::Camera::SetRotation(const glm::vec3 &rotation)
 
 void MCEngine::Camera::UpdateViewMatrix()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));

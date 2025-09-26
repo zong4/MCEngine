@@ -20,6 +20,7 @@ void MCEngine::CameraLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // todo Move to other place
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<KeyEvent>([this](KeyEvent &e) {
         KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());

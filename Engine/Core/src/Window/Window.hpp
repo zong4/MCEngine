@@ -36,13 +36,12 @@ public:
     bool ShouldClose() const;
 
     void OnEvent(Event &e);
-
     void PreUpdate();
     void Update(float deltaTime);
     void PostUpdate();
 
-    void AddLayer(const std::shared_ptr<Layer> &layer);
-    void RemoveLayer(const std::shared_ptr<Layer> &layer);
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PushLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack->PopLayer(layer); }
 
 private:
     void *m_NativeWindow = nullptr;

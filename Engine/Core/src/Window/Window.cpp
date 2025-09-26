@@ -11,10 +11,13 @@ MCEngine::WindowProps::WindowProps(int width, int height, std::string title, boo
     : Width(width), Height(height), Title(title), VSync(vsync),
       BackgroundColor{backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]}
 {
+    ENGINE_PROFILE_FUNCTION();
 }
 
 std::string MCEngine::WindowProps::ToString() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     std::stringstream ss;
     ss << "WindowProps: " << Title << " (" << Width << ", " << Height << "), VSync: " << (VSync ? "true" : "false")
        << ", BackgroundColor: (" << BackgroundColor[0] << ", " << BackgroundColor[1] << ", " << BackgroundColor[2]
@@ -26,12 +29,24 @@ MCEngine::Window::Window(WindowProps props) : m_Props(props) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
-bool MCEngine::Window::ShouldClose() const { return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)); }
+bool MCEngine::Window::ShouldClose() const
+{
+    ENGINE_PROFILE_FUNCTION();
 
-void MCEngine::Window::OnEvent(Event &e) { m_LayerStack->OnEvent(e); }
+    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow));
+}
+
+void MCEngine::Window::OnEvent(Event &e)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_LayerStack->OnEvent(e);
+}
 
 void MCEngine::Window::PreUpdate()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glClearColor(m_Props.BackgroundColor[0], m_Props.BackgroundColor[1], m_Props.BackgroundColor[2],
                  m_Props.BackgroundColor[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -39,32 +54,24 @@ void MCEngine::Window::PreUpdate()
 
 void MCEngine::Window::Update(float deltaTime)
 {
-    LOG_ENGINE_TRACE("Frame Time: " + std::to_string(deltaTime) + "ms");
+    ENGINE_PROFILE_FUNCTION();
+
     m_LayerStack->Update(deltaTime);
 }
 
 void MCEngine::Window::PostUpdate()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwPollEvents();
 }
 
-void MCEngine::Window::AddLayer(const std::shared_ptr<Layer> &layer)
-{
-    m_LayerStack->PushLayer(layer);
-    LOG_ENGINE_INFO("Layer added: " + layer->GetName());
-}
-
-void MCEngine::Window::RemoveLayer(const std::shared_ptr<Layer> &layer)
-{
-    m_LayerStack->PopLayer(layer);
-    LOG_ENGINE_INFO("Layer removed: " + layer->GetName());
-}
-
 void MCEngine::Window::Init()
 {
-    glfwInit();
+    ENGINE_PROFILE_FUNCTION();
 
+    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -87,11 +94,13 @@ void MCEngine::Window::Init()
 
     m_LayerStack = std::make_unique<LayerStack>();
 
-    LOG_ENGINE_INFO("Window initialized: " + m_Props.ToString());
+    LOG_ENGINE_INFO("Window created: " + m_Props.ToString());
 }
 
 void MCEngine::Window::SetCallbacks()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindow), this);
 
     glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindow),
@@ -132,6 +141,9 @@ void MCEngine::Window::SetCallbacks()
 
 void MCEngine::Window::SetVSync(bool enabled)
 {
+    ENGINE_PROFILE_FUNCTION();
+
+    m_Props.VSync = enabled;
     if (enabled)
     {
         glfwSwapInterval(1);
@@ -140,10 +152,18 @@ void MCEngine::Window::SetVSync(bool enabled)
     {
         glfwSwapInterval(0);
     }
+
+    LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
 
 void MCEngine::Window::Shutdown()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwTerminate();
+
+    m_LayerStack.reset();
+
+    LOG_ENGINE_INFO("Window destroyed.");
 }

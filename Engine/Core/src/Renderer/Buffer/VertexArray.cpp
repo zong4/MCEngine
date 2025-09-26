@@ -6,6 +6,8 @@ MCEngine::VertexArray::VertexArray(IndexBuffer &&indexBuffer, VertexBuffer &&ver
                                    const VertexAttribute &attribute)
     : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer))
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glGenVertexArrays(1, &m_RendererID);
     glBindVertexArray(m_RendererID);
 
@@ -33,9 +35,9 @@ MCEngine::VertexArray::VertexArray(VertexArray &&other)
     : m_RendererID(other.m_RendererID), m_IndexBuffer(std::move(other.m_IndexBuffer)),
       m_VertexBuffer(std::move(other.m_VertexBuffer))
 {
-    other.m_RendererID = 0;
-
     LOG_ENGINE_INFO("VertexArray moved with ID: " + std::to_string(m_RendererID));
+
+    other.m_RendererID = 0;
 }
 
 MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
@@ -47,25 +49,24 @@ MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
         m_RendererID = other.m_RendererID;
         m_IndexBuffer = std::move(other.m_IndexBuffer);
         m_VertexBuffer = std::move(other.m_VertexBuffer);
+        LOG_ENGINE_INFO("VertexArray move-assigned with ID: " + std::to_string(m_RendererID));
 
         other.m_RendererID = 0;
     }
-
-    LOG_ENGINE_INFO("VertexArray move-assigned with ID: " + std::to_string(m_RendererID));
-
     return *this;
 }
 
 void MCEngine::VertexArray::Bind() const
 {
     glBindVertexArray(m_RendererID);
-
     m_VertexBuffer.Bind();
     m_IndexBuffer.Bind();
 }
 
 void MCEngine::VertexArray::Render() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0);
 }
 
@@ -73,7 +74,6 @@ void MCEngine::VertexArray::Unbind() const
 {
     m_IndexBuffer.Unbind();
     m_VertexBuffer.Unbind();
-
     glBindVertexArray(0);
 }
 

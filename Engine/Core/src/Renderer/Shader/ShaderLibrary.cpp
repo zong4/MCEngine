@@ -2,29 +2,33 @@
 
 MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     static ShaderLibrary instance;
     return instance;
 }
 
 std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::GetShader(const std::string &name)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     if (!Exists(name))
     {
         LOG_ENGINE_ERROR("Shader not found: " + name);
         return nullptr;
     }
-
     return m_Shaders[name];
 }
 
 void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shared_ptr<Shader> &shader)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     if (Exists(name))
     {
         LOG_ENGINE_ERROR("Shader already exists: " + name);
         return;
     }
-
     m_Shaders[name] = shader;
 
     LOG_ENGINE_INFO("Shader added: " + name);
@@ -34,6 +38,13 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
                                                                       const std::string &vertexSource,
                                                                       const std::string &fragmentSource)
 {
+    ENGINE_PROFILE_FUNCTION();
+
+    if (Exists(name))
+    {
+        LOG_ENGINE_ERROR("Shader already exists: " + name);
+        return m_Shaders[name];
+    }
     auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource);
     AddShader(name, shader);
     return shader;
@@ -41,13 +52,14 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
 
 MCEngine::ShaderLibrary::ShaderLibrary()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
     for (const auto &entry : std::filesystem::directory_iterator(path))
     {
         if (entry.path().extension() == ".vert")
         {
             std::string vertexPath = entry.path().string();
-
             auto fragPath = entry.path();
             std::string fragmentPath = fragPath.replace_extension(".frag").string();
 

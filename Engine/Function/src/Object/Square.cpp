@@ -1,11 +1,9 @@
 #include "Square.hpp"
 
-MCEngine::Square::Square(float size) : Object(), m_size(size) { SetupSquare(); }
-
-void MCEngine::Square::Update(float deltaTime) {}
-
-void MCEngine::Square::SetupSquare()
+MCEngine::Square::Square(float size) : Object(), m_size(size)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     m_VertexArray = std::make_shared<VertexArray>(
         MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)),
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
@@ -16,6 +14,8 @@ void MCEngine::Square::SetupSquare()
 
 std::shared_ptr<MCEngine::Square> &MCEngine::Square::GetIdentitySquare()
 {
+    ENGINE_PROFILE_FUNCTION();
+
     static std::shared_ptr<Square> identitySquare = std::make_shared<Square>(1.0f);
     return identitySquare;
 }

@@ -16,15 +16,23 @@ public:
     float GetNearClip() const { return m_NearClip; }
     float GetFarClip() const { return m_FarClip; }
 
+    void SetFOV(float fov);
+    void SetAspectRatio(float aspectRatio);
+    void SetNearClip(float nearClip);
+    void SetFarClip(float farClip);
+
 public:
     void OnEvent(Event &event) override;
-    void Update(float deltaTime) override;
+    void Update(float deltaTime) override {}
 
 private:
     float m_FOV;
     float m_AspectRatio;
     float m_NearClip;
     float m_FarClip;
+
+protected:
+    void UpdateProjectionMatrix() override;
 };
 
 } // namespace MCEngine
