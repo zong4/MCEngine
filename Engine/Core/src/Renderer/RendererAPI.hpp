@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.hpp"
+#include "Renderer/VertexArray/VertexArray.hpp"
 
 namespace MCEngine
 {
@@ -10,7 +10,7 @@ class RendererAPI
 public:
     static RendererAPI &GetInstance();
 
-    void DrawQuad(glm::mat4 transform, glm::vec4 color);
+    void DrawQuad(std::shared_ptr<VertexArray> vertexArray);
 
 private:
     RendererAPI() = default;

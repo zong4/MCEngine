@@ -21,7 +21,7 @@ void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
     for (auto entity : view)
     {
         auto &&[transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-        RendererAPI::GetInstance().DrawQuad(transform.GetTransformMatrix(), sprite.Color);
+        RendererAPI::GetInstance().DrawQuad(VAOLibrary::GetInstance().GetVAO("IdentitySquare"));
     }
 }
 

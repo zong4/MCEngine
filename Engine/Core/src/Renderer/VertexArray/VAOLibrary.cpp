@@ -40,12 +40,11 @@ MCEngine::VAOLibrary::VAOLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto vao = std::make_shared<VertexArray>(
-        MCEngine::IndexBuffer(g_IdentitySquareData.indices,
-                              sizeof(g_IdentitySquareData.indices) / sizeof(unsigned int)),
+    auto vertexArray = std::make_shared<VertexArray>(
+        MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)),
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
         MCEngine::VertexAttribute{0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void *)0});
-    AddVAO("IdentitySquare", vao);
+    AddVAO("IdentitySquare", vertexArray);
 
     LOG_ENGINE_INFO("VAO Library initialized.");
 }

@@ -13,5 +13,6 @@
 #include "Renderer/RendererAPI.hpp"
 #include "Renderer/Shader/Shader.hpp"
 #include "Renderer/Shader/ShaderLibrary.hpp"
+#include "Renderer/VertexArray/VAOLibrary.hpp"
 #include "Renderer/VertexArray/VertexArray.hpp"
 #include "Window/Window.hpp"
