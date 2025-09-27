@@ -56,11 +56,11 @@ void MCEngine::ImGuiLayer::OnDetach()
     ImGui::DestroyContext();
 }
 
-void MCEngine::ImGuiLayer::OnEvent(Event &eventRef)
+void MCEngine::ImGuiLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    EventDispatcher dispatcher(eventRef);
+    EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &e) {
         ImGuiIO &io = ImGui::GetIO();

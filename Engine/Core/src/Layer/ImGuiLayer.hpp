@@ -15,7 +15,7 @@ public:
     void OnDetach() override;
 
 public:
-    void OnEvent(Event &eventRef) override;
+    void OnEvent(Event &event) override;
     void OnUpdate(float deltaTime) override {}
     void OnRender() override {}
     void OnImGuiRender(float deltaTime) override;

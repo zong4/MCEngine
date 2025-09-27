@@ -1,6 +1,6 @@
 #include "ShaderLibrary.hpp"
 
-MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstanceRef()
+MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
 {
     static ShaderLibrary instance;
     return instance;

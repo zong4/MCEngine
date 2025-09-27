@@ -25,7 +25,6 @@ std::unique_ptr<MCEngine::Application> MCEngine::CreateApplication()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // todo: make the window props configurable
     return std::make_unique<MCEditor::Editor>(
         MCEngine::WindowProps(800, 450, "Minecraft Engine", true, new float[4]{0.1f, 0.1f, 0.1f, 1.0f}));
 }

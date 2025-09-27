@@ -10,23 +10,22 @@ MCEngine::EditorLayer::EditorLayer(std::shared_ptr<Camera> sceneCameraPtr, std::
 
     // Initialize 2D scene
     m_Scene2D.AddSquare(TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f)),
-                        SpriteRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentitySquare"),
-                                                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+                        SpriteRendererComponent(VAOLibrary::GetInstance().GetVAO("IdentitySquare"),
+                                                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+                                                TextureLibrary::GetInstance().GetTexture("02BG")));
 
     // Initialize 3D scene
-    m_Scene3D.AddCube(TransformComponent(),
-                      MeshRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentityCubeWithNormals"),
-                                            glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+    m_Scene3D.AddCube(TransformComponent(), MeshRendererComponent(VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                                                                  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
 }
 
 void MCEngine::EditorLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // todo Move to other place
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<KeyEvent>([this](KeyEvent &e) {
-        KeyCodeLibrary::GetInstanceRef().SetKeyAction(e.GetKeyCode(), e.GetAction());
+        KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
         return true;
     });
 
@@ -42,11 +41,11 @@ void MCEngine::EditorLayer::OnUpdate(float deltaTime)
 
     // Switch camera
     {
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_1))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_1))
         {
             m_CameraPtr = m_SceneCameraPtr;
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_2))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_2))
         {
             m_CameraPtr = m_GameCameraPtr;
         }
@@ -54,29 +53,29 @@ void MCEngine::EditorLayer::OnUpdate(float deltaTime)
 
     // Move camera
     {
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_W))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_W))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() + glm::vec3(0.0f, m_CameraMoveSpeed * deltaTime, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_S))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_S))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() +
                                      glm::vec3(0.0f, -m_CameraMoveSpeed * deltaTime, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_A))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_A))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() +
                                      glm::vec3(-m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_D))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_D))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() + glm::vec3(m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_Q))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_Q))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() + glm::vec3(0.0f, 0.0f, m_CameraMoveSpeed * deltaTime));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_E))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_E))
         {
             m_CameraPtr->SetPosition(m_CameraPtr->GetPosition() +
                                      glm::vec3(0.0f, 0.0f, -m_CameraMoveSpeed * deltaTime));
@@ -85,32 +84,32 @@ void MCEngine::EditorLayer::OnUpdate(float deltaTime)
 
     // Rotate camera
     {
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_I))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_I))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(-m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_K))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_K))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_J))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_J))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(0.0f, -m_CameraRotateSpeed * deltaTime, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_L))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_L))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(0.0f, m_CameraRotateSpeed * deltaTime, 0.0f));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_U))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_U))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed * deltaTime));
         }
-        if (KeyCodeLibrary::GetInstanceRef().IsKeyDown(ENGINE_KEY_O))
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_O))
         {
             m_CameraPtr->SetRotation(m_CameraPtr->GetRotation() +
                                      glm::vec3(0.0f, 0.0f, -m_CameraRotateSpeed * deltaTime));

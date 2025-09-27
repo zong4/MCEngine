@@ -11,13 +11,13 @@ public:
     Layer(const std::string &name) : m_Name(name) {}
     virtual ~Layer() = default;
 
-    inline const std::string &GetNameRef() const { return m_Name; }
+    inline const std::string &GetName() const { return m_Name; }
 
     virtual void OnAttach() = 0;
     virtual void OnDetach() = 0;
 
 public:
-    virtual void OnEvent(Event &eventRef) = 0;
+    virtual void OnEvent(Event &event) = 0;
     virtual void OnUpdate(float deltaTime) = 0;
     virtual void OnRender() = 0;
     virtual void OnImGuiRender(float deltaTime) = 0;

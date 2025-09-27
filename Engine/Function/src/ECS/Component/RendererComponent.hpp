@@ -8,11 +8,15 @@ namespace MCEngine
 struct SpriteRendererComponent
 {
     std::shared_ptr<VertexArray> VAOPtr;
+
+    // Color tint
     glm::vec4 Color;
+    std::shared_ptr<Texture> TexturePtr;
 
 public:
-    SpriteRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color = glm::vec4(1.0f))
-        : VAOPtr(vao), Color(color)
+    SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color = glm::vec4(1.0f),
+                            std::shared_ptr<Texture> texturePtr = Texture::GetWhiteTexturePtr())
+        : VAOPtr(vaoPtr), Color(color), TexturePtr(texturePtr)
     {
     }
 };
@@ -20,11 +24,13 @@ public:
 struct MeshRendererComponent
 {
     std::shared_ptr<VertexArray> VAOPtr;
+
+    // Color tint
     glm::vec4 Color;
 
 public:
-    MeshRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color = glm::vec4(1.0f))
-        : VAOPtr(vao), Color(color)
+    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color = glm::vec4(1.0f))
+        : VAOPtr(vaoPtr), Color(color)
     {
     }
 };
@@ -37,6 +43,7 @@ public:
     CameraComponent(std::shared_ptr<Camera> camera) : CameraPtr(camera) {}
 };
 
+// todo
 struct LightComponent
 {
     glm::vec3 Color;

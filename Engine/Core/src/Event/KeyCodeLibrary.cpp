@@ -1,6 +1,6 @@
 #include "KeyCodeLibrary.hpp"
 
-MCEngine::KeyCodeLibrary &MCEngine::KeyCodeLibrary::GetInstanceRef()
+MCEngine::KeyCodeLibrary &MCEngine::KeyCodeLibrary::GetInstance()
 {
     static KeyCodeLibrary instance;
     return instance;

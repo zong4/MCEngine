@@ -2,7 +2,7 @@
 add_requires("spdlog", "glm")
 
 -- Graphics
-add_requires("glfw", "glad")
+add_requires("glfw", "glad", "stb")
 add_requires("imgui v1.92.1-docking", {configs = {glfw_opengl3 = true}})
 
 target("Core")
@@ -17,5 +17,5 @@ target("Core")
     add_packages("glm", {public = true})
 
     -- Graphics
-    add_packages("glfw", "glad")
+    add_packages("glfw", "glad", "stb");
     add_packages("imgui");

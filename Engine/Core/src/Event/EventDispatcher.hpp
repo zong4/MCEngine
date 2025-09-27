@@ -8,14 +8,14 @@ namespace MCEngine
 class EventDispatcher
 {
 public:
-    EventDispatcher(Event &eventRef) : m_EventRef(eventRef) {}
+    EventDispatcher(Event &event) : m_Event(event) {}
 
     template <typename T> bool Dispatch(const std::function<bool(T &)> &func)
     {
-        if (T *ev = dynamic_cast<T *>(&m_EventRef))
+        if (T *ev = dynamic_cast<T *>(&m_Event))
         {
             bool result = func(*ev);
-            m_EventRef.SetHandled(result);
+            m_Event.SetHandled(result);
 
             // result ? LOG_ENGINE_TRACE("Event dispatched: " + m_Event.ToString())
             //        : LOG_ENGINE_WARN("Event not handled: " + m_Event.ToString());
@@ -25,7 +25,7 @@ public:
     }
 
 private:
-    Event &m_EventRef;
+    Event &m_Event;
 };
 
 } // namespace MCEngine

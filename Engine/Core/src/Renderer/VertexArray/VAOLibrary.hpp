@@ -8,7 +8,7 @@ namespace MCEngine
 class VAOLibrary
 {
 public:
-    static VAOLibrary &GetInstanceRef();
+    static VAOLibrary &GetInstance();
 
     std::shared_ptr<VertexArray> GetVAO(const std::string &name);
     void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao);

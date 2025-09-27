@@ -8,7 +8,7 @@ namespace MCEngine
 class ShaderLibrary
 {
 public:
-    static ShaderLibrary &GetInstanceRef();
+    static ShaderLibrary &GetInstance();
 
     std::shared_ptr<Shader> GetShader(const std::string &name);
     void AddShader(const std::string &name, const std::shared_ptr<Shader> &shader);

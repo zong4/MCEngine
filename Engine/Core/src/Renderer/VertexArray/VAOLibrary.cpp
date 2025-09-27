@@ -7,11 +7,11 @@ namespace MCEngine
 
 struct IdentitySquareData
 {
-    float vertices[12] = {
-        0.5f,  0.5f,  0.0f, // top right
-        0.5f,  -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f,  0.0f  // top left
+    float vertices[20] = {
+        0.5f,  0.5f,  0.0f, 1.0, 1.0, // top right
+        0.5f,  -0.5f, 0.0f, 1.0, 0.0, // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0, 0.0, // bottom left
+        -0.5f, 0.5f,  0.0f, 0.0, 1.0, // top left
     };
     unsigned int indices[6] = {
         // note that we start from 0!
@@ -22,29 +22,6 @@ struct IdentitySquareData
 inline const IdentitySquareData g_IdentitySquareData;
 
 struct IdentityCubeData
-{
-    float vertices[24] = {
-        -0.5f, -0.5f, -0.5f, // 0
-        0.5f,  -0.5f, -0.5f, // 1
-        0.5f,  0.5f,  -0.5f, // 2
-        -0.5f, 0.5f,  -0.5f, // 3
-        -0.5f, -0.5f, 0.5f,  // 4
-        0.5f,  -0.5f, 0.5f,  // 5
-        0.5f,  0.5f,  0.5f,  // 6
-        -0.5f, 0.5f,  0.5f   // 7
-    };
-    unsigned int indices[36] = {
-        0, 1, 2, 2, 3, 0, // back face
-        4, 5, 6, 6, 7, 4, // front face
-        4, 5, 1, 1, 0, 4, // bottom face
-        7, 6, 2, 2, 3, 7, // top face
-        4, 0, 3, 3, 7, 4, // left face
-        5, 1, 2, 2, 6, 5  // right face
-    };
-};
-inline const IdentityCubeData g_IdentityCubeData;
-
-struct IdentityCubeWithNormalsData
 {
     float vertices[216] = {
         // clang-format off
@@ -93,11 +70,11 @@ struct IdentityCubeWithNormalsData
         // clang-format on
     };
 };
-inline const IdentityCubeWithNormalsData g_IdentityCubeWithNormalsData;
+inline const IdentityCubeData g_IdentityCubeData;
 
 } // namespace MCEngine
 
-MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstanceRef()
+MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstance()
 {
     static VAOLibrary instance;
     return instance;
@@ -137,21 +114,16 @@ MCEngine::VAOLibrary::VAOLibrary()
 
     auto vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
-        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void *)0}},
+        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},
+                                     {1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)(3 * sizeof(float))}},
         MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)));
     AddVAO("IdentitySquare", vertexArray);
 
     vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentityCubeData.vertices, sizeof(g_IdentityCubeData.vertices)),
-        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void *)0}},
-        MCEngine::IndexBuffer(g_IdentityCubeData.indices, sizeof(g_IdentityCubeData.indices)));
-    AddVAO("IdentityCube", vertexArray);
-
-    vertexArray = std::make_shared<VertexArray>(
-        MCEngine::VertexBuffer(g_IdentityCubeWithNormalsData.vertices, sizeof(g_IdentityCubeWithNormalsData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)0},
                                      {1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)(3 * sizeof(float))}});
-    AddVAO("IdentityCubeWithNormals", vertexArray);
+    AddVAO("IdentityCube", vertexArray);
 
     LOG_ENGINE_INFO("VAO Library initialized.");
 }

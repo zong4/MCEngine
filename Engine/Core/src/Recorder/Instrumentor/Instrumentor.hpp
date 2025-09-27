@@ -18,7 +18,7 @@ public:
     Instrumentor() = default;
     ~Instrumentor() = default;
 
-    static Instrumentor &GetInstanceRef();
+    static Instrumentor &GetInstance();
 
     void BeginSession(const std::string &filepath);
     void EndSession();

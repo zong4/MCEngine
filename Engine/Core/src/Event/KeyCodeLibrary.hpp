@@ -8,7 +8,7 @@ namespace MCEngine
 class KeyCodeLibrary
 {
 public:
-    static KeyCodeLibrary &GetInstanceRef();
+    static KeyCodeLibrary &GetInstance();
 
     int GetKeyAction(int keyCode) const;
     void SetKeyAction(int keyCode, int action) { m_KeyStateMap[keyCode] = action; }
