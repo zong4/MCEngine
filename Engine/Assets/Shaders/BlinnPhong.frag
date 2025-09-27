@@ -35,5 +35,5 @@ void main()
 
     // Final color
     vec4 result = (ambient + diffuse + specular) * u_ObjectColor;
-    FragColor = result;
+    FragColor = vec4(result.rgb, u_ObjectColor.a);
 }

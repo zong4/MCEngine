@@ -1,6 +1,9 @@
 #pragma once
 
-#include "pch.hpp"
+#include "ECS/Component/Basic/TransformComponent.hpp"
+#include "ECS/Component/Camera/CameraComponent.hpp"
+#include "ECS/Component/Light/LightComponent.hpp"
+#include "ECS/Component/Renderer/RendererComponent.hpp"
 
 namespace MCEngine
 {
@@ -8,35 +11,28 @@ namespace MCEngine
 class Scene
 {
 public:
-    Scene() = default;
+    Scene();
     virtual ~Scene() = default;
+
+    entt::registry &GetRegistry() { return m_Registry; }
 
 public:
     virtual void OnEvent(Event &event) = 0;
     virtual void Update(float deltaTime) = 0;
-    virtual void Render() const = 0;
-
-    // clang-format off
-    template <typename... Components>
-    // clang-format on
-    entt::entity CreateEntity(Components &&...components)
-    {
-        entt::entity entity = m_Registry.create();
-        (m_Registry.emplace<std::decay_t<Components>>(entity, std::forward<Components>(components)), ...);
-        return entity;
-    }
-
-    // clang-format off
-    template <typename... Components>
-    // clang-format on
-    void AddComponent(entt::entity entity, Components &&...components)
-    {
-        (m_Registry.emplace<std::decay_t<Components>>(entity, std::forward<Components>(components)), ...);
-    }
+    void Render() const;
 
 protected:
     entt::registry m_Registry = {};
-    entt::entity m_MainCamera;
+
+    // Camera control
+    entt::entity m_Camera;
+    float m_CameraMoveSpeed = 1.0f;
+    float m_CameraRotateSpeed = 15.0f;
+
+    entt::entity m_Light;
+
+protected:
+    void UpdateCamera(glm::vec3 position, glm::vec3 rotation);
 };
 
 } // namespace MCEngine

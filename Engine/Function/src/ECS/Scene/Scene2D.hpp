@@ -13,8 +13,7 @@ public:
 
 public:
     virtual void OnEvent(Event &event) override {}
-    virtual void Update(float deltaTime) override {}
-    virtual void Render() const override;
+    virtual void Update(float deltaTime) override { Scene::Update(deltaTime); }
 };
 
 } // namespace MCEngine

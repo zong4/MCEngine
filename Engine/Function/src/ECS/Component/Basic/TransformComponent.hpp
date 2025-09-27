@@ -1,14 +1,9 @@
 #pragma once
 
-#include "pch.hpp"
+#include "ECS/Component/Component.hpp"
 
 namespace MCEngine
 {
-
-struct Component
-{
-    virtual ~Component() = default;
-};
 
 struct TransformComponent : public Component
 {
