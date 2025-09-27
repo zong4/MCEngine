@@ -1,36 +1,38 @@
 #version 330 core
 
+// Output
 out vec4 FragColor;
 
+// Uniforms
+uniform vec4 u_ObjectColor;
+uniform vec3 u_ViewPos;
+uniform vec3 u_LightPos;
+uniform vec4 u_LightColor;
+
+// Inputs
 in vec3 o_FragPos;
 in vec3 o_Normal;
 
-// 光照参数
-uniform vec3 lightPos;    // 光源位置
-uniform vec3 viewPos;     // 相机位置
-uniform vec3 lightColor;  // 光源颜色
-uniform vec3 objectColor; // 物体颜色
-
 void main()
 {
-    // 1. 环境光
+    // Ambient
     float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    vec4 ambient = ambientStrength * u_LightColor;
 
-    // 2. 漫反射
+    // Diffuse
     vec3 norm = normalize(o_Normal);
-    vec3 lightDir = normalize(lightPos - o_FragPos);
+    vec3 lightDir = normalize(u_LightPos - o_FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
+    vec4 diffuse = vec4(diff * u_LightColor.rgb, 1.0);
 
-    // 3. 镜面反射
+    // Specular
     float specularStrength = 0.5;
-    vec3 viewDir = normalize(viewPos - o_FragPos);
+    vec3 viewDir = normalize(u_ViewPos - o_FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32); // 32 = 高光指数（shininess）
-    vec3 specular = specularStrength * spec * lightColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32); // 32 = shininess
+    vec4 specular = vec4(specularStrength * spec * u_LightColor.rgb, 1.0);
 
-    // 4. 合并结果
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    // Set fragment color
+    vec4 result = (ambient + diffuse + specular) * u_ObjectColor;
+    FragColor = result;
 }

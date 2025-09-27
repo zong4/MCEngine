@@ -4,10 +4,16 @@ void MCEngine::Scene3D::Render(std::shared_ptr<Camera> camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&shader = ShaderLibrary::GetInstanceRef().GetShader("Texture");
+    auto &&shader = ShaderLibrary::GetInstanceRef().GetShader("Phong");
     shader->Bind();
+
     shader->SetUniformMat4("u_View", camera->GetView());
     shader->SetUniformMat4("u_Projection", camera->GetProjection());
+
+    shader->SetUniformVec4("u_ObjectColor", glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+    shader->SetUniformVec3("u_ViewPos", camera->GetPosition());
+    shader->SetUniformVec3("u_LightPos", glm::vec3(1.2f, 1.0f, 2.0f));
+    shader->SetUniformVec4("u_LightColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
     for (auto entity : meshView)

@@ -56,6 +56,33 @@ void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4
     GL_ERROR();
 }
 
+void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform3fv(location, 1, &vector3[0]);
+    GL_ERROR();
+}
+
+void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform1i(location, value);
+    GL_ERROR();
+}
+
+void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform1f(location, value);
+    GL_ERROR();
+}
+
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)
 {
     ENGINE_PROFILE_FUNCTION();

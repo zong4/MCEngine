@@ -1,9 +1,4 @@
-#include "Component.hpp"
-
-MCEngine::TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-    : Position(position), Rotation(rotation), Scale(scale)
-{
-}
+#include "BasicComponent.hpp"
 
 glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
 {
@@ -20,15 +15,3 @@ glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
 
     return translationMatrix * rotationMatrix * scaleMatrix;
 }
-
-MCEngine::SpriteRendererComponent::SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color)
-    : VAOPtr(vaoPtr), Color(color)
-{
-}
-
-MCEngine::MeshRendererComponent::MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color)
-    : VAOPtr(vaoPtr), Color(color)
-{
-}
-
-MCEngine::CameraComponent::CameraComponent(std::shared_ptr<Camera> camera) : CameraPtr(camera) {}

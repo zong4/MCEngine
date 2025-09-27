@@ -1,10 +1,16 @@
 #version 330 core
 
-in vec4 v_Color;
-
+// Output
 out vec4 FragColor;
 
+// Uniforms
+uniform vec4 u_Color;
+
+// Inputs
+
+// Main
 void main()
 {
-    FragColor = v_Color;
+    // Set fragment color
+    FragColor = u_Color;
 }

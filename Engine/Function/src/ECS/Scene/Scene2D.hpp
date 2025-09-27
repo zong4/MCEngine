@@ -2,6 +2,9 @@
 
 #include "Scene.hpp"
 
+#include "ECS/Component/BasicComponent.hpp"
+#include "ECS/Component/RendererComponent.hpp"
+
 namespace MCEngine
 {
 
