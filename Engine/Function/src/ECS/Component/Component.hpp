@@ -5,8 +5,10 @@
 namespace MCEngine
 {
 
-struct Component
+class Component
 {
+public:
+    Component() = default;
     virtual ~Component() = default;
 };
 

@@ -17,7 +17,7 @@ void MCEngine::Application::Run()
     }
 }
 
-void MCEngine::Application::Init(WindowProps props)
+void MCEngine::Application::Init(const WindowProps &props)
 {
     ENGINE_PROFILE_FUNCTION();
 

@@ -4,12 +4,29 @@ MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Camera = m_Registry.create();
-    auto &&transformComponent =
-        m_Registry.emplace<TransformComponent>(m_Camera, TransformComponent(glm::vec3(0.0f, 0.0f, 0.0f)));
-    auto &&cameraComponent =
-        m_Registry.emplace<OrthoCameraComponent>(m_Camera, OrthoCameraComponent(glm::vec3(16.0f, 9.0f, 10.0f)));
-    UpdateCamera(transformComponent.Position, transformComponent.Rotation);
+    // Default 2D camera
+    {
+        m_Camera2D = m_Registry.create();
+        m_CameraTransformComponent =
+            &m_Registry.emplace<TransformComponent>(m_Camera2D, TransformComponent(glm::vec3(0.0f, 0.0f, 0.0f)));
+        m_CameraComponent =
+            &m_Registry.emplace<OrthoCameraComponent>(m_Camera2D, OrthoCameraComponent(glm::vec3(16.0f, 9.0f, 10.0f)));
+        m_CameraComponent->UpdateViewMatrix(m_CameraTransformComponent->GetPosition(),
+                                            m_CameraTransformComponent->GetRotation());
+    }
+
+    // Default 3D camera
+    {
+        m_Camera3D = m_Registry.create();
+        m_CameraTransformComponent =
+            &m_Registry.emplace<TransformComponent>(m_Camera3D, TransformComponent(glm::vec3(0.0f, 0.0f, 5.0f)));
+        m_CameraComponent = &m_Registry.emplace<PerspectiveCameraComponent>(
+            m_Camera3D, PerspectiveCameraComponent(45.0f, 16.0f / 9.0f, 0.1f, 100.0f));
+        m_CameraComponent->UpdateViewMatrix(m_CameraTransformComponent->GetPosition(),
+                                            m_CameraTransformComponent->GetRotation());
+    }
+
+    m_Camera = m_Camera2D;
 
     // Default light
     m_Light = m_Registry.create();
@@ -17,43 +34,75 @@ MCEngine::Scene::Scene()
     m_Registry.emplace<LightComponent>(m_Light, LightComponent(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
 }
 
+MCEngine::Scene::~Scene()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_CameraTransformComponent = nullptr;
+    m_CameraComponent = nullptr;
+
+    m_Registry.clear();
+}
+
 void MCEngine::Scene::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&cameraTransformComponent = m_Registry.get<TransformComponent>(m_Camera);
+    // Switch camera
+    {
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_1))
+        {
+            m_Camera = m_Camera2D;
+            m_CameraTransformComponent = &m_Registry.get<TransformComponent>(m_Camera);
+            m_CameraComponent = &m_Registry.get<OrthoCameraComponent>(m_Camera);
+            LOG_ENGINE_INFO("Switched to 2D Camera");
+        }
+        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_2))
+        {
+            m_Camera = m_Camera3D;
+            m_CameraTransformComponent = &m_Registry.get<TransformComponent>(m_Camera);
+            m_CameraComponent = &m_Registry.get<PerspectiveCameraComponent>(m_Camera);
+            LOG_ENGINE_INFO("Switched to 3D Camera");
+        }
+    }
 
     // Move camera
     {
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_W))
         {
-            UpdateCamera(cameraTransformComponent.Position + glm::vec3(0.0f, m_CameraMoveSpeed * deltaTime, 0.0f),
-                         cameraTransformComponent.Rotation);
+            UpdateCamera(m_CameraTransformComponent->GetPosition() +
+                             glm::vec3(0.0f, m_CameraMoveSpeed * deltaTime, 0.0f),
+                         m_CameraTransformComponent->GetRotation());
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_S))
         {
-            UpdateCamera(cameraTransformComponent.Position + glm::vec3(0.0f, -m_CameraMoveSpeed * deltaTime, 0.0f),
-                         cameraTransformComponent.Rotation);
+            UpdateCamera(m_CameraTransformComponent->GetPosition() +
+                             glm::vec3(0.0f, -m_CameraMoveSpeed * deltaTime, 0.0f),
+                         m_CameraTransformComponent->GetRotation());
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_A))
         {
-            UpdateCamera(cameraTransformComponent.Position + glm::vec3(-m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f),
-                         cameraTransformComponent.Rotation);
+            UpdateCamera(m_CameraTransformComponent->GetPosition() +
+                             glm::vec3(-m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f),
+                         m_CameraTransformComponent->GetRotation());
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_D))
         {
-            UpdateCamera(cameraTransformComponent.Position + glm::vec3(m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f),
-                         cameraTransformComponent.Rotation);
+            UpdateCamera(m_CameraTransformComponent->GetPosition() +
+                             glm::vec3(m_CameraMoveSpeed * deltaTime, 0.0f, 0.0f),
+                         m_CameraTransformComponent->GetRotation());
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_Q))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed * deltaTime));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed * deltaTime));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_E))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, 0.0f, -m_CameraRotateSpeed * deltaTime));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, 0.0f, -m_CameraRotateSpeed * deltaTime));
         }
     }
 
@@ -61,33 +110,39 @@ void MCEngine::Scene::Update(float deltaTime)
     {
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_I))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(-m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(-m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_K))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(m_CameraRotateSpeed * deltaTime, 0.0f, 0.0f));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_J))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, -m_CameraRotateSpeed * deltaTime, 0.0f));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, -m_CameraRotateSpeed * deltaTime, 0.0f));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_L))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, m_CameraRotateSpeed * deltaTime, 0.0f));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, m_CameraRotateSpeed * deltaTime, 0.0f));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_U))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed * deltaTime));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, 0.0f, m_CameraRotateSpeed * deltaTime));
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_O))
         {
-            UpdateCamera(cameraTransformComponent.Position,
-                         cameraTransformComponent.Rotation + glm::vec3(0.0f, 0.0f, -m_CameraRotateSpeed * deltaTime));
+            UpdateCamera(m_CameraTransformComponent->GetPosition(),
+                         m_CameraTransformComponent->GetRotation() +
+                             glm::vec3(0.0f, 0.0f, -m_CameraRotateSpeed * deltaTime));
         }
     }
 }
@@ -96,16 +151,13 @@ void MCEngine::Scene::Render() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&cameraTransformComponent = m_Registry.get<TransformComponent>(m_Camera);
-    auto &&cameraComponent = m_Registry.get<OrthoCameraComponent>(m_Camera);
-
     // Render 2D
     {
         auto &&shader = ShaderLibrary::GetInstance().GetShader("Texture");
         shader->Bind();
 
-        shader->SetUniformMat4("u_View", cameraComponent.ViewMatrix);
-        shader->SetUniformMat4("u_Projection", cameraComponent.ProjectionMatrix);
+        shader->SetUniformMat4("u_View", m_CameraComponent->GetViewMatrix());
+        shader->SetUniformMat4("u_Projection", m_CameraComponent->GetProjectionMatrix());
 
         auto &&spriteView = m_Registry.view<TransformComponent, SpriteRendererComponent>();
         for (auto entity : spriteView)
@@ -116,11 +168,11 @@ void MCEngine::Scene::Render() const
             shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
 
             // Sprite component
-            shader->SetUniformVec4("u_Color", sprite.Color);
+            shader->SetUniformVec4("u_Color", sprite.GetColor());
             shader->SetUniformInt("u_Texture", 0);
-            sprite.TexturePtr->Bind(0);
+            sprite.GetTexturePtr()->Bind(0);
 
-            RendererAPI::GetInstance().DrawQuad(sprite.VAOPtr);
+            sprite.GetVAOPtr()->Render();
         }
 
         shader->Unbind();
@@ -132,13 +184,13 @@ void MCEngine::Scene::Render() const
         shader->Bind();
 
         // Camera
-        shader->SetUniformVec3("u_ViewPos", cameraTransformComponent.Position);
-        shader->SetUniformMat4("u_View", cameraComponent.ViewMatrix);
-        shader->SetUniformMat4("u_Projection", cameraComponent.ProjectionMatrix);
+        shader->SetUniformVec3("u_ViewPos", m_CameraTransformComponent->GetPosition());
+        shader->SetUniformMat4("u_View", m_CameraComponent->GetViewMatrix());
+        shader->SetUniformMat4("u_Projection", m_CameraComponent->GetProjectionMatrix());
 
         // Light
-        shader->SetUniformVec3("u_LightPos", m_Registry.get<TransformComponent>(m_Light).Position);
-        shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).Color);
+        shader->SetUniformVec3("u_LightPos", m_Registry.get<TransformComponent>(m_Light).GetPosition());
+        shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).GetColor());
 
         auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
         for (auto entity : meshView)
@@ -149,22 +201,20 @@ void MCEngine::Scene::Render() const
             shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
 
             // Mesh component
-            shader->SetUniformVec4("u_ObjectColor", mesh.Color);
+            shader->SetUniformVec4("u_ObjectColor", mesh.GetColor());
 
-            RendererAPI::GetInstance().DrawQuad(mesh.VAOPtr);
+            mesh.GetVAOPtr()->Render();
         }
 
         shader->Unbind();
     }
 }
 
-void MCEngine::Scene::UpdateCamera(glm::vec3 position, glm::vec3 rotation)
+void MCEngine::Scene::UpdateCamera(const glm::vec3 &position, const glm::vec3 &rotation)
 {
-    auto &&cameraTransformComponent = m_Registry.get<TransformComponent>(m_Camera);
-    auto &&cameraComponent = m_Registry.get<OrthoCameraComponent>(m_Camera);
 
-    cameraTransformComponent.Position = position;
-    cameraTransformComponent.Rotation = rotation;
-    cameraComponent.UpdateViewMatrix(cameraTransformComponent.Position, cameraTransformComponent.Rotation);
-    cameraComponent.UpdateProjectionMatrix();
+    m_CameraTransformComponent->SetPosition(position);
+    m_CameraTransformComponent->SetRotation(rotation);
+    m_CameraComponent->UpdateViewMatrix(m_CameraTransformComponent->GetPosition(),
+                                        m_CameraTransformComponent->GetRotation());
 }

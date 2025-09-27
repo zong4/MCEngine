@@ -12,22 +12,9 @@ MCEngine::EditorLayer::EditorLayer() : Layer("EditorLayer")
     TransformComponent cubeTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
     MeshRendererComponent cubeMesh(VAOLibrary::GetInstance().GetVAO("IdentityCube"), glm::vec4(0.0f, 0.0f, 1.0f, 0.8f));
 
-    // Initialize 2D scene
-    {
-        m_Scene2D = std::make_shared<Scene2D>();
-        EntityFactory::CreateEntity(m_Scene2D->GetRegistry(), squareTransform, squareSprite);
-        EntityFactory::CreateEntity(m_Scene2D->GetRegistry(), cubeTransform, cubeMesh);
-    }
-
-    // Initialize 3D scene
-    {
-        m_Scene3D = std::make_shared<Scene3D>();
-        EntityFactory::CreateEntity(m_Scene3D->GetRegistry(), squareTransform, squareSprite);
-        EntityFactory::CreateEntity(m_Scene3D->GetRegistry(), cubeTransform, cubeMesh);
-    }
-
-    // Set main scene
-    m_MainScene = m_Scene3D;
+    m_Scene = std::make_shared<Scene>();
+    EntityFactory::CreateEntity(m_Scene->GetRegistry(), squareTransform, squareSprite);
+    EntityFactory::CreateEntity(m_Scene->GetRegistry(), cubeTransform, cubeMesh);
 };
 
 void MCEngine::EditorLayer::OnEvent(Event &event)
@@ -40,31 +27,19 @@ void MCEngine::EditorLayer::OnEvent(Event &event)
         return true;
     });
 
-    m_MainScene->OnEvent(event);
+    m_Scene->OnEvent(event);
 }
 
 void MCEngine::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // Switch Scene
-    {
-        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_1))
-        {
-            m_MainScene = m_Scene2D;
-        }
-        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_2))
-        {
-            m_MainScene = m_Scene3D;
-        }
-    }
-
-    m_MainScene->Update(deltaTime);
+    m_Scene->Update(deltaTime);
 }
 
 void MCEngine::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_MainScene->Render();
+    m_Scene->Render();
 }

@@ -22,9 +22,7 @@ public:
     void OnImGuiRender(float deltaTime) override {}
 
 private:
-    std::shared_ptr<Scene> m_MainScene;
-    std::shared_ptr<Scene> m_Scene2D;
-    std::shared_ptr<Scene> m_Scene3D;
+    std::shared_ptr<Scene> m_Scene;
 };
 
 } // namespace MCEngine

@@ -5,20 +5,26 @@
 namespace MCEngine
 {
 
-struct TransformComponent : public Component
+class TransformComponent : public Component
 {
-    glm::vec3 Position;
-    glm::vec3 Rotation;
-    glm::vec3 Scale;
-
 public:
-    TransformComponent(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f),
-                       glm::vec3 scale = glm::vec3(1.0f))
-        : Position(position), Rotation(rotation), Scale(scale)
-    {
-    }
+    TransformComponent(const glm::vec3 &position = glm::vec3(0.0f), const glm::vec3 &rotation = glm::vec3(0.0f),
+                       const glm::vec3 &scale = glm::vec3(1.0f));
+    virtual ~TransformComponent() override = default;
 
+    const glm::vec3 &GetPosition() const { return m_Position; }
+    const glm::vec3 &GetRotation() const { return m_Rotation; }
+    const glm::vec3 &GetScale() const { return m_Scale; }
     glm::mat4 GetTransformMatrix() const;
+
+    void SetPosition(const glm::vec3 &position) { m_Position = position; }
+    void SetRotation(const glm::vec3 &rotation) { m_Rotation = rotation; }
+    void SetScale(const glm::vec3 &scale) { m_Scale = scale; }
+
+private:
+    glm::vec3 m_Position;
+    glm::vec3 m_Rotation;
+    glm::vec3 m_Scale;
 };
 
 } // namespace MCEngine

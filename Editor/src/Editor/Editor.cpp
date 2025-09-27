@@ -2,7 +2,7 @@
 
 #include "EditorLayer.hpp"
 
-MCEditor::Editor::Editor(MCEngine::WindowProps props) : Application(props)
+MCEditor::Editor::Editor(const MCEngine::WindowProps &props) : Application(props)
 {
     ENGINE_PROFILE_FUNCTION();
 

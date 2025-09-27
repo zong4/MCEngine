@@ -5,34 +5,49 @@
 namespace MCEngine
 {
 
-struct SpriteRendererComponent : public Component
+class SpriteRendererComponent : public Component
 {
-    std::shared_ptr<VertexArray> VAOPtr;
-
-    // Color tint
-    glm::vec4 Color;
-    std::shared_ptr<Texture> TexturePtr;
 
 public:
-    SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color = glm::vec4(1.0f),
+    SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color = glm::vec4(1.0f),
                             std::shared_ptr<Texture> texturePtr = Texture::GetWhiteTexturePtr())
-        : VAOPtr(vaoPtr), Color(color), TexturePtr(texturePtr)
+        : m_VAOPtr(vaoPtr), m_Color(color), m_TexturePtr(texturePtr)
     {
     }
+
+    std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
+    const glm::vec4 &GetColor() const { return m_Color; }
+    std::shared_ptr<Texture> GetTexturePtr() const { return m_TexturePtr; }
+
+    void SetColor(const glm::vec4 &color) { m_Color = color; }
+    void SetTexturePtr(std::shared_ptr<Texture> texturePtr) { m_TexturePtr = texturePtr; }
+
+private:
+    std::shared_ptr<VertexArray> m_VAOPtr;
+
+    // Color tint
+    glm::vec4 m_Color;
+    std::shared_ptr<Texture> m_TexturePtr;
 };
 
-struct MeshRendererComponent : public Component
+class MeshRendererComponent : public Component
 {
-    std::shared_ptr<VertexArray> VAOPtr;
-
-    // Color tint
-    glm::vec4 Color;
-
 public:
-    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color = glm::vec4(1.0f))
-        : VAOPtr(vaoPtr), Color(color)
+    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color = glm::vec4(1.0f))
+        : m_VAOPtr(vaoPtr), m_Color(color)
     {
     }
+
+    std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
+    const glm::vec4 &GetColor() const { return m_Color; }
+
+    void SetColor(const glm::vec4 &color) { m_Color = color; }
+
+private:
+    std::shared_ptr<VertexArray> m_VAOPtr;
+
+    // Color tint
+    glm::vec4 m_Color;
 };
 
 } // namespace MCEngine

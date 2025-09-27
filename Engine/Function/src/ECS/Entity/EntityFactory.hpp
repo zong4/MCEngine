@@ -15,6 +15,10 @@ public:
     {
         entt::entity entity = registry.create();
         (registry.emplace<std::decay_t<Components>>(entity, std::forward<Components>(components)), ...);
+
+        LOG_ENGINE_INFO("Entity created with ID: " + std::to_string((uint32_t)entity) + " and " +
+                        std::to_string(sizeof...(Components)) + " components.");
+
         return entity;
     }
 };

@@ -21,7 +21,7 @@ protected:
     void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_WindowPtr->RemoveLayer(layer); }
 
 private:
-    void Init(WindowProps props);
+    void Init(const WindowProps &props);
     void Shutdown();
 };
 

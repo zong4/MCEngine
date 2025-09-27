@@ -5,48 +5,63 @@
 namespace MCEngine
 {
 
-struct CameraComponent : public Component
+class CameraComponent : public Component
 {
-    glm::mat4 ViewMatrix;
-    glm::mat4 ProjectionMatrix;
-
 public:
-    void UpdateViewMatrix(glm::vec3 position, glm::vec3 rotation);
-    virtual void UpdateProjectionMatrix() {}
+    CameraComponent() = default;
+    virtual ~CameraComponent() override = default;
+
+    const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
+    const glm::mat4 &GetProjectionMatrix() const { return m_ProjectionMatrix; }
+
+    void UpdateViewMatrix(const glm::vec3 &position, const glm::vec3 &rotation);
+    virtual void UpdateProjectionMatrix() = 0;
+
+protected:
+    glm::mat4 m_ViewMatrix;
+    glm::mat4 m_ProjectionMatrix;
 };
 
-struct OrthoCameraComponent : public CameraComponent
+class OrthoCameraComponent : public CameraComponent
 {
-    glm::vec3 Size;
 
 public:
-    OrthoCameraComponent(const glm::vec3 &size) : Size(size) { UpdateProjectionMatrix(); }
+    OrthoCameraComponent(const glm::vec3 &size);
+    virtual ~OrthoCameraComponent() override = default;
 
-    virtual void UpdateProjectionMatrix() override
-    {
-        ProjectionMatrix =
-            glm::ortho(-Size.x / 2.0f, Size.x / 2.0f, -Size.y / 2.0f, Size.y / 2.0f, -Size.z / 2.0f, Size.z / 2.0f);
-    }
+    const glm::vec3 &GetSize() const { return m_Size; }
+    void SetSize(const glm::vec3 &size);
+
+    virtual void UpdateProjectionMatrix() override;
+
+private:
+    glm::vec3 m_Size;
 };
 
-struct PerspectiveCameraComponent : public CameraComponent
+class PerspectiveCameraComponent : public CameraComponent
 {
-    float FOV;
-    float AspectRatio;
-    float NearClip;
-    float FarClip;
 
 public:
-    PerspectiveCameraComponent(float fov, float aspectRatio, float nearClip, float farClip)
-        : FOV(fov), AspectRatio(aspectRatio), NearClip(nearClip), FarClip(farClip)
-    {
-        UpdateProjectionMatrix();
-    }
+    PerspectiveCameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
+    virtual ~PerspectiveCameraComponent() override = default;
 
-    virtual void UpdateProjectionMatrix() override
-    {
-        ProjectionMatrix = glm::perspective(glm::radians(FOV), AspectRatio, NearClip, FarClip);
-    }
+    float GetFOV() const { return m_FOV; }
+    float GetAspectRatio() const { return m_AspectRatio; }
+    float GetNearClip() const { return m_NearClip; }
+    float GetFarClip() const { return m_FarClip; }
+
+    void SetFOV(float fov);
+    void SetAspectRatio(float aspectRatio);
+    void SetNearClip(float nearClip);
+    void SetFarClip(float farClip);
+
+    virtual void UpdateProjectionMatrix() override;
+
+private:
+    float m_FOV;
+    float m_AspectRatio;
+    float m_NearClip;
+    float m_FarClip;
 };
 
 } // namespace MCEngine

@@ -12,13 +12,13 @@ class Scene
 {
 public:
     Scene();
-    virtual ~Scene() = default;
+    virtual ~Scene();
 
     entt::registry &GetRegistry() { return m_Registry; }
 
 public:
-    virtual void OnEvent(Event &event) = 0;
-    virtual void Update(float deltaTime) = 0;
+    virtual void OnEvent(Event &event) {}
+    virtual void Update(float deltaTime);
     void Render() const;
 
 protected:
@@ -26,13 +26,17 @@ protected:
 
     // Camera control
     entt::entity m_Camera;
+    entt::entity m_Camera2D;
+    entt::entity m_Camera3D;
+    TransformComponent *m_CameraTransformComponent = nullptr;
+    CameraComponent *m_CameraComponent = nullptr;
     float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 15.0f;
 
     entt::entity m_Light;
 
 protected:
-    void UpdateCamera(glm::vec3 position, glm::vec3 rotation);
+    void UpdateCamera(const glm::vec3 &position, const glm::vec3 &rotation);
 };
 
 } // namespace MCEngine
