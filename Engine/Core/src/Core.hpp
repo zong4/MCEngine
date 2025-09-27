@@ -9,7 +9,6 @@
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
 #include "Layer/ImGuiLayer.hpp"
-#include "Math/Math.hpp"
 #include "Renderer/RendererAPI.hpp"
 #include "Renderer/Shader/Shader.hpp"
 #include "Renderer/Shader/ShaderLibrary.hpp"

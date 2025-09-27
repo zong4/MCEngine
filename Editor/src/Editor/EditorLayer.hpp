@@ -26,7 +26,7 @@ private:
     std::shared_ptr<PerspectiveCamera> m_PerspectiveCamera;
 
     float m_CameraMoveSpeed = 1.0f;
-    float m_CameraRotateSpeed = 10.0f;
+    float m_CameraRotateSpeed = 15.0f;
 
     Scene m_Scene;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.hpp"
+#include "Camera/Camera.hpp"
 
 namespace MCEngine
 {
@@ -12,16 +12,36 @@ struct TransformComponent
     glm::vec3 Scale;
 
 public:
-    TransformComponent() : Position(0.0f, 0.0f, 0.0f), Rotation(0.0f, 0.0f, 0.0f), Scale(1.0f, 1.0f, 1.0f) {}
+    TransformComponent(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f),
+                       glm::vec3 scale = glm::vec3(1.0f));
 
-    glm::mat4 GetTransformMatrix() const { return Math::CreateTransformationMatrix(Position, Rotation, Scale); }
+    glm::mat4 GetTransformMatrix() const;
 };
 
 struct SpriteRendererComponent
 {
+    std::shared_ptr<VertexArray> VAO;
     glm::vec4 Color;
 
-    SpriteRendererComponent() : Color(1.0f, 1.0f, 1.0f, 1.0f) {}
+public:
+    SpriteRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color = glm::vec4(1.0f));
+};
+
+struct MeshRendererComponent
+{
+    std::shared_ptr<VertexArray> VAO;
+    glm::vec4 Color;
+
+public:
+    MeshRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color = glm::vec4(1.0f));
+};
+
+struct CameraComponent
+{
+    std::shared_ptr<Camera> CameraPtr;
+
+public:
+    CameraComponent(std::shared_ptr<Camera> camera);
 };
 
 } // namespace MCEngine

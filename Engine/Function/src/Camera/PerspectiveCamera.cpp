@@ -1,8 +1,8 @@
 #include "PerspectiveCamera.hpp"
 
-MCEngine::PerspectiveCamera::PerspectiveCamera(glm::vec3 position, float fov, float aspectRatio, float nearClip,
-                                               float farClip)
-    : Camera(position), m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
+MCEngine::PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float nearClip, float farClip,
+                                               glm::vec3 position, glm::vec3 rotation)
+    : Camera(position, rotation), m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
 {
     UpdateProjectionMatrix();
 

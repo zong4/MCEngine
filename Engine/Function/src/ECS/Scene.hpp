@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Camera/Camera.hpp"
 #include "Component.hpp"
-#include "Object/Camera/Camera.hpp"
 
 namespace MCEngine
 {
@@ -17,9 +17,11 @@ public:
     void Update(float deltaTime);
     void Render(std::shared_ptr<Camera> camera) const;
 
-    entt::entity CreateEntity();
+    entt::entity AddSquare(TransformComponent transform, SpriteRendererComponent sprite);
+    entt::entity AddCube(TransformComponent transform, MeshRendererComponent mesh);
 
 private:
+    // entt::entity m_CameraEntity;
     entt::registry m_Registry = {};
 };
 

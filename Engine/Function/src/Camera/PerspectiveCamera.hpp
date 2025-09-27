@@ -8,7 +8,8 @@ namespace MCEngine
 class PerspectiveCamera : public Camera
 {
 public:
-    PerspectiveCamera(glm::vec3 position, float fov, float aspectRatio, float nearClip, float farClip);
+    PerspectiveCamera(float fov, float aspectRatio, float nearClip, float farClip, glm::vec3 position = glm::vec3(0.0f),
+                      glm::vec3 rotation = glm::vec3(0.0f));
     virtual ~PerspectiveCamera() override = default;
 
     float GetFOV() const { return m_FOV; }

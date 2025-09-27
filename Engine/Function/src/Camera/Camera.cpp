@@ -1,6 +1,9 @@
 #include "Camera.hpp"
 
-MCEngine::Camera::Camera(glm::vec3 position, glm::vec3 rotation) : Object(position, rotation) { UpdateViewMatrix(); }
+MCEngine::Camera::Camera(glm::vec3 position, glm::vec3 rotation) : m_Position(position), m_Rotation(rotation)
+{
+    UpdateViewMatrix();
+}
 
 void MCEngine::Camera::SetPosition(const glm::vec3 &position)
 {
