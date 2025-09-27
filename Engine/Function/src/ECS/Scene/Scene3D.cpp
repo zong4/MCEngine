@@ -6,7 +6,7 @@ MCEngine::Scene3D::Scene3D()
 
     // Default light
     m_Light = m_Registry.create();
-    m_Registry.emplace<TransformComponent>(m_Light, TransformComponent(glm::vec3(1.2f, 1.0f, 2.0f), glm::vec3(0.0f)));
+    m_Registry.emplace<TransformComponent>(m_Light, TransformComponent(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f)));
     m_Registry.emplace<LightComponent>(m_Light, LightComponent(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
 }
 
@@ -14,7 +14,7 @@ void MCEngine::Scene3D::Render(const std::shared_ptr<Camera> &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&shader = ShaderLibrary::GetInstance().GetShader("Phong");
+    auto &&shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong");
     shader->Bind();
 
     // Camera

@@ -16,23 +16,24 @@ in vec3 o_Normal;
 void main()
 {
     // Ambient
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.3;
     vec4 ambient = ambientStrength * u_LightColor;
 
     // Diffuse
+    float diffuseStrength = 1.0;
     vec3 norm = normalize(o_Normal);
     vec3 lightDir = normalize(u_LightPos - o_FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec4 diffuse = vec4(diff * u_LightColor.rgb, 1.0);
+    vec4 diffuse = vec4(diffuseStrength * diff * u_LightColor);
 
     // Specular
-    float specularStrength = 0.5;
+    float specularStrength = 1.0;
     vec3 viewDir = normalize(u_ViewPos - o_FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32); // 32 = shininess
-    vec4 specular = vec4(specularStrength * spec * u_LightColor.rgb, 1.0);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32); // shininess = 32
+    vec4 specular = vec4(specularStrength * spec * u_LightColor);
 
-    // Set fragment color
+    // Final color
     vec4 result = (ambient + diffuse + specular) * u_ObjectColor;
     FragColor = result;
 }
