@@ -16,7 +16,7 @@ MCEngine::EditorLayer::EditorLayer(std::shared_ptr<Camera> sceneCameraPtr, std::
 
     // Initialize 3D scene
     m_Scene3D.AddCube(TransformComponent(), MeshRendererComponent(VAOLibrary::GetInstance().GetVAO("IdentityCube"),
-                                                                  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+                                                                  glm::vec4(0.0f, 0.0f, 1.0f, 0.8f)));
 }
 
 void MCEngine::EditorLayer::OnEvent(Event &event)
