@@ -5,7 +5,12 @@
 namespace MCEngine
 {
 
-struct TransformComponent
+struct Component
+{
+    virtual ~Component() = default;
+};
+
+struct TransformComponent : public Component
 {
     glm::vec3 Position;
     glm::vec3 Rotation;

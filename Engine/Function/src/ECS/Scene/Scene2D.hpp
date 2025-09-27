@@ -8,15 +8,13 @@ namespace MCEngine
 class Scene2D : public Scene
 {
 public:
-    Scene2D() = default;
-    ~Scene2D() override = default;
+    Scene2D();
+    virtual ~Scene2D() override = default;
 
 public:
-    void OnEvent(Event &event) override {}
-    void Update(float deltaTime) override {}
-    void Render(const std::shared_ptr<Camera> &camera) const override;
-
-    entt::entity AddSquare(TransformComponent transform, SpriteRendererComponent sprite);
+    virtual void OnEvent(Event &event) override {}
+    virtual void Update(float deltaTime) override {}
+    virtual void Render() const override;
 };
 
 } // namespace MCEngine

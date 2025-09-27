@@ -6,14 +6,7 @@ MCEditor::Editor::Editor(MCEngine::WindowProps props) : Application(props)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    float width = (float)m_WindowPtr->GetProps().Width;
-    float height = (float)m_WindowPtr->GetProps().Height;
-
-    AddLayer(std::make_shared<MCEngine::EditorLayer>(
-        std::make_shared<MCEngine::OrthoCamera>(glm::vec3(width / 100.0f, height / 100.0f, 10.0f)),
-        std::make_shared<MCEngine::PerspectiveCamera>(45.0f, width / height, 0.1f, 100.0f,
-                                                      glm::vec3(0.0f, 0.0f, 10.0f))));
-
+    AddLayer(std::make_shared<MCEngine::EditorLayer>());
     AddLayer(std::make_shared<MCEngine::ImGuiLayer>(m_WindowPtr));
 
     LOG_EDITOR_INFO("Editor created.");

@@ -9,16 +9,14 @@ class Scene3D : public Scene
 {
 public:
     Scene3D();
-    ~Scene3D() override = default;
+    virtual ~Scene3D() override = default;
 
     void SetLight(const entt::entity &light) { m_Light = light; }
 
 public:
-    void OnEvent(Event &event) override {}
-    void Update(float deltaTime) override {}
-    void Render(const std::shared_ptr<Camera> &camera) const override;
-
-    entt::entity AddCube(TransformComponent transform, MeshRendererComponent mesh);
+    virtual void OnEvent(Event &event) override {}
+    virtual void Update(float deltaTime) override {}
+    virtual void Render() const override;
 
 private:
     entt::entity m_Light;

@@ -1,11 +1,12 @@
 #pragma once
 
+#include "BasicComponent.hpp"
 #include "Camera/Camera.hpp"
 
 namespace MCEngine
 {
 
-struct SpriteRendererComponent
+struct SpriteRendererComponent : public Component
 {
     std::shared_ptr<VertexArray> VAOPtr;
 
@@ -21,7 +22,7 @@ public:
     }
 };
 
-struct MeshRendererComponent
+struct MeshRendererComponent : public Component
 {
     std::shared_ptr<VertexArray> VAOPtr;
 
@@ -35,7 +36,7 @@ public:
     }
 };
 
-struct CameraComponent
+struct CameraComponent : public Component
 {
     std::shared_ptr<Camera> CameraPtr;
 
@@ -44,7 +45,7 @@ public:
 };
 
 // todo
-struct LightComponent
+struct LightComponent : public Component
 {
     glm::vec4 Color;
     float Intensity;
