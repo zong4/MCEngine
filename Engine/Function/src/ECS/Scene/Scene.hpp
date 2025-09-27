@@ -16,7 +16,7 @@ public:
 public:
     virtual void OnEvent(Event &event) = 0;
     virtual void Update(float deltaTime) = 0;
-    virtual void Render(std::shared_ptr<Camera> camera) const = 0;
+    virtual void Render(const std::shared_ptr<Camera> &camera) const = 0;
 
 protected:
     // entt::entity m_CameraEntity;

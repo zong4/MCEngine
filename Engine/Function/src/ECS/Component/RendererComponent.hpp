@@ -46,12 +46,13 @@ public:
 // todo
 struct LightComponent
 {
-    glm::vec3 Color;
+    glm::vec4 Color;
     float Intensity;
     float Range;
     float SpotAngle; // For spot lights
+
 public:
-    LightComponent(glm::vec3 color = glm::vec3(1.0f), float intensity = 1.0f, float range = 10.0f,
+    LightComponent(glm::vec4 color = glm::vec4(1.0f), float intensity = 1.0f, float range = 10.0f,
                    float spotAngle = 45.0f)
         : Color(color), Intensity(intensity), Range(range), SpotAngle(spotAngle)
     {

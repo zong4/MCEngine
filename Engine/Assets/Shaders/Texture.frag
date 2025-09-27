@@ -14,5 +14,5 @@ in vec2 v_TexCoord;
 void main()
 {
     // Set fragment color
-    FragColor = texture(u_Texture, v_TexCoord);
+    FragColor = texture(u_Texture, v_TexCoord) * u_Color;
 }

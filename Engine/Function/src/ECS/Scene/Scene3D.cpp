@@ -1,6 +1,16 @@
 #include "Scene3D.hpp"
 
-void MCEngine::Scene3D::Render(std::shared_ptr<Camera> camera) const
+MCEngine::Scene3D::Scene3D()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    // Default light
+    m_Light = m_Registry.create();
+    m_Registry.emplace<TransformComponent>(m_Light, TransformComponent(glm::vec3(1.2f, 1.0f, 2.0f), glm::vec3(0.0f)));
+    m_Registry.emplace<LightComponent>(m_Light, LightComponent(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
+}
+
+void MCEngine::Scene3D::Render(const std::shared_ptr<Camera> &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -13,8 +23,8 @@ void MCEngine::Scene3D::Render(std::shared_ptr<Camera> camera) const
     shader->SetUniformMat4("u_Projection", camera->GetProjection());
 
     // Light
-    shader->SetUniformVec3("u_LightPos", glm::vec3(1.2f, 1.0f, 2.0f));
-    shader->SetUniformVec4("u_LightColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    shader->SetUniformVec3("u_LightPos", m_Registry.get<TransformComponent>(m_Light).Position);
+    shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).Color);
 
     auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
     for (auto entity : meshView)

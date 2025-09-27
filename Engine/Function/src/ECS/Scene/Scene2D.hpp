@@ -14,7 +14,7 @@ public:
 public:
     void OnEvent(Event &event) override {}
     void Update(float deltaTime) override {}
-    void Render(std::shared_ptr<Camera> camera) const override;
+    void Render(const std::shared_ptr<Camera> &camera) const override;
 
     entt::entity AddSquare(TransformComponent transform, SpriteRendererComponent sprite);
 };

@@ -1,6 +1,6 @@
 #include "Scene2D.hpp"
 
-void MCEngine::Scene2D::Render(std::shared_ptr<Camera> camera) const
+void MCEngine::Scene2D::Render(const std::shared_ptr<Camera> &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 

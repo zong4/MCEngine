@@ -11,7 +11,7 @@ MCEngine::EditorLayer::EditorLayer(std::shared_ptr<Camera> sceneCameraPtr, std::
     // Initialize 2D scene
     m_Scene2D.AddSquare(TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f)),
                         SpriteRendererComponent(VAOLibrary::GetInstance().GetVAO("IdentitySquare"),
-                                                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+                                                glm::vec4(1.0f, 0.7f, 0.8f, 1.0f),
                                                 TextureLibrary::GetInstance().GetTexture("02BG")));
 
     // Initialize 3D scene
