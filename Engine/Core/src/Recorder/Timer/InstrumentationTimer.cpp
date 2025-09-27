@@ -14,5 +14,5 @@ MCEngine::InstrumentationTimer::~InstrumentationTimer()
     long long endTime =
         std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
     uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
-    Instrumentor::GetInstance().WriteProfile({m_Name, startTime, endTime, threadID});
+    Instrumentor::GetInstanceRef().WriteProfile({m_Name, startTime, endTime, threadID});
 }

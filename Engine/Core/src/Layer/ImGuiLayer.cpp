@@ -9,7 +9,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> window) : Layer("ImGuiLayer"), m_Window(window)
+MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr) : Layer("ImGuiLayer"), m_WindowPtr(windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -39,7 +39,7 @@ void MCEngine::ImGuiLayer::OnAttach()
     ImGui::LoadIniSettingsFromDisk(m_GuiFilePath.c_str());
 
     // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
+    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_WindowPtr->GetNativeWindowPtr()), true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -56,11 +56,11 @@ void MCEngine::ImGuiLayer::OnDetach()
     ImGui::DestroyContext();
 }
 
-void MCEngine::ImGuiLayer::OnEvent(Event &event)
+void MCEngine::ImGuiLayer::OnEvent(Event &eventRef)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    EventDispatcher dispatcher(event);
+    EventDispatcher dispatcher(eventRef);
 
     dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &e) {
         ImGuiIO &io = ImGui::GetIO();
@@ -113,7 +113,7 @@ void MCEngine::ImGuiLayer::End()
     ENGINE_PROFILE_FUNCTION();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.DisplaySize = ImVec2((float)m_Window->GetProps().Width, (float)m_Window->GetProps().Height);
+    io.DisplaySize = ImVec2((float)m_WindowPtr->GetProps().Width, (float)m_WindowPtr->GetProps().Height);
 
     // Rendering
     ImGui::Render();
@@ -156,7 +156,7 @@ void MCEngine::ImGuiLayer::RenderDockSpace()
         {
             if (ImGui::MenuItem("Exit"))
             {
-                m_Window->SetRunning(false);
+                m_WindowPtr->SetRunning(false);
             }
             ImGui::EndMenu();
         }

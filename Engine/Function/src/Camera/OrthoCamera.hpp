@@ -13,6 +13,7 @@ public:
 
     glm::vec3 GetSize() const { return m_Size; }
     void SetSize(const glm::vec3 &size);
+    void SetSize(const glm::vec2 &size) { SetSize(glm::vec3(size, m_Size.z)); }
 
 public:
     void OnEvent(Event &event) override;

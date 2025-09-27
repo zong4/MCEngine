@@ -26,8 +26,8 @@ public:
     static void LogEditorError(const std::string &message);
 
 private:
-    static std::shared_ptr<spdlog::logger> s_EngineLogger;
-    static std::shared_ptr<spdlog::logger> s_EditorLogger;
+    static std::shared_ptr<spdlog::logger> s_EngineLoggerPtr;
+    static std::shared_ptr<spdlog::logger> s_EditorLoggerPtr;
 };
 
 #ifdef DEBUG

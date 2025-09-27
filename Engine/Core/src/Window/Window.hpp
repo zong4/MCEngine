@@ -27,7 +27,7 @@ public:
     Window(WindowProps props);
     ~Window();
 
-    void *GetNativeWindow() const { return m_NativeWindow; }
+    void *GetNativeWindowPtr() const { return m_NativeWindowPtr; }
     const WindowProps &GetProps() const { return m_Props; }
 
     void SetRunning(bool running) { m_Running = running; }
@@ -46,7 +46,7 @@ public:
 
 private:
     bool m_Running = true;
-    void *m_NativeWindow = nullptr;
+    void *m_NativeWindowPtr = nullptr;
     WindowProps m_Props;
 
     LayerStack m_LayerStack;

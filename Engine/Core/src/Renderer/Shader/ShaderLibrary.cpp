@@ -1,6 +1,6 @@
 #include "ShaderLibrary.hpp"
 
-MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
+MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstanceRef()
 {
     static ShaderLibrary instance;
     return instance;
@@ -15,7 +15,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::GetShader(const std::
         LOG_ENGINE_ERROR("Shader not found: " + name);
         return nullptr;
     }
-    return m_Shaders[name];
+    return m_ShaderMap[name];
 }
 
 void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shared_ptr<Shader> &shader)
@@ -27,7 +27,7 @@ void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shar
         LOG_ENGINE_ERROR("Shader already exists: " + name);
         return;
     }
-    m_Shaders[name] = shader;
+    m_ShaderMap[name] = shader;
 
     LOG_ENGINE_INFO("Shader added: " + name);
 }
@@ -41,7 +41,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
     if (Exists(name))
     {
         LOG_ENGINE_ERROR("Shader already exists: " + name);
-        return m_Shaders[name];
+        return m_ShaderMap[name];
     }
 
     auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource);
@@ -85,4 +85,7 @@ MCEngine::ShaderLibrary::ShaderLibrary()
     LOG_ENGINE_INFO("ShaderLibrary initialized.");
 }
 
-bool MCEngine::ShaderLibrary::Exists(const std::string &name) const { return m_Shaders.find(name) != m_Shaders.end(); }
+bool MCEngine::ShaderLibrary::Exists(const std::string &name) const
+{
+    return m_ShaderMap.find(name) != m_ShaderMap.end();
+}

@@ -14,11 +14,11 @@ public:
     void Run();
 
 protected:
-    std::shared_ptr<Window> m_Window = nullptr;
+    std::shared_ptr<Window> m_WindowPtr = nullptr;
 
 protected:
-    void AddLayer(const std::shared_ptr<Layer> &layer) { m_Window->AddLayer(layer); }
-    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_Window->RemoveLayer(layer); }
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_WindowPtr->AddLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_WindowPtr->RemoveLayer(layer); }
 
 private:
     void Init(WindowProps props);

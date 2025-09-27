@@ -47,13 +47,13 @@ inline const IdentityCubeData g_IdentityCubeData;
 class VAOLibrary
 {
 public:
-    static VAOLibrary &GetInstance();
+    static VAOLibrary &GetInstanceRef();
 
     std::shared_ptr<VertexArray> GetVAO(const std::string &name);
-    void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao); // Add or replace
+    void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao);
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VAOs;
+    std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VAOMap;
 
 private:
     VAOLibrary();

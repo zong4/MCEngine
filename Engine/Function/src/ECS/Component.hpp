@@ -20,7 +20,7 @@ public:
 
 struct SpriteRendererComponent
 {
-    std::shared_ptr<VertexArray> VAO;
+    std::shared_ptr<VertexArray> VAOPtr;
     glm::vec4 Color;
 
 public:
@@ -29,7 +29,7 @@ public:
 
 struct MeshRendererComponent
 {
-    std::shared_ptr<VertexArray> VAO;
+    std::shared_ptr<VertexArray> VAOPtr;
     glm::vec4 Color;
 
 public:

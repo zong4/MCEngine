@@ -1,6 +1,6 @@
 #include "RendererAPI.hpp"
 
-MCEngine::RendererAPI &MCEngine::RendererAPI::GetInstance()
+MCEngine::RendererAPI &MCEngine::RendererAPI::GetInstanceRef()
 {
     static RendererAPI instance;
     return instance;

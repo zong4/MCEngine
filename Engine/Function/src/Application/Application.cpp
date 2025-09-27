@@ -5,15 +5,15 @@ void MCEngine::Application::Run()
     ENGINE_PROFILE_FUNCTION();
 
     Timer timer;
-    while (!m_Window->ShouldClose())
+    while (!m_WindowPtr->ShouldClose())
     {
-        m_Window->PreUpdate();
+        m_WindowPtr->PreUpdate();
 
         float deltaTime = timer.GetElapsedSeconds();
-        m_Window->Update(deltaTime);
-        m_Window->Render(deltaTime);
+        m_WindowPtr->Update(deltaTime);
+        m_WindowPtr->Render(deltaTime);
 
-        m_Window->PostUpdate();
+        m_WindowPtr->PostUpdate();
     }
 }
 
@@ -21,7 +21,7 @@ void MCEngine::Application::Init(WindowProps props)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Window = std::make_shared<Window>(props);
+    m_WindowPtr = std::make_shared<Window>(props);
 
     LOG_ENGINE_INFO("Application initialized.");
 }
@@ -30,7 +30,7 @@ void MCEngine::Application::Shutdown()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Window.reset();
+    m_WindowPtr.reset();
 
     LOG_ENGINE_INFO("Application shutdown.");
 }

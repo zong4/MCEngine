@@ -1,6 +1,6 @@
 #include "Instrumentor.hpp"
 
-MCEngine::Instrumentor &MCEngine::Instrumentor::GetInstance()
+MCEngine::Instrumentor &MCEngine::Instrumentor::GetInstanceRef()
 {
     static Instrumentor instance;
     return instance;

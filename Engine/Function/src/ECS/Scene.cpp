@@ -17,7 +17,7 @@ void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&shader = ShaderLibrary::GetInstance().GetShader("Standard");
+    auto &&shader = ShaderLibrary::GetInstanceRef().GetShader("Standard");
     shader->Bind();
     shader->SetUniformMat4("u_View", camera->GetView());
     shader->SetUniformMat4("u_Projection", camera->GetProjection());
@@ -29,7 +29,7 @@ void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
 
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
         shader->SetUniformVec4("u_Color", sprite.Color);
-        RendererAPI::GetInstance().DrawQuad(sprite.VAO);
+        RendererAPI::GetInstanceRef().DrawQuad(sprite.VAOPtr);
     }
 
     auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -39,7 +39,7 @@ void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
 
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
         shader->SetUniformVec4("u_Color", mesh.Color);
-        RendererAPI::GetInstance().DrawQuad(mesh.VAO);
+        RendererAPI::GetInstanceRef().DrawQuad(mesh.VAOPtr);
     }
 }
 

@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstance()
+MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstanceRef()
 {
     static VAOLibrary instance;
     return instance;
@@ -17,7 +17,7 @@ std::shared_ptr<MCEngine::VertexArray> MCEngine::VAOLibrary::GetVAO(const std::s
         LOG_ENGINE_ERROR("VAO not found: " + name);
         return nullptr;
     }
-    return m_VAOs[name];
+    return m_VAOMap[name];
 }
 
 void MCEngine::VAOLibrary::AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao)
@@ -29,12 +29,12 @@ void MCEngine::VAOLibrary::AddVAO(const std::string &name, const std::shared_ptr
         LOG_ENGINE_WARN("VAO already exists: " + name);
         return;
     }
-    m_VAOs[name] = vao;
+    m_VAOMap[name] = vao;
 
     LOG_ENGINE_INFO("VAO added: " + name);
 }
 
-bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOs.find(name) != m_VAOs.end(); }
+bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOMap.find(name) != m_VAOMap.end(); }
 
 MCEngine::VAOLibrary::VAOLibrary()
 {

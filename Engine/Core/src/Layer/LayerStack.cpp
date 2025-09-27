@@ -11,17 +11,17 @@ MCEngine::LayerStack::~LayerStack()
     m_Layers.clear();
 }
 
-void MCEngine::LayerStack::OnEvent(Event &e)
+void MCEngine::LayerStack::OnEvent(Event &eventRef)
 {
     ENGINE_PROFILE_FUNCTION();
 
     for (auto it = rbegin(); it != rend(); ++it)
     {
-        if (e.IsHandled())
+        if (eventRef.IsHandled())
         {
             break;
         }
-        (*it)->OnEvent(e);
+        (*it)->OnEvent(eventRef);
     }
 }
 
@@ -46,30 +46,30 @@ void MCEngine::LayerStack::Render(float deltaTime)
     }
 }
 
-void MCEngine::LayerStack::PushLayer(const std::shared_ptr<Layer> &layer)
+void MCEngine::LayerStack::PushLayer(const std::shared_ptr<Layer> &layerPtrRef)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Layers.emplace_back(layer);
-    layer->OnAttach();
+    m_Layers.emplace_back(layerPtrRef);
+    layerPtrRef->OnAttach();
 
-    LOG_ENGINE_INFO("Layer pushed: " + layer->GetName());
+    LOG_ENGINE_INFO("Layer pushed: " + layerPtrRef->GetNameRef());
 }
 
-void MCEngine::LayerStack::PopLayer(const std::shared_ptr<Layer> &layer)
+void MCEngine::LayerStack::PopLayer(const std::shared_ptr<Layer> &layerPtrRef)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
+    auto it = std::find(m_Layers.begin(), m_Layers.end(), layerPtrRef);
     if (it != m_Layers.end())
     {
         (*it)->OnDetach();
         m_Layers.erase(it);
 
-        LOG_ENGINE_INFO("Layer popped: " + layer->GetName());
+        LOG_ENGINE_INFO("Layer popped: " + layerPtrRef->GetNameRef());
     }
     else
     {
-        LOG_ENGINE_WARN("Layer not found: " + layer->GetName());
+        LOG_ENGINE_WARN("Layer not found: " + layerPtrRef->GetNameRef());
     }
 }

@@ -28,7 +28,7 @@ MCEngine::Window::~Window() { Shutdown(); }
 
 bool MCEngine::Window::ShouldClose() const
 {
-    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)) || !m_Running;
+    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindowPtr)) || !m_Running;
 }
 
 void MCEngine::Window::OnEvent(Event &e)
@@ -65,7 +65,7 @@ void MCEngine::Window::PostUpdate()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
+    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     glfwPollEvents();
 }
 
@@ -81,14 +81,14 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    m_NativeWindow = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
-    if (!m_NativeWindow)
+    m_NativeWindowPtr = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
+    if (!m_NativeWindowPtr)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
 
-    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindow));
+    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     SetCallbacks();
     SetVSync(m_Props.VSync);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -101,9 +101,9 @@ void MCEngine::Window::SetCallbacks()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindow), this);
+    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindowPtr), this);
 
-    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                                    [](GLFWwindow *window, int width, int height) {
                                        glViewport(0, 0, width, height);
 
@@ -114,7 +114,7 @@ void MCEngine::Window::SetCallbacks()
                                        win->OnEvent(event);
                                    });
 
-    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                        [](GLFWwindow *window, int key, int scancode, int action, int mods) {
                            KeyEvent event(key, action);
 
@@ -122,7 +122,7 @@ void MCEngine::Window::SetCallbacks()
                            win->OnEvent(event);
                        });
 
-    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                                [](GLFWwindow *window, int button, int action, int mods) {
                                    MouseButtonEvent event(button, action);
 
@@ -130,7 +130,7 @@ void MCEngine::Window::SetCallbacks()
                                    win->OnEvent(event);
                                });
 
-    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                              [](GLFWwindow *window, double xpos, double ypos) {
                                  MouseMoveEvent event(xpos, ypos);
 
@@ -153,7 +153,7 @@ void MCEngine::Window::Shutdown()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindow));
+    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     glfwTerminate();
 
     LOG_ENGINE_INFO("Window destroyed.");

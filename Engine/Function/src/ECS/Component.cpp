@@ -21,13 +21,13 @@ glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
     return translationMatrix * rotationMatrix * scaleMatrix;
 }
 
-MCEngine::SpriteRendererComponent::SpriteRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color)
-    : VAO(vao), Color(color)
+MCEngine::SpriteRendererComponent::SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color)
+    : VAOPtr(vaoPtr), Color(color)
 {
 }
 
-MCEngine::MeshRendererComponent::MeshRendererComponent(std::shared_ptr<VertexArray> vao, glm::vec4 color)
-    : VAO(vao), Color(color)
+MCEngine::MeshRendererComponent::MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, glm::vec4 color)
+    : VAOPtr(vaoPtr), Color(color)
 {
 }
 

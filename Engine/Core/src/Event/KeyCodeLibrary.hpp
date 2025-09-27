@@ -8,16 +8,16 @@ namespace MCEngine
 class KeyCodeLibrary
 {
 public:
-    static KeyCodeLibrary &GetInstance();
+    static KeyCodeLibrary &GetInstanceRef();
 
     int GetKeyAction(int keyCode) const;
-    void SetKeyAction(int keyCode, int action) { m_KeyStates[keyCode] = action; }
+    void SetKeyAction(int keyCode, int action) { m_KeyStateMap[keyCode] = action; }
 
 public:
     bool IsKeyDown(int keyCode) const;
 
 private:
-    std::unordered_map<int, int> m_KeyStates;
+    std::unordered_map<int, int> m_KeyStateMap;
 
 private:
     KeyCodeLibrary() = default;

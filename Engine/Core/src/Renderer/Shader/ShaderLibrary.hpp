@@ -8,7 +8,7 @@ namespace MCEngine
 class ShaderLibrary
 {
 public:
-    static ShaderLibrary &GetInstance();
+    static ShaderLibrary &GetInstanceRef();
 
     std::shared_ptr<Shader> GetShader(const std::string &name);
     void AddShader(const std::string &name, const std::shared_ptr<Shader> &shader);
@@ -16,7 +16,7 @@ public:
                                        const std::string &fragmentSource);
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+    std::unordered_map<std::string, std::shared_ptr<Shader>> m_ShaderMap;
 
 private:
     ShaderLibrary();

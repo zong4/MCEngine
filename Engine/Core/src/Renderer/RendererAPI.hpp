@@ -8,7 +8,7 @@ namespace MCEngine
 class RendererAPI
 {
 public:
-    static RendererAPI &GetInstance();
+    static RendererAPI &GetInstanceRef();
 
     void DrawQuad(std::shared_ptr<VertexArray> vertexArray);
 
