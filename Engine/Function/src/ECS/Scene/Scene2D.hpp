@@ -1,28 +1,22 @@
 #pragma once
 
-#include "Camera/Camera.hpp"
-#include "ECS/Component.hpp"
+#include "Scene.hpp"
 
 namespace MCEngine
 {
 
-class Scene2D
+class Scene2D : public Scene
 {
 public:
-    Scene2D();
-    ~Scene2D();
+    Scene2D() = default;
+    ~Scene2D() override = default;
 
 public:
-    void OnEvent(Event &event) {}
-    void Update(float deltaTime);
-    void Render(std::shared_ptr<Camera> camera) const;
+    void OnEvent(Event &event) override {}
+    void Update(float deltaTime) override {}
+    void Render(std::shared_ptr<Camera> camera) const override;
 
     entt::entity AddSquare(TransformComponent transform, SpriteRendererComponent sprite);
-    entt::entity AddCube(TransformComponent transform, MeshRendererComponent mesh);
-
-private:
-    // entt::entity m_CameraEntity;
-    entt::registry m_Registry = {};
 };
 
 } // namespace MCEngine

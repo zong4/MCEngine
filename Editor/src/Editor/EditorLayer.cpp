@@ -8,13 +8,15 @@ MCEngine::EditorLayer::EditorLayer(std::shared_ptr<Camera> sceneCameraPtr, std::
     // Default to scene camera
     m_CameraPtr = m_SceneCameraPtr;
 
-    // Initialize scene
-    m_Scene.AddSquare(TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f)),
-                      SpriteRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentitySquare"),
-                                              glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
-    m_Scene.AddCube(TransformComponent(),
-                    MeshRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentityCubeWithNormals"),
-                                          glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+    // Initialize 2D scene
+    m_Scene2D.AddSquare(TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f)),
+                        SpriteRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentitySquare"),
+                                                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+
+    // Initialize 3D scene
+    m_Scene3D.AddCube(TransformComponent(),
+                      MeshRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentityCubeWithNormals"),
+                                            glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
 }
 
 void MCEngine::EditorLayer::OnEvent(Event &event)
@@ -30,7 +32,8 @@ void MCEngine::EditorLayer::OnEvent(Event &event)
 
     m_CameraPtr->OnEvent(event);
 
-    m_Scene.OnEvent(event);
+    m_Scene2D.OnEvent(event);
+    m_Scene3D.OnEvent(event);
 }
 
 void MCEngine::EditorLayer::OnUpdate(float deltaTime)
@@ -118,12 +121,14 @@ void MCEngine::EditorLayer::OnUpdate(float deltaTime)
     m_CameraPtr->Update(deltaTime);
 
     // Update objects
-    m_Scene.Update(deltaTime);
+    m_Scene2D.Update(deltaTime);
+    m_Scene3D.Update(deltaTime);
 }
 
 void MCEngine::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Scene.Render(m_CameraPtr);
+    m_Scene2D.Render(m_CameraPtr);
+    m_Scene3D.Render(m_CameraPtr);
 }
