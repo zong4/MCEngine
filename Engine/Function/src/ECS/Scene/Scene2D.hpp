@@ -1,16 +1,16 @@
 #pragma once
 
 #include "Camera/Camera.hpp"
-#include "Component.hpp"
+#include "ECS/Component.hpp"
 
 namespace MCEngine
 {
 
-class Scene
+class Scene2D
 {
 public:
-    Scene();
-    ~Scene();
+    Scene2D();
+    ~Scene2D();
 
 public:
     void OnEvent(Event &event) {}

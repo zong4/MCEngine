@@ -1,6 +1,6 @@
-#include "Scene.hpp"
+#include "Scene2D.hpp"
 
-MCEngine::Scene::Scene()
+MCEngine::Scene2D::Scene2D()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -9,15 +9,15 @@ MCEngine::Scene::Scene()
     // m_Registry.emplace<CameraComponent>(m_CameraEntity, CameraComponent());
 }
 
-MCEngine::Scene::~Scene() {}
+MCEngine::Scene2D::~Scene2D() {}
 
-void MCEngine::Scene::Update(float deltaTime) {}
+void MCEngine::Scene2D::Update(float deltaTime) {}
 
-void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
+void MCEngine::Scene2D::Render(std::shared_ptr<Camera> camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&shader = ShaderLibrary::GetInstanceRef().GetShader("Standard");
+    auto &&shader = ShaderLibrary::GetInstanceRef().GetShader("Texture");
     shader->Bind();
     shader->SetUniformMat4("u_View", camera->GetView());
     shader->SetUniformMat4("u_Projection", camera->GetProjection());
@@ -43,7 +43,7 @@ void MCEngine::Scene::Render(std::shared_ptr<Camera> camera) const
     }
 }
 
-entt::entity MCEngine::Scene::AddSquare(TransformComponent transform, SpriteRendererComponent sprite)
+entt::entity MCEngine::Scene2D::AddSquare(TransformComponent transform, SpriteRendererComponent sprite)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -54,7 +54,7 @@ entt::entity MCEngine::Scene::AddSquare(TransformComponent transform, SpriteRend
     return entity;
 }
 
-entt::entity MCEngine::Scene::AddCube(TransformComponent transform, MeshRendererComponent mesh)
+entt::entity MCEngine::Scene2D::AddCube(TransformComponent transform, MeshRendererComponent mesh)
 {
     ENGINE_PROFILE_FUNCTION();
 

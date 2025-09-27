@@ -2,21 +2,33 @@
 
 #include <glad/glad.h>
 
-MCEngine::IndexBuffer::IndexBuffer(const void *data, size_t size) : m_Count(static_cast<int>(size / sizeof(uint32_t)))
+#define GL_ERROR()                                                                                                     \
+    {                                                                                                                  \
+        GLint error = glGetError();                                                                                    \
+        if (error != GL_NO_ERROR)                                                                                      \
+        {                                                                                                              \
+            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
+        }                                                                                                              \
+    }
+
+MCEngine::IndexBuffer::IndexBuffer(const void *data, size_t size)
 {
+    m_Count = static_cast<int>(size / sizeof(uint32_t));
     CreateBuffer(data, size);
 }
 
-MCEngine::IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices) : m_Count(static_cast<int>(indices.size()))
+MCEngine::IndexBuffer::IndexBuffer(const std::vector<uint32_t> &indices)
 {
+    m_Count = static_cast<int>(indices.size());
     CreateBuffer(indices.data(), indices.size() * sizeof(uint32_t));
 }
 
 MCEngine::IndexBuffer::~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 
-MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other) : m_Count(other.m_Count)
+MCEngine::IndexBuffer::IndexBuffer(IndexBuffer &&other)
 {
     m_RendererID = other.m_RendererID;
+    m_Count = other.m_Count;
     LOG_ENGINE_INFO("IndexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
                     " and count: " + std::to_string(m_Count));
 
@@ -52,8 +64,15 @@ void MCEngine::IndexBuffer::SetData(const void *data, size_t size)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    if (data == nullptr || size == 0)
+    {
+        LOG_ENGINE_WARN("Invalid IndexBuffer data or size.");
+        return;
+    }
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+    GL_ERROR();
 
     LOG_ENGINE_INFO("IndexBuffer data updated for ID: " + std::to_string(m_RendererID) +
                     " with new count: " + std::to_string(m_Count));
@@ -63,9 +82,16 @@ void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    if (data == nullptr || size == 0)
+    {
+        LOG_ENGINE_WARN("Invalid IndexBuffer data or size.");
+        return;
+    }
+
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    GL_ERROR();
 
     LOG_ENGINE_INFO("IndexBuffer created with ID: " + std::to_string(m_RendererID) +
                     " and count: " + std::to_string(m_Count));

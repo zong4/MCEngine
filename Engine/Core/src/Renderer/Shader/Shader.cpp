@@ -2,6 +2,15 @@
 
 #include <glad/glad.h>
 
+#define GL_ERROR()                                                                                                     \
+    {                                                                                                                  \
+        GLint error = glGetError();                                                                                    \
+        if (error != GL_NO_ERROR)                                                                                      \
+        {                                                                                                              \
+            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
+        }                                                                                                              \
+    }
+
 MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -35,12 +44,7 @@ void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
-
-    int error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-        LOG_ENGINE_ERROR("OpenGL error while setting uniform mat4 '" + name + "': " + std::to_string(error));
-    }
+    GL_ERROR();
 }
 
 void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
@@ -49,12 +53,7 @@ void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform4fv(location, 1, &vector4[0]);
-
-    int error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-        LOG_ENGINE_ERROR("OpenGL error while setting uniform vec4 '" + name + "': " + std::to_string(error));
-    }
+    GL_ERROR();
 }
 
 void MCEngine::Shader::CompileShader(unsigned int shaderID, const std::string &source)

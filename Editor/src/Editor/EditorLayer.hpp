@@ -31,7 +31,7 @@ private:
     float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 15.0f;
 
-    Scene m_Scene;
+    Scene2D m_Scene;
 };
 
 } // namespace MCEngine

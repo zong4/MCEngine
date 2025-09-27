@@ -14,6 +14,7 @@ public:
     Buffer &operator=(const Buffer &) = delete;
 
     unsigned int GetRendererID() const { return m_RendererID; }
+    int GetCount() const { return m_Count; }
 
 public:
     virtual void Bind() const = 0;
@@ -23,6 +24,7 @@ public:
 
 protected:
     unsigned int m_RendererID = 0;
+    int m_Count = 0;
 
 protected:
     virtual void CreateBuffer(const void *data, size_t size) = 0;

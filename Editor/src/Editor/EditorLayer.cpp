@@ -12,8 +12,9 @@ MCEngine::EditorLayer::EditorLayer(std::shared_ptr<Camera> sceneCameraPtr, std::
     m_Scene.AddSquare(TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f)),
                       SpriteRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentitySquare"),
                                               glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
-    m_Scene.AddCube(TransformComponent(), MeshRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentityCube"),
-                                                                glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+    m_Scene.AddCube(TransformComponent(),
+                    MeshRendererComponent(VAOLibrary::GetInstanceRef().GetVAO("IdentityCubeWithNormals"),
+                                          glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
 }
 
 void MCEngine::EditorLayer::OnEvent(Event &event)

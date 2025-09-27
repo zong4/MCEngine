@@ -2,28 +2,23 @@
 
 #include <glad/glad.h>
 
-MCEngine::VertexArray::VertexArray(IndexBuffer &&indexBuffer, VertexBuffer &&vertexBuffer,
-                                   const VertexAttribute &attribute)
+#define GL_ERROR()                                                                                                     \
+    {                                                                                                                  \
+        GLint error = glGetError();                                                                                    \
+        if (error != GL_NO_ERROR)                                                                                      \
+        {                                                                                                              \
+            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
+        }                                                                                                              \
+    }
+
+MCEngine::VertexArray::VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
+                                   IndexBuffer &&indexBuffer)
     : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer))
 {
     ENGINE_PROFILE_FUNCTION();
 
     glGenVertexArrays(1, &m_RendererID);
-    glBindVertexArray(m_RendererID);
-
-    m_VertexBuffer.Bind();
-    m_IndexBuffer.Bind();
-
-    glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
-                          static_cast<GLsizei>(attribute.stride), attribute.offset);
-    glEnableVertexAttribArray(attribute.location);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    m_IndexBuffer.Unbind();
-    m_VertexBuffer.Unbind();
-
-    glBindVertexArray(0);
-
+    SetVertexAttributes(attributes);
     LOG_ENGINE_INFO("VertexArray created with ID: " + std::to_string(m_RendererID) +
                     ", VertexBuffer ID: " + std::to_string(m_VertexBuffer.GetRendererID()) +
                     ", IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
@@ -58,57 +53,23 @@ MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
     return *this;
 }
 
+void MCEngine::VertexArray::SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_VertexBuffer = std::move(vertexBuffer);
+    SetVertexAttributes(attributes);
+    LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) +
+                    " set with new VertexBuffer ID: " + std::to_string(m_VertexBuffer.GetRendererID()));
+}
+
 void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    Bind();
     m_IndexBuffer = std::move(indexBuffer);
-    m_IndexBuffer.Bind();
-
-    GLint error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in SetIndexBuffer");
-    }
-
-    m_IndexBuffer.Unbind();
-    Unbind();
-
     LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) +
                     " set with new IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
-}
-
-void MCEngine::VertexArray::SetVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    Bind();
-    m_VertexBuffer = std::move(vertexBuffer);
-    m_VertexBuffer.Bind();
-
-    GLint error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in SetVertexBuffer");
-    }
-
-    glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
-                          static_cast<GLsizei>(attribute.stride), attribute.offset);
-    glEnableVertexAttribArray(attribute.location);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in SetVertexAttribute");
-    }
-
-    m_VertexBuffer.Unbind();
-    Unbind();
-
-    LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) +
-                    " set with new VertexBuffer ID: " + std::to_string(m_VertexBuffer.GetRendererID()));
 }
 
 void MCEngine::VertexArray::Render() const
@@ -117,9 +78,20 @@ void MCEngine::VertexArray::Render() const
 
     Bind();
     m_VertexBuffer.Bind();
-    m_IndexBuffer.Bind();
-    glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0);
-    m_IndexBuffer.Unbind();
+
+    if (m_IndexBuffer.GetRendererID() == 0)
+    {
+        glDrawArrays(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount);
+        GL_ERROR();
+    }
+    else
+    {
+        m_IndexBuffer.Bind();
+        glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0);
+        GL_ERROR();
+        m_IndexBuffer.Unbind();
+    }
+
     m_VertexBuffer.Unbind();
     Unbind();
 }
@@ -127,3 +99,22 @@ void MCEngine::VertexArray::Render() const
 void MCEngine::VertexArray::Bind() const { glBindVertexArray(m_RendererID); }
 
 void MCEngine::VertexArray::Unbind() const { glBindVertexArray(0); }
+
+void MCEngine::VertexArray::SetVertexAttributes(const std::vector<VertexAttribute> &attributes)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    Bind();
+    for (const auto &attribute : attributes)
+    {
+        glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
+                              static_cast<GLsizei>(attribute.stride), attribute.offset);
+        glEnableVertexAttribArray(attribute.location);
+        GL_ERROR();
+    }
+    m_AttributeCount = static_cast<int>(attributes.size());
+    Unbind();
+
+    LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) + " vertex attributes(" +
+                    std::to_string(m_AttributeCount) + ") set/updated.");
+}

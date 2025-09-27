@@ -19,7 +19,8 @@ struct VertexAttribute
 class VertexArray
 {
 public:
-    VertexArray(IndexBuffer &&indexBuffer, VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
+    VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
+                IndexBuffer &&indexBuffer = IndexBuffer(nullptr, 0));
     ~VertexArray();
 
     VertexArray(const VertexArray &) = delete;
@@ -27,21 +28,23 @@ public:
     VertexArray(VertexArray &&);
     VertexArray &operator=(VertexArray &&);
 
+    void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
-    void SetVertexBuffer(VertexBuffer &&vertexBuffer, const VertexAttribute &attribute);
 
 public:
     void Render() const;
 
 private:
     unsigned int m_RendererID = 0;
-
-    IndexBuffer m_IndexBuffer;
     VertexBuffer m_VertexBuffer;
+    IndexBuffer m_IndexBuffer;
+    int m_AttributeCount = 0;
 
 protected:
     void Bind() const;
     void Unbind() const;
+
+    void SetVertexAttributes(const std::vector<VertexAttribute> &attributes);
 };
 
 } // namespace MCEngine

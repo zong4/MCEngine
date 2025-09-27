@@ -80,6 +80,11 @@ void MCEngine::Window::Init()
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
+    LOG_ENGINE_INFO("GLFW version: " + std::string(glfwGetVersionString()));
+
+    // Enable 4x MSAA
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    LOG_ENGINE_INFO("4x MSAA enabled");
 
     m_NativeWindowPtr = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
     if (!m_NativeWindowPtr)
@@ -87,14 +92,25 @@ void MCEngine::Window::Init()
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
+    LOG_ENGINE_INFO("GLFW window created: " + m_Props.Title + " (" + std::to_string(m_Props.Width) + ", " +
+                    std::to_string(m_Props.Height) + ")");
 
     glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     SetCallbacks();
     SetVSync(m_Props.VSync);
+
+    // Initialize GLAD
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    LOG_ENGINE_INFO("OpenGL version: " + std::string((const char *)glGetString(GL_VERSION)));
+
+    // Enable depth testing
     glEnable(GL_DEPTH_TEST);
 
-    LOG_ENGINE_INFO("Window created: " + m_Props.ToString());
+    // Enable multi-sampling
+    int maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    LOG_ENGINE_INFO("Max samples supported: " + std::to_string(maxSamples));
+    glEnable(GL_MULTISAMPLE);
 }
 
 void MCEngine::Window::SetCallbacks()
@@ -146,7 +162,7 @@ void MCEngine::Window::SetVSync(bool enabled)
     m_Props.VSync = enabled;
     enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
 
-    LOG_ENGINE_TRACE("VSync " + std::string(enabled ? "enabled" : "disabled"));
+    LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
 
 void MCEngine::Window::Shutdown()

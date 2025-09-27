@@ -6,10 +6,10 @@ MCEngine::PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, flo
 {
     UpdateProjectionMatrix();
 
-    LOG_ENGINE_TRACE("PerspectiveCamera created at position (" + std::to_string(position.x) + ", " +
-                     std::to_string(position.y) + ", " + std::to_string(position.z) + ") with FOV " +
-                     std::to_string(fov) + ", aspect ratio " + std::to_string(aspectRatio) + ", near clip " +
-                     std::to_string(nearClip) + ", far clip " + std::to_string(farClip) + ".");
+    LOG_ENGINE_INFO("PerspectiveCamera created at position (" + std::to_string(position.x) + ", " +
+                    std::to_string(position.y) + ", " + std::to_string(position.z) + ") with FOV " +
+                    std::to_string(fov) + ", aspect ratio " + std::to_string(aspectRatio) + ", near clip " +
+                    std::to_string(nearClip) + ", far clip " + std::to_string(farClip) + ".");
 }
 
 void MCEngine::PerspectiveCamera::SetFOV(float fov)
