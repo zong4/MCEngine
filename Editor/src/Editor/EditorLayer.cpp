@@ -7,20 +7,10 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    MCEngine::TransformComponent squareTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f));
-    MCEngine::SpriteRendererComponent squareSprite(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentitySquare"),
-                                                   glm::vec4(1.0f, 0.7f, 0.8f, 1.0f),
-                                                   MCEngine::TextureLibrary::GetInstance().GetTexture("02BG"));
-
-    MCEngine::TransformComponent cubeTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-    MCEngine::MeshRendererComponent cubeMesh(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
-                                             glm::vec4(0.0f, 0.0f, 1.0f, 0.8f));
-
     m_Scene = std::make_shared<MCEngine::Scene>();
-    entt::entity squareEntity =
-        MCEngine::EntityFactory::CreateEntity(m_Scene->GetRegistry(), "Square", squareTransform, squareSprite);
-    entt::entity cubeEntity =
-        MCEngine::EntityFactory::CreateEntity(m_Scene->GetRegistry(), "Cube", cubeTransform, cubeMesh);
+    entt::entity squareEntity = MCEngine::EntityFactory::CreateBasicSquare(
+        m_Scene->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f));
+    entt::entity cubeEntity = MCEngine::EntityFactory::CreateBasicCube(m_Scene->GetRegistry(), "Cube");
 
     m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).AddChild(squareEntity);
     m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(squareEntity).SetParent(cubeEntity);

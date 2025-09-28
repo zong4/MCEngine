@@ -11,8 +11,7 @@ public:
     Component() = default;
     virtual ~Component() = default;
 
-protected:
-    bool m_Dirty = false;
+    virtual void Update(float deltaTime) = 0;
 };
 
 } // namespace MCEngine

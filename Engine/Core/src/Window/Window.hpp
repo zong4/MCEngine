@@ -51,8 +51,8 @@ public:
     void Render(float deltaTime);
     void PostUpdate();
 
-    void AddLayer(std::shared_ptr<Layer> layer) { m_LayerStack.PushLayer(layer); }
-    void RemoveLayer(std::shared_ptr<Layer> layer) { m_LayerStack.PopLayer(layer); }
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }
 
 private:
     bool m_Running = true;

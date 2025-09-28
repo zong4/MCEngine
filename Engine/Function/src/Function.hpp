@@ -2,4 +2,4 @@
 
 #include "Application/Application.hpp"
 #include "ECS/Entity/EntityFactory.hpp"
-#include "ECS/Scene/Scene.hpp"
+#include "Scene/Scene.hpp"

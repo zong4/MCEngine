@@ -8,7 +8,7 @@ namespace MCEngine
 class Application
 {
 public:
-    Application(WindowProps props) { Init(props); }
+    Application(const WindowProps &props) { Init(props); }
     virtual ~Application() { Shutdown(); }
 
     void Run();

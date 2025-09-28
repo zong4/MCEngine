@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/Component/Component.hpp"
+#include "ECS/Component/Basic/BasicComponent.hpp"
 
 namespace MCEngine
 {
@@ -8,8 +8,8 @@ namespace MCEngine
 class CameraComponent : public Component
 {
 public:
-    CameraComponent() = default;
-    virtual ~CameraComponent() override = default;
+    CameraComponent(TransformComponent *transformComponent);
+    virtual ~CameraComponent() override;
 
     const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
     const glm::mat4 &GetProjectionMatrix() const { return m_ProjectionMatrix; }
@@ -17,7 +17,10 @@ public:
     void UpdateViewMatrix(const glm::vec3 &position, const glm::vec3 &rotation);
     virtual void UpdateProjectionMatrix() = 0;
 
+    void Update(float deltaTime) override;
+
 protected:
+    TransformComponent *m_TransformComponent = nullptr;
     glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
 };
@@ -26,7 +29,7 @@ class OrthoCameraComponent : public CameraComponent
 {
 
 public:
-    OrthoCameraComponent(const glm::vec3 &size);
+    OrthoCameraComponent(TransformComponent *transformComponent, const glm::vec3 &size);
 
     const glm::vec3 &GetSize() const { return m_Size; }
     void SetSize(const glm::vec3 &size);
@@ -41,7 +44,8 @@ class PerspectiveCameraComponent : public CameraComponent
 {
 
 public:
-    PerspectiveCameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
+    PerspectiveCameraComponent(TransformComponent *transformComponent, float fov, float aspectRatio, float nearClip,
+                               float farClip);
 
     float GetFOV() const { return m_FOV; }
     float GetAspectRatio() const { return m_AspectRatio; }

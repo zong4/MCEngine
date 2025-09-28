@@ -21,6 +21,8 @@ public:
     void SetRange(float range) { m_Range = range; }
     void SetSpotAngle(float spotAngle) { m_SpotAngle = spotAngle; }
 
+    void Update(float deltaTime) override {}
+
 private:
     glm::vec4 m_Color;
     float m_Intensity;
