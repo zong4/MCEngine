@@ -1,4 +1,9 @@
-#include "TransformComponent.hpp"
+#include "BasicComponent.hpp"
+
+MCEngine::TagComponent::TagComponent(const std::string &tag) : m_Tag(tag)
+{
+    LOG_ENGINE_INFO("Tag Component created with Tag: " + m_Tag);
+}
 
 MCEngine::TransformComponent::TransformComponent(const glm::vec3 &position, const glm::vec3 &rotation,
                                                  const glm::vec3 &scale)

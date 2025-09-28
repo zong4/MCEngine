@@ -1,27 +1,31 @@
 #include "Scene.hpp"
 
+#include "ECS/Entity/EntityFactory.hpp"
+
 MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
     // Default 2D camera
     {
-        m_Camera2D = m_Registry.create();
-        m_CameraTransformComponent =
-            &m_Registry.emplace<TransformComponent>(m_Camera2D, TransformComponent(glm::vec3(0.0f, 0.0f, 0.0f)));
-        m_CameraComponent =
-            &m_Registry.emplace<OrthoCameraComponent>(m_Camera2D, OrthoCameraComponent(glm::vec3(16.0f, 9.0f, 10.0f)));
+        EntityFactory::CreateEntity(m_Registry, "MainCamera2D", glm::vec3(0.0f, 0.0f, 0.0f),
+                                    OrthoCameraComponent(glm::vec3(16.0f, 9.0f, 10.0f)));
+
+        m_Camera2D = m_Registry.view<OrthoCameraComponent>().front();
+        m_CameraTransformComponent = &m_Registry.get<TransformComponent>(m_Camera2D);
+        m_CameraComponent = &m_Registry.get<OrthoCameraComponent>(m_Camera2D);
         m_CameraComponent->UpdateViewMatrix(m_CameraTransformComponent->GetPosition(),
                                             m_CameraTransformComponent->GetRotation());
     }
 
     // Default 3D camera
     {
-        m_Camera3D = m_Registry.create();
-        m_CameraTransformComponent =
-            &m_Registry.emplace<TransformComponent>(m_Camera3D, TransformComponent(glm::vec3(0.0f, 0.0f, 5.0f)));
-        m_CameraComponent = &m_Registry.emplace<PerspectiveCameraComponent>(
-            m_Camera3D, PerspectiveCameraComponent(45.0f, 16.0f / 9.0f, 0.1f, 100.0f));
+        EntityFactory::CreateEntity(m_Registry, "MainCamera3D", glm::vec3(0.0f, 0.0f, 5.0f),
+                                    PerspectiveCameraComponent(45.0f, 16.0f / 9.0f, 0.1f, 100.0f));
+
+        m_Camera3D = m_Registry.view<PerspectiveCameraComponent>().front();
+        m_CameraTransformComponent = &m_Registry.get<TransformComponent>(m_Camera3D);
+        m_CameraComponent = &m_Registry.get<PerspectiveCameraComponent>(m_Camera3D);
         m_CameraComponent->UpdateViewMatrix(m_CameraTransformComponent->GetPosition(),
                                             m_CameraTransformComponent->GetRotation());
     }
@@ -29,9 +33,9 @@ MCEngine::Scene::Scene()
     m_Camera = m_Camera2D;
 
     // Default light
-    m_Light = m_Registry.create();
-    m_Registry.emplace<TransformComponent>(m_Light, TransformComponent(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f)));
-    m_Registry.emplace<LightComponent>(m_Light, LightComponent(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
+    EntityFactory::CreateEntity(m_Registry, "MainLight", glm::vec3(1.0f, 1.0f, 1.0f),
+                                LightComponent(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
+    m_Light = m_Registry.view<LightComponent>().front();
 }
 
 MCEngine::Scene::~Scene()

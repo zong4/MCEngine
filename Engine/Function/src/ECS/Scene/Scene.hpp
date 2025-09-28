@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/Component/Basic/TransformComponent.hpp"
+#include "ECS/Component/Basic/BasicComponent.hpp"
 #include "ECS/Component/Camera/CameraComponent.hpp"
 #include "ECS/Component/Light/LightComponent.hpp"
 #include "ECS/Component/Renderer/RendererComponent.hpp"

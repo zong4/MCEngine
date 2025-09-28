@@ -2,30 +2,34 @@
 
 #include <Function.hpp>
 
-namespace MCEngine
+namespace MCEditor
 {
 
-class EditorLayer : public ImGuiLayer
+class EditorLayer : public MCEngine::ImGuiLayer
 {
 
 public:
-    EditorLayer(std::shared_ptr<Window> windowPtr);
+    EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr);
 
 public:
-    void OnEvent(Event &event) override;
+    void OnEvent(MCEngine::Event &event) override;
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
 
 private:
-    std::shared_ptr<Scene> m_Scene;
+    std::shared_ptr<MCEngine::Scene> m_Scene;
 
 protected:
     void Begin(float deltaTime) override;
 
 private:
     void BeginDockSpace();
-    void RenderMenuBar();
     void EndDockSpace();
+
+    void RenderMenuBar();
+
+    void RenderSceneHierarchy();
+    void DrawEntityNode(entt::entity entity);
 };
 
-} // namespace MCEngine
+} // namespace MCEditor
