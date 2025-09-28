@@ -9,11 +9,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr) : Layer("ImGuiLayer"), m_WindowPtr(windowPtr)
+MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath)
+    : Layer("ImGuiLayer"), m_WindowPtr(windowPtr), m_ImGuiFilePath(filePath)
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    m_GuiFilePath = std::string(PROJECT_ROOT) + "/Editor/configs/imgui.ini";
 }
 
 void MCEngine::ImGuiLayer::OnAttach()
@@ -35,8 +33,8 @@ void MCEngine::ImGuiLayer::OnAttach()
     ImGui::StyleColorsClassic();
 
     // Read ini file
-    ImGui::GetIO().IniFilename = m_GuiFilePath.c_str();
-    ImGui::LoadIniSettingsFromDisk(m_GuiFilePath.c_str());
+    ImGui::GetIO().IniFilename = m_ImGuiFilePath.c_str();
+    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_WindowPtr->GetNativeWindowPtr()), true);
@@ -48,7 +46,7 @@ void MCEngine::ImGuiLayer::OnDetach()
     ENGINE_PROFILE_FUNCTION();
 
     // Save ini file
-    ImGui::SaveIniSettingsToDisk(m_GuiFilePath.c_str());
+    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.c_str());
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
@@ -83,23 +81,11 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
 void MCEngine::ImGuiLayer::OnImGuiRender(float deltaTime)
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    Begin();
-
-    RenderDockSpace();
-
-    ImGui::Begin("Event Info");
-    ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
-    ImGui::Text("Mouse Position: (%.1f, %.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-    ImGui::Text("Mouse Buttons: Left(%d), Right(%d), Middle(%d)", ImGui::GetIO().MouseDown[0],
-                ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
-    ImGui::End();
-
+    Begin(deltaTime);
     End();
 }
 
-void MCEngine::ImGuiLayer::Begin()
+void MCEngine::ImGuiLayer::Begin(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -126,42 +112,4 @@ void MCEngine::ImGuiLayer::End()
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
     }
-}
-
-void MCEngine::ImGuiLayer::RenderDockSpace()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-                                    ImGuiWindowFlags_MenuBar;
-
-    ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(viewport->Size);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-    ImGui::Begin("DockSpace", nullptr, window_flags);
-    ImGui::PopStyleColor();
-
-    ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-
-    // Menu Bar
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            if (ImGui::MenuItem("Exit"))
-            {
-                m_WindowPtr->SetRunning(false);
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
-
-    ImGui::End();
 }

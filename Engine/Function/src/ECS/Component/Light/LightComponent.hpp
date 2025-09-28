@@ -10,7 +10,6 @@ class LightComponent : public Component
 public:
     LightComponent(const glm::vec4 &color = glm::vec4(1.0f), float intensity = 1.0f, float range = 10.0f,
                    float spotAngle = 45.0f);
-    virtual ~LightComponent() override = default;
 
     const glm::vec4 &GetColor() const { return m_Color; }
     float GetIntensity() const { return m_Intensity; }

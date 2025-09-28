@@ -10,7 +10,6 @@ class TransformComponent : public Component
 public:
     TransformComponent(const glm::vec3 &position = glm::vec3(0.0f), const glm::vec3 &rotation = glm::vec3(0.0f),
                        const glm::vec3 &scale = glm::vec3(1.0f));
-    virtual ~TransformComponent() override = default;
 
     const glm::vec3 &GetPosition() const { return m_Position; }
     const glm::vec3 &GetRotation() const { return m_Rotation; }

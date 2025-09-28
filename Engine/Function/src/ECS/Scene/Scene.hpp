@@ -12,13 +12,13 @@ class Scene
 {
 public:
     Scene();
-    virtual ~Scene();
+    ~Scene();
 
     entt::registry &GetRegistry() { return m_Registry; }
 
 public:
-    virtual void OnEvent(Event &event) {}
-    virtual void Update(float deltaTime);
+    void OnEvent(Event &event) {}
+    void Update(float deltaTime);
     void Render() const;
 
 protected:

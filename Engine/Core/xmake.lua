@@ -18,4 +18,4 @@ target("Core")
 
     -- Graphics
     add_packages("glfw", "glad", "stb");
-    add_packages("imgui");
+    add_packages("imgui", {public = true});

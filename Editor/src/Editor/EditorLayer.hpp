@@ -10,7 +10,6 @@ class EditorLayer : public Layer
 
 public:
     EditorLayer();
-    virtual ~EditorLayer() = default;
 
     void OnAttach() override {}
     void OnDetach() override {}

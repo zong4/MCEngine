@@ -27,7 +27,6 @@ class OrthoCameraComponent : public CameraComponent
 
 public:
     OrthoCameraComponent(const glm::vec3 &size);
-    virtual ~OrthoCameraComponent() override = default;
 
     const glm::vec3 &GetSize() const { return m_Size; }
     void SetSize(const glm::vec3 &size);
@@ -43,7 +42,6 @@ class PerspectiveCameraComponent : public CameraComponent
 
 public:
     PerspectiveCameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
-    virtual ~PerspectiveCameraComponent() override = default;
 
     float GetFOV() const { return m_FOV; }
     float GetAspectRatio() const { return m_AspectRatio; }

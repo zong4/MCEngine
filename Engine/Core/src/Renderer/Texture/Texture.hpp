@@ -10,7 +10,7 @@ class Texture
 public:
     Texture(void *data, int width, int height);
     Texture(const std::string &path);
-    virtual ~Texture();
+    ~Texture();
 
     unsigned int GetRendererID() const { return m_RendererID; }
 

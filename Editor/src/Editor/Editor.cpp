@@ -1,13 +1,11 @@
 #include "Editor.hpp"
 
-#include "EditorLayer.hpp"
-
 MCEditor::Editor::Editor(const MCEngine::WindowProps &props) : Application(props)
 {
     ENGINE_PROFILE_FUNCTION();
 
     AddLayer(std::make_shared<MCEngine::EditorLayer>());
-    AddLayer(std::make_shared<MCEngine::ImGuiLayer>(m_WindowPtr));
+    AddLayer(std::make_shared<MCEngine::EditorImGuiLayer>(m_WindowPtr));
 
     LOG_EDITOR_INFO("Editor created.");
 }
