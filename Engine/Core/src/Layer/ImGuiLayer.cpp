@@ -9,8 +9,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath)
-    : Layer("ImGuiLayer"), m_WindowPtr(windowPtr), m_ImGuiFilePath(filePath)
+MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath,
+                                 const std::string &name)
+    : Layer(name), m_WindowPtr(windowPtr), m_ImGuiFilePath(filePath)
 {
 }
 

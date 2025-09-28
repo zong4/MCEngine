@@ -5,23 +5,27 @@
 namespace MCEngine
 {
 
-class EditorLayer : public Layer
+class EditorLayer : public ImGuiLayer
 {
 
 public:
-    EditorLayer();
-
-    void OnAttach() override {}
-    void OnDetach() override {}
+    EditorLayer(std::shared_ptr<Window> windowPtr);
 
 public:
     void OnEvent(Event &event) override;
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
-    void OnImGuiRender(float deltaTime) override {}
 
 private:
     std::shared_ptr<Scene> m_Scene;
+
+protected:
+    void Begin(float deltaTime) override;
+
+private:
+    void BeginDockSpace();
+    void RenderMenuBar();
+    void EndDockSpace();
 };
 
 } // namespace MCEngine

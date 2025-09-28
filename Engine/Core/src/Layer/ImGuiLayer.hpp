@@ -8,7 +8,7 @@ namespace MCEngine
 class ImGuiLayer : public Layer
 {
 public:
-    ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath);
+    ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath, const std::string &name = "ImGuiLayer");
     virtual ~ImGuiLayer() override = default;
 
     void OnAttach() override;
