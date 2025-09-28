@@ -14,6 +14,16 @@
         }                                                                                                              \
     }
 
+MCEngine::Texture::Texture(void *data, int width, int height)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glGenTextures(1, &m_RendererID);
+    glBindTexture(GL_TEXTURE_2D, m_RendererID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    GL_ERROR();
+}
+
 MCEngine::Texture::Texture(const std::string &path)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -54,13 +64,6 @@ MCEngine::Texture::~Texture()
     glDeleteTextures(1, &m_RendererID);
 }
 
-std::shared_ptr<MCEngine::Texture> MCEngine::Texture::GetWhiteTexturePtr()
-{
-    static std::shared_ptr<Texture> whiteTexturePtr =
-        std::make_shared<Texture>(new unsigned char[4]{255, 255, 255, 255}, 1, 1);
-    return whiteTexturePtr;
-}
-
 void MCEngine::Texture::Bind(unsigned int slot) const
 {
     ENGINE_PROFILE_FUNCTION();
@@ -75,16 +78,5 @@ void MCEngine::Texture::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    GL_ERROR();
-}
-
-MCEngine::Texture::Texture(void *data, int width, int height)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glGenTextures(1, &m_RendererID);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
     GL_ERROR();
 }

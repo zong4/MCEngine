@@ -10,8 +10,8 @@ class MouseMoveEvent : public MCEngine::Event
 public:
     MouseMoveEvent(double x, double y) : m_X(x), m_Y(y) {}
 
-    inline double GetX() const { return m_X; }
-    inline double GetY() const { return m_Y; }
+    double GetX() const { return m_X; }
+    double GetY() const { return m_Y; }
 
     std::string ToString() const override
     {

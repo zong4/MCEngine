@@ -1,9 +1,12 @@
 #include "InstrumentationTimer.hpp"
 
-#include "Recorder/Instrumentor/Instrumentor.hpp"
+#include "Instrumentor.hpp"
 #include <thread>
 
-MCEngine::InstrumentationTimer::InstrumentationTimer(const std::string &name) : Timer(), m_Name(name) {}
+MCEngine::InstrumentationTimer::InstrumentationTimer(const std::string &name) : m_Name(name)
+{
+    m_StartTime = std::chrono::high_resolution_clock::now();
+}
 
 MCEngine::InstrumentationTimer::~InstrumentationTimer()
 {

@@ -9,7 +9,6 @@ class Timer
 {
 public:
     Timer() { Start(); }
-    virtual ~Timer() = default;
 
     float GetElapsedSeconds() { return GetElapsedTime(); }
     float GetElapsedMilliseconds() { return GetElapsedTime() * 1000.0f; }

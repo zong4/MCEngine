@@ -1,7 +1,7 @@
 #include "ImGuiLayer.hpp"
 
 #include "Event/EventDispatcher.hpp"
-#include "Event/KeyEvent.hpp"
+#include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -100,7 +100,7 @@ void MCEngine::ImGuiLayer::End()
     ENGINE_PROFILE_FUNCTION();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.DisplaySize = ImVec2((float)m_WindowPtr->GetProps().Width, (float)m_WindowPtr->GetProps().Height);
+    io.DisplaySize = ImVec2((float)m_WindowPtr->GetProps().GetWidth(), (float)m_WindowPtr->GetProps().GetHeight());
 
     // Rendering
     ImGui::Render();

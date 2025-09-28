@@ -13,15 +13,15 @@ public:
 
     unsigned int GetRendererID() const { return m_RendererID; }
 
-public:
-    void Bind() const;
-    void Unbind() const;
-
     void SetUniformMat4(const std::string &name, glm::mat4 matrix4);
     void SetUniformVec4(const std::string &name, glm::vec4 vector4);
     void SetUniformVec3(const std::string &name, glm::vec3 vector3);
-    void SetUniformInt(const std::string &name, int value);
     void SetUniformFloat(const std::string &name, float value);
+    void SetUniformInt(const std::string &name, int value);
+
+public:
+    void Bind() const;
+    void Unbind() const;
 
 private:
     unsigned int m_RendererID = 0;

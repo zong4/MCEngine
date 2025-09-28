@@ -11,13 +11,13 @@ public:
     LayerStack() = default;
     ~LayerStack();
 
+    void PushLayer(const std::shared_ptr<Layer> &layerPtr);
+    void PopLayer(const std::shared_ptr<Layer> &layerPtr);
+
 public:
     void OnEvent(Event &event);
     void Update(float deltaTime);
     void Render(float deltaTime);
-
-    void PushLayer(const std::shared_ptr<Layer> &layerPtr);
-    void PopLayer(const std::shared_ptr<Layer> &layerPtr);
 
 private:
     std::vector<std::shared_ptr<Layer>> m_Layers;

@@ -14,8 +14,6 @@ public:
 
     unsigned int GetRendererID() const { return m_RendererID; }
 
-    static std::shared_ptr<Texture> GetWhiteTexturePtr();
-
 public:
     void Bind(unsigned int slot) const;
     void Unbind() const;

@@ -1,9 +1,10 @@
 #pragma once
 
 // Recorder
+#include "Recorder/Instrumentor/InstrumentationTimer.hpp"
 #include "Recorder/Instrumentor/Instrumentor.hpp"
 #include "Recorder/Logger/Logger.hpp"
-#include "Recorder/Timer/InstrumentationTimer.hpp"
+#include "Recorder/Timer/Timer.hpp"
 
 // Utility
 #include "Utility/ToString.hpp"

@@ -39,8 +39,8 @@ public:
 private:
     unsigned int m_RendererID = 0;
     VertexBuffer m_VertexBuffer;
-    IndexBuffer m_IndexBuffer;
     int m_AttributeCount = 0;
+    IndexBuffer m_IndexBuffer;
 
 protected:
     void Bind() const;

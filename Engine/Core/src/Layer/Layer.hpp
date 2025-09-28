@@ -11,7 +11,7 @@ public:
     Layer(const std::string &name) : m_Name(name) {}
     virtual ~Layer() = default;
 
-    inline const std::string &GetName() const { return m_Name; }
+    const std::string &GetName() const { return m_Name; }
 
     virtual void OnAttach() = 0;
     virtual void OnDetach() = 0;

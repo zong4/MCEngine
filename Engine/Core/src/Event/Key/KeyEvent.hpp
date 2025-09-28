@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.hpp"
+#include "Event/Event.hpp"
 
 namespace MCEngine
 {
@@ -10,8 +10,8 @@ class KeyEvent : public Event
 public:
     KeyEvent(int keycode, int action) : m_KeyCode(keycode), m_Action(action) {}
 
-    inline int GetKeyCode() const { return m_KeyCode; }
-    inline int GetAction() const { return m_Action; }
+    int GetKeyCode() const { return m_KeyCode; }
+    int GetAction() const { return m_Action; }
 
     std::string ToString() const override
     {

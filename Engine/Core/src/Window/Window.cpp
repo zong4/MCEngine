@@ -1,28 +1,29 @@
 #include "Window.hpp"
 
 #include "Event/EventDispatcher.hpp"
-#include "Event/KeyEvent.hpp"
+#include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-MCEngine::WindowProps::WindowProps(int width, int height, std::string title, bool vsync, float backgroundColor[4])
-    : Width(width), Height(height), Title(title), VSync(vsync),
-      BackgroundColor{backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]}
+MCEngine::WindowProps::WindowProps(const std::string &title, int width, int height, bool vsync,
+                                   const float backgroundColor[4])
+    : m_Title(title), m_Width(width), m_Height(height), m_VSync(vsync)
 {
+    std::copy(backgroundColor, backgroundColor + 4, m_BackgroundColor);
 }
 
 std::string MCEngine::WindowProps::ToString() const
 {
     std::stringstream ss;
-    ss << "WindowProps: " << Title << " (" << Width << ", " << Height << "), VSync: " << (VSync ? "true" : "false")
-       << ", BackgroundColor: (" << BackgroundColor[0] << ", " << BackgroundColor[1] << ", " << BackgroundColor[2]
-       << ", " << BackgroundColor[3] << ")";
+    ss << "WindowProps: " << m_Title << " (" << m_Width << ", " << m_Height
+       << "), VSync: " << (m_VSync ? "true" : "false") << ", BackgroundColor: (" << m_BackgroundColor[0] << ", "
+       << m_BackgroundColor[1] << ", " << m_BackgroundColor[2] << ", " << m_BackgroundColor[3] << ")";
     return ss.str();
 }
 
-MCEngine::Window::Window(WindowProps props) : m_Props(props) { Init(); }
+MCEngine::Window::Window(const WindowProps &props) : m_Props(props) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
@@ -42,8 +43,8 @@ void MCEngine::Window::PreUpdate()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glClearColor(m_Props.BackgroundColor[0], m_Props.BackgroundColor[1], m_Props.BackgroundColor[2],
-                 m_Props.BackgroundColor[3]);
+    glClearColor(m_Props.GetBackgroundColor()[0], m_Props.GetBackgroundColor()[1], m_Props.GetBackgroundColor()[2],
+                 m_Props.GetBackgroundColor()[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -86,18 +87,18 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_SAMPLES, 4);
     LOG_ENGINE_INFO("4x MSAA enabled");
 
-    m_NativeWindowPtr = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
+    m_NativeWindowPtr =
+        glfwCreateWindow(m_Props.GetWidth(), m_Props.GetHeight(), m_Props.GetTitle().c_str(), nullptr, nullptr);
     if (!m_NativeWindowPtr)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
-    LOG_ENGINE_INFO("GLFW window created: " + m_Props.Title + " (" + std::to_string(m_Props.Width) + ", " +
-                    std::to_string(m_Props.Height) + ")");
+    LOG_ENGINE_INFO("GLFW window created: " + m_Props.ToString());
 
     glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     SetCallbacks();
-    SetVSync(m_Props.VSync);
+    SetVSync(m_Props.IsVSync());
 
     // Initialize GLAD
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -119,6 +120,16 @@ void MCEngine::Window::Init()
     glEnable(GL_MULTISAMPLE);
 }
 
+void MCEngine::Window::Shutdown()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindowPtr));
+    glfwTerminate();
+
+    LOG_ENGINE_INFO("Window destroyed.");
+}
+
 void MCEngine::Window::SetCallbacks()
 {
     ENGINE_PROFILE_FUNCTION();
@@ -133,6 +144,8 @@ void MCEngine::Window::SetCallbacks()
                                        WindowResizeEvent event(width, height);
 
                                        Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
+                                       win->GetProps().SetWidth(width);
+                                       win->GetProps().SetHeight(height);
                                        win->OnEvent(event);
                                    });
 
@@ -165,18 +178,8 @@ void MCEngine::Window::SetVSync(bool enabled)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Props.VSync = enabled;
+    m_Props.SetVSync(enabled);
     enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
 
     LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
-}
-
-void MCEngine::Window::Shutdown()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindowPtr));
-    glfwTerminate();
-
-    LOG_ENGINE_INFO("Window destroyed.");
 }

@@ -16,7 +16,6 @@ public:
         {
             bool result = func(*ev);
             m_Event.SetHandled(result);
-
             // result ? LOG_ENGINE_TRACE("Event dispatched: " + m_Event.ToString())
             //        : LOG_ENGINE_WARN("Event not handled: " + m_Event.ToString());
             return result;

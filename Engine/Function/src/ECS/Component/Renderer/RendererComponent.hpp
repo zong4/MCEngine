@@ -10,7 +10,7 @@ class SpriteRendererComponent : public Component
 
 public:
     SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color = glm::vec4(1.0f),
-                            std::shared_ptr<Texture> texturePtr = Texture::GetWhiteTexturePtr());
+                            std::shared_ptr<Texture> texturePtr = TextureLibrary::GetInstance().GetTexture("White"));
 
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
     const glm::vec4 &GetColor() const { return m_Color; }
