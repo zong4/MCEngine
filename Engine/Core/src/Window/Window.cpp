@@ -105,10 +105,12 @@ void MCEngine::Window::Init()
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
+    LOG_ENGINE_INFO("Depth testing enabled");
 
     // Enable blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    LOG_ENGINE_INFO("Blending enabled: SRC_ALPHA, ONE_MINUS_SRC_ALPHA");
 
     // Enable multi-sampling
     int maxSamples = 0;

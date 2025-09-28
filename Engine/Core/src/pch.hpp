@@ -5,6 +5,9 @@
 #include "Recorder/Logger/Logger.hpp"
 #include "Recorder/Timer/InstrumentationTimer.hpp"
 
+// Utility
+#include "Utility/ToString.hpp"
+
 // Standard Library
 #include <array>
 #include <chrono>

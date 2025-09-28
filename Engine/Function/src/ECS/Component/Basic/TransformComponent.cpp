@@ -4,6 +4,8 @@ MCEngine::TransformComponent::TransformComponent(const glm::vec3 &position, cons
                                                  const glm::vec3 &scale)
     : m_Position(position), m_Rotation(rotation), m_Scale(scale)
 {
+    LOG_ENGINE_INFO("Transform Component created with Position: " + ToString(m_Position) +
+                    ", Rotation: " + ToString(m_Rotation) + ", Scale: " + ToString(m_Scale));
 }
 
 glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const

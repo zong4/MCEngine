@@ -12,7 +12,7 @@ public:
     Texture(const std::string &path);
     virtual ~Texture();
 
-    inline unsigned int GetRendererID() const { return m_RendererID; }
+    unsigned int GetRendererID() const { return m_RendererID; }
 
     static std::shared_ptr<Texture> GetWhiteTexturePtr();
 

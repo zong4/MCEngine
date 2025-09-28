@@ -28,6 +28,8 @@ public:
     VertexArray(VertexArray &&);
     VertexArray &operator=(VertexArray &&);
 
+    unsigned int GetRendererID() const { return m_RendererID; }
+
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
 

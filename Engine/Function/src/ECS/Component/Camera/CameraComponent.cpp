@@ -13,13 +13,13 @@ void MCEngine::CameraComponent::UpdateViewMatrix(const glm::vec3 &position, cons
     glm::vec3 up = glm::normalize(glm::vec3(rotationXYZ * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
 
     m_ViewMatrix = glm::lookAt(position, position + front, up);
-
-    LOG_ENGINE_TRACE("Camera Position: " + std::to_string(position.x) + ", " + std::to_string(position.y) + ", " +
-                     std::to_string(position.z) + "; Rotation: " + std::to_string(rotation.x) + ", " +
-                     std::to_string(rotation.y) + ", " + std::to_string(rotation.z));
 }
 
-MCEngine::OrthoCameraComponent::OrthoCameraComponent(const glm::vec3 &size) : m_Size(size) { UpdateProjectionMatrix(); }
+MCEngine::OrthoCameraComponent::OrthoCameraComponent(const glm::vec3 &size) : m_Size(size)
+{
+    UpdateProjectionMatrix();
+    LOG_ENGINE_INFO("Ortho Camera Created with Size: " + ToString(size));
+}
 
 void MCEngine::OrthoCameraComponent::SetSize(const glm::vec3 &size)
 {
@@ -33,9 +33,6 @@ void MCEngine::OrthoCameraComponent::UpdateProjectionMatrix()
 
     m_ProjectionMatrix = glm::ortho(-m_Size.x / 2.0f, m_Size.x / 2.0f, -m_Size.y / 2.0f, m_Size.y / 2.0f,
                                     -m_Size.z / 2.0f, m_Size.z / 2.0f);
-
-    LOG_ENGINE_TRACE("Ortho Camera Size: " + std::to_string(m_Size.x) + ", " + std::to_string(m_Size.y) + ", " +
-                     std::to_string(m_Size.z));
 }
 
 MCEngine::PerspectiveCameraComponent::PerspectiveCameraComponent(float fov, float aspectRatio, float nearClip,
@@ -43,6 +40,9 @@ MCEngine::PerspectiveCameraComponent::PerspectiveCameraComponent(float fov, floa
     : m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
 {
     UpdateProjectionMatrix();
+    LOG_ENGINE_INFO("Perspective Camera Created with FOV: " + std::to_string(fov) +
+                    ", Aspect Ratio: " + std::to_string(aspectRatio) + ", Near Clip: " + std::to_string(nearClip) +
+                    ", Far Clip: " + std::to_string(farClip));
 }
 
 void MCEngine::PerspectiveCameraComponent::SetFOV(float fov)
@@ -74,8 +74,4 @@ void MCEngine::PerspectiveCameraComponent::UpdateProjectionMatrix()
     ENGINE_PROFILE_FUNCTION();
 
     m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
-
-    LOG_ENGINE_TRACE("Perspective Camera FOV: " + std::to_string(m_FOV) +
-                     "; Aspect Ratio: " + std::to_string(m_AspectRatio) + "; Near Clip: " + std::to_string(m_NearClip) +
-                     "; Far Clip: " + std::to_string(m_FarClip));
 }
