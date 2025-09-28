@@ -3,11 +3,18 @@
 // Output
 out vec4 FragColor;
 
-// Uniforms
+// Object Uniforms
 uniform vec4 u_ObjectColor;
+// Camera Uniforms
 uniform vec3 u_ViewPos;
+// Light Uniforms
 uniform vec3 u_LightPos;
 uniform vec4 u_LightColor;
+// Shader Uniforms
+uniform float u_AmbientStrength;
+uniform float u_DiffuseStrength;
+uniform float u_SpecularStrength;
+uniform int u_Shininess;
 
 // Inputs
 in vec3 o_FragPos;
@@ -16,22 +23,19 @@ in vec3 o_Normal;
 void main()
 {
     // Ambient
-    float ambientStrength = 0.3;
-    vec4 ambient = ambientStrength * u_LightColor;
+    vec4 ambient = u_AmbientStrength * u_LightColor;
 
     // Diffuse
-    float diffuseStrength = 1.0;
     vec3 norm = normalize(o_Normal);
     vec3 lightDir = normalize(u_LightPos - o_FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec4 diffuse = vec4(diffuseStrength * diff * u_LightColor);
+    vec4 diffuse = vec4(u_DiffuseStrength * diff * u_LightColor);
 
     // Specular
-    float specularStrength = 1.0;
     vec3 viewDir = normalize(u_ViewPos - o_FragPos);
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32); // shininess = 32
-    vec4 specular = vec4(specularStrength * spec * u_LightColor);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), u_Shininess);
+    vec4 specular = vec4(u_SpecularStrength * spec * u_LightColor);
 
     // Final color
     vec4 result = (ambient + diffuse + specular) * u_ObjectColor;

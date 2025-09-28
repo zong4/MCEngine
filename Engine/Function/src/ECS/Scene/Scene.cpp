@@ -196,6 +196,12 @@ void MCEngine::Scene::Render() const
         shader->SetUniformVec3("u_LightPos", m_Registry.get<TransformComponent>(m_Light).GetPosition());
         shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).GetColor());
 
+        // Shader
+        shader->SetUniformFloat("u_AmbientStrength", 0.3f);
+        shader->SetUniformFloat("u_DiffuseStrength", 1.0f);
+        shader->SetUniformFloat("u_SpecularStrength", 1.0f);
+        shader->SetUniformInt("u_Shininess", 32);
+
         auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
         for (auto entity : meshView)
         {
