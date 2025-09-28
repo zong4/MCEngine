@@ -18,6 +18,7 @@ public:
 
 private:
     std::shared_ptr<MCEngine::Scene> m_Scene;
+    entt::entity m_SelectedEntity = entt::null;
 
 protected:
     void Begin(float deltaTime) override;
@@ -27,9 +28,9 @@ private:
     void EndDockSpace();
 
     void RenderMenuBar();
-
     void RenderSceneHierarchy();
     void DrawEntityNode(entt::entity entity);
+    void RenderInspector();
 };
 
 } // namespace MCEditor

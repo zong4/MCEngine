@@ -26,6 +26,9 @@ public:
     const glm::vec3 &GetPosition() const { return m_Position; }
     const glm::vec3 &GetRotation() const { return m_Rotation; }
     const glm::vec3 &GetScale() const { return m_Scale; }
+    glm::vec3 &GetPosition() { return m_Position; }
+    glm::vec3 &GetRotation() { return m_Rotation; }
+    glm::vec3 &GetScale() { return m_Scale; }
     glm::mat4 GetTransformMatrix() const;
 
     void SetPosition(const glm::vec3 &position) { m_Position = position; }

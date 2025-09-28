@@ -64,6 +64,7 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
     BeginDockSpace();
 
     RenderSceneHierarchy();
+    RenderInspector();
 
     ImGui::Begin("Event Info");
     ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
@@ -150,6 +151,9 @@ void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
     bool opened =
         ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, node_flags, tag.GetTag().c_str(), (uint32_t)entity);
 
+    if (ImGui::IsItemClicked())
+        m_SelectedEntity = entity;
+
     if (opened)
     {
         if (auto *rel = registry.try_get<MCEngine::RelationshipComponent>(entity))
@@ -161,4 +165,34 @@ void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
         }
         ImGui::TreePop();
     }
+}
+
+void MCEditor::EditorLayer::RenderInspector()
+{
+    ImGui::Begin("Inspector");
+
+    if (m_SelectedEntity != entt::null && m_Scene->GetRegistry().valid(m_SelectedEntity))
+    {
+        auto &registry = m_Scene->GetRegistry();
+
+        // TagComponent
+        if (auto *tag = registry.try_get<MCEngine::TagComponent>(m_SelectedEntity))
+        {
+            char buffer[256];
+            memset(buffer, 0, sizeof(buffer));
+            strncpy(buffer, tag->GetTag().c_str(), sizeof(buffer));
+            if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+                tag->SetTag(std::string(buffer));
+        }
+
+        // TransformComponent
+        if (auto *transform = registry.try_get<MCEngine::TransformComponent>(m_SelectedEntity))
+        {
+            ImGui::DragFloat3("Position", glm::value_ptr(transform->GetPosition()), 0.1f);
+            ImGui::DragFloat3("Rotation", glm::value_ptr(transform->GetRotation()), 0.1f);
+            ImGui::DragFloat3("Scale", glm::value_ptr(transform->GetScale()), 0.1f);
+        }
+    }
+
+    ImGui::End();
 }
