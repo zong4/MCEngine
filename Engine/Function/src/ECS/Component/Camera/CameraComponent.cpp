@@ -1,16 +1,101 @@
 #include "CameraComponent.hpp"
 
-MCEngine::CameraComponent::CameraComponent(TransformComponent *transformComponent)
-    : m_TransformComponent(transformComponent)
+MCEngine::CameraComponent::CameraComponent(TransformComponent *transformComponent, const glm::vec3 &size)
+    : m_Type(CameraType::Ortho), m_TransformComponent(transformComponent), m_Size(size)
 {
-    UpdateViewMatrix(m_TransformComponent->GetPosition(), m_TransformComponent->GetRotation());
+    UpdateViewMatrix();
+    UpdateProjectionMatrix();
+    LOG_ENGINE_INFO("Ortho Camera Created with Size: " + ToString(size));
+}
+
+MCEngine::CameraComponent::CameraComponent(TransformComponent *transformComponent, float fov, float aspectRatio,
+                                           float nearClip, float farClip)
+    : m_Type(CameraType::Perspective), m_TransformComponent(transformComponent), m_FOV(fov), m_AspectRatio(aspectRatio),
+      m_NearClip(nearClip), m_FarClip(farClip)
+{
+    UpdateViewMatrix();
+    UpdateProjectionMatrix();
+    LOG_ENGINE_INFO("Perspective Camera Created with FOV: " + std::to_string(fov) +
+                    ", Aspect Ratio: " + std::to_string(aspectRatio) + ", Near Clip: " + std::to_string(nearClip) +
+                    ", Far Clip: " + std::to_string(farClip));
 }
 
 MCEngine::CameraComponent::~CameraComponent() { m_TransformComponent = nullptr; }
 
-void MCEngine::CameraComponent::UpdateViewMatrix(const glm::vec3 &position, const glm::vec3 &rotation)
+void MCEngine::CameraComponent::Update(float deltaTime)
+{
+    if (m_TransformComponent->IsDirty())
+    {
+        UpdateViewMatrix();
+    }
+}
+
+void MCEngine::CameraComponent::SetSize(const glm::vec3 &size)
+{
+    if (m_Type != CameraType::Ortho)
+    {
+        LOG_ENGINE_WARN("Trying to set size on a non-ortho camera.");
+        return;
+    }
+
+    m_Size = size;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetFOV(float fov)
+{
+    if (m_Type != CameraType::Perspective)
+    {
+        LOG_ENGINE_WARN("Trying to set FOV on a non-perspective camera.");
+        return;
+    }
+
+    m_FOV = fov;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetAspectRatio(float aspectRatio)
+{
+    if (m_Type != CameraType::Perspective)
+    {
+        LOG_ENGINE_WARN("Trying to set Aspect Ratio on a non-perspective camera.");
+        return;
+    }
+
+    m_AspectRatio = aspectRatio;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetNearClip(float nearClip)
+{
+    if (m_Type != CameraType::Perspective)
+    {
+        LOG_ENGINE_WARN("Trying to set Near Clip on a non-perspective camera.");
+        return;
+    }
+
+    m_NearClip = nearClip;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetFarClip(float farClip)
+{
+    if (m_Type != CameraType::Perspective)
+    {
+        LOG_ENGINE_WARN("Trying to set Far Clip on a non-perspective camera.");
+        return;
+    }
+
+    m_FarClip = farClip;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::UpdateViewMatrix()
 {
     ENGINE_PROFILE_FUNCTION();
+
+    glm::vec3 position = m_TransformComponent->GetPosition();
+    glm::vec3 rotation = m_TransformComponent->GetRotation();
 
     glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -23,74 +108,17 @@ void MCEngine::CameraComponent::UpdateViewMatrix(const glm::vec3 &position, cons
     m_ViewMatrix = glm::lookAt(position, position + front, up);
 }
 
-void MCEngine::CameraComponent::Update(float deltaTime)
+void MCEngine::CameraComponent::UpdateProjectionMatrix()
 {
-    if (m_TransformComponent->IsDirty())
+    ENGINE_PROFILE_FUNCTION();
+
+    if (m_Type == CameraType::Ortho)
     {
-        UpdateViewMatrix(m_TransformComponent->GetPosition(), m_TransformComponent->GetRotation());
-        UpdateProjectionMatrix();
+        m_ProjectionMatrix = glm::ortho(-m_Size.x / 2.0f, m_Size.x / 2.0f, -m_Size.y / 2.0f, m_Size.y / 2.0f,
+                                        -m_Size.z / 2.0f, m_Size.z / 2.0f);
     }
-}
-
-MCEngine::OrthoCameraComponent::OrthoCameraComponent(TransformComponent *transformComponent, const glm::vec3 &size)
-    : CameraComponent(transformComponent), m_Size(size)
-{
-    UpdateProjectionMatrix();
-    LOG_ENGINE_INFO("Ortho Camera Created with Size: " + ToString(size));
-}
-
-void MCEngine::OrthoCameraComponent::SetSize(const glm::vec3 &size)
-{
-    m_Size = size;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::OrthoCameraComponent::UpdateProjectionMatrix()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_ProjectionMatrix = glm::ortho(-m_Size.x / 2.0f, m_Size.x / 2.0f, -m_Size.y / 2.0f, m_Size.y / 2.0f,
-                                    -m_Size.z / 2.0f, m_Size.z / 2.0f);
-}
-
-MCEngine::PerspectiveCameraComponent::PerspectiveCameraComponent(TransformComponent *transformComponent, float fov,
-                                                                 float aspectRatio, float nearClip, float farClip)
-    : CameraComponent(transformComponent), m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip),
-      m_FarClip(farClip)
-{
-    UpdateProjectionMatrix();
-    LOG_ENGINE_INFO("Perspective Camera Created with FOV: " + std::to_string(fov) +
-                    ", Aspect Ratio: " + std::to_string(aspectRatio) + ", Near Clip: " + std::to_string(nearClip) +
-                    ", Far Clip: " + std::to_string(farClip));
-}
-
-void MCEngine::PerspectiveCameraComponent::SetFOV(float fov)
-{
-    m_FOV = fov;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::PerspectiveCameraComponent::SetAspectRatio(float aspectRatio)
-{
-    m_AspectRatio = aspectRatio;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::PerspectiveCameraComponent::SetNearClip(float nearClip)
-{
-    m_NearClip = nearClip;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::PerspectiveCameraComponent::SetFarClip(float farClip)
-{
-    m_FarClip = farClip;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::PerspectiveCameraComponent::UpdateProjectionMatrix()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+    else if (m_Type == CameraType::Perspective)
+    {
+        m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+    }
 }

@@ -19,7 +19,7 @@ public:
     void SetColor(const glm::vec4 &color) { m_Color = color; }
     void SetTexturePtr(std::shared_ptr<Texture> texturePtr) { m_TexturePtr = texturePtr; }
 
-    void Update(float deltaTime) override {}
+    virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
@@ -39,7 +39,7 @@ public:
 
     void SetColor(const glm::vec4 &color) { m_Color = color; }
 
-    void Update(float deltaTime) override {}
+    virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;

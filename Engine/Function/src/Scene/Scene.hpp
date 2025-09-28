@@ -25,7 +25,6 @@ protected:
     entt::entity m_Camera;
     entt::entity m_Camera2D;
     entt::entity m_Camera3D;
-    CameraComponent *m_CameraComponent = nullptr;
     float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 15.0f;
 

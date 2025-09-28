@@ -13,7 +13,7 @@ public:
     const std::string &GetTag() const { return m_Tag; }
     void SetTag(const std::string &tag) { m_Tag = tag; }
 
-    void Update(float deltaTime) override {}
+    virtual void Update(float deltaTime) override {}
 
 private:
     std::string m_Tag;
@@ -39,7 +39,7 @@ public:
     void SetRotation(const glm::vec3 &rotation);
     void SetScale(const glm::vec3 &scale);
 
-    void Update(float deltaTime) override;
+    virtual void Update(float deltaTime) override;
 
 private:
     bool m_Dirty = true;
@@ -61,7 +61,7 @@ public:
     void AddChild(entt::entity child) { m_Children.push_back(child); }
     void RemoveChild(entt::entity child);
 
-    void Update(float deltaTime) override {}
+    virtual void Update(float deltaTime) override {}
 
 private:
     entt::entity m_Parent;

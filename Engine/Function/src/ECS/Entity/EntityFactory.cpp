@@ -51,7 +51,7 @@ entt::entity MCEngine::EntityFactory::CreateBasicOrthoCamera(entt::registry &reg
                                                              const glm::vec3 &size)
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, glm::vec3(1.0f));
-    AddComponents(registry, entity, OrthoCameraComponent(&registry.get<TransformComponent>(entity), size));
+    AddComponents(registry, entity, CameraComponent(&registry.get<TransformComponent>(entity), size));
     LOG_ENGINE_TRACE("Basic Orthographic Camera Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
@@ -62,9 +62,8 @@ entt::entity MCEngine::EntityFactory::CreateBasicPerspectiveCamera(entt::registr
                                                                    float farClip)
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, glm::vec3(1.0f));
-    AddComponents(
-        registry, entity,
-        PerspectiveCameraComponent(&registry.get<TransformComponent>(entity), fov, aspectRatio, nearClip, farClip));
+    AddComponents(registry, entity,
+                  CameraComponent(&registry.get<TransformComponent>(entity), fov, aspectRatio, nearClip, farClip));
     LOG_ENGINE_TRACE("Basic Perspective Camera Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }

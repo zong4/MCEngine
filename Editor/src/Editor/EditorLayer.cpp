@@ -153,6 +153,7 @@ void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
     }
 }
 
+// todo: add components
 void MCEditor::EditorLayer::RenderInspector()
 {
     ImGui::Begin("Inspector");
