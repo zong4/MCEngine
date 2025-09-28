@@ -34,6 +34,8 @@ public:
                                                      const glm::vec3 &position, const glm::vec3 &rotation, float fov,
                                                      float aspectRatio, float nearClip, float farClip);
 
+    static entt::entity CreateBasicPointLight(entt::registry &registry, const std::string &name);
+
     // clang-format off
     template <typename... Components>
     // clang-format on

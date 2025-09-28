@@ -8,12 +8,24 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
     ENGINE_PROFILE_FUNCTION();
 
     m_Scene = std::make_shared<MCEngine::Scene>();
+
     entt::entity squareEntity = MCEngine::EntityFactory::CreateBasicSquare(
         m_Scene->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f));
-    entt::entity cubeEntity = MCEngine::EntityFactory::CreateBasicCube(m_Scene->GetRegistry(), "Cube");
 
-    m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).AddChild(squareEntity);
-    m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(squareEntity).SetParent(cubeEntity);
+    // 3D
+    {
+        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_Scene->GetRegistry(), "Cubes");
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                entt::entity cubeEntity = MCEngine::EntityFactory::CreateBasicCube(m_Scene->GetRegistry(), "Cube",
+                                                                                   glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
+                m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
+                m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
+            }
+        }
+    }
 };
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
@@ -42,7 +54,8 @@ void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Scene->Render();
+    // m_Scene->Render2D();
+    m_Scene->Render3D();
 }
 
 void MCEditor::EditorLayer::Begin(float deltaTime)
@@ -56,12 +69,12 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
     RenderSceneHierarchy();
     RenderInspector();
 
-    ImGui::Begin("Event Info");
-    ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
-    ImGui::Text("Mouse Position: (%.1f, %.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-    ImGui::Text("Mouse Buttons: Left(%d), Right(%d), Middle(%d)", ImGui::GetIO().MouseDown[0],
-                ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
-    ImGui::End();
+    // ImGui::Begin("Event Info");
+    // ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
+    // ImGui::Text("Mouse Position: (%.1f, %.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+    // ImGui::Text("Mouse Buttons: Left(%d), Right(%d), Middle(%d)", ImGui::GetIO().MouseDown[0],
+    //             ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
+    // ImGui::End();
 
     EndDockSpace();
 }
@@ -165,19 +178,59 @@ void MCEditor::EditorLayer::RenderInspector()
         // TagComponent
         if (auto &&tag = registry.try_get<MCEngine::TagComponent>(m_SelectedEntity))
         {
-            char buffer[256];
-            memset(buffer, 0, sizeof(buffer));
-            strncpy(buffer, tag->GetTag().c_str(), sizeof(buffer));
-            if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-                tag->SetTag(std::string(buffer));
+            std::string header = "Tag Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                char buffer[256];
+                memset(buffer, 0, sizeof(buffer));
+                strncpy(buffer, tag->GetTag().c_str(), sizeof(buffer));
+                if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+                    tag->SetTag(std::string(buffer));
+            }
         }
 
         // TransformComponent
         if (auto &&transform = registry.try_get<MCEngine::TransformComponent>(m_SelectedEntity))
         {
-            ImGui::DragFloat3("Position", glm::value_ptr(transform->GetPosition()), 0.1f);
-            ImGui::DragFloat3("Rotation", glm::value_ptr(transform->GetRotation()), 0.1f);
-            ImGui::DragFloat3("Scale", glm::value_ptr(transform->GetScale()), 0.1f);
+            std::string header = "Transform Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::DragFloat3("Position", glm::value_ptr(transform->GetPosition()), 0.1f);
+                ImGui::DragFloat3("Rotation", glm::value_ptr(transform->GetRotation()), 0.1f);
+                ImGui::DragFloat3("Scale", glm::value_ptr(transform->GetScale()), 0.1f);
+            }
+        }
+
+        // SpriteRendererComponent
+        if (auto &&spriteRenderer = registry.try_get<MCEngine::SpriteRendererComponent>(m_SelectedEntity))
+        {
+            std::string header =
+                "Sprite Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::ColorEdit4("Color", glm::value_ptr(spriteRenderer->GetColor()));
+            }
+        }
+
+        // MeshRendererComponent
+        if (auto &&meshRenderer = registry.try_get<MCEngine::MeshRendererComponent>(m_SelectedEntity))
+        {
+            std::string header = "Mesh Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetColor()));
+            }
+        }
+
+        // LightComponent
+        if (auto &&light = registry.try_get<MCEngine::LightComponent>(m_SelectedEntity))
+        {
+            std::string header = "Light Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::ColorEdit4("Light Color", glm::value_ptr(light->GetColor()));
+                ImGui::DragFloat("Intensity", &light->GetIntensity(), 0.1f, 0.0f, 100.0f);
+            }
         }
     }
 

@@ -16,7 +16,8 @@ public:
 public:
     void OnEvent(Event &event) {}
     void Update(float deltaTime);
-    void Render() const;
+    void Render2D() const;
+    void Render3D() const;
 
 protected:
     entt::registry m_Registry = {};
