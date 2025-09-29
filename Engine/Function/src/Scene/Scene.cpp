@@ -1,5 +1,7 @@
 #include "Scene.hpp"
 
+#include <imgui.h>
+
 MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
@@ -17,12 +19,12 @@ void MCEngine::Scene::Update(float deltaTime)
 
     // Switch camera
     {
-        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_1))
+        if (ImGui::IsKeyDown(ImGuiKey_1))
         {
             m_MainCamera = m_Camera2D;
             LOG_ENGINE_TRACE("Switched to 2D Camera");
         }
-        if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_2))
+        if (ImGui::IsKeyDown(ImGuiKey_2))
         {
             m_MainCamera = m_Camera3D;
             LOG_ENGINE_TRACE("Switched to 3D Camera");

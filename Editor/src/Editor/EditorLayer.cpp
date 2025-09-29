@@ -89,13 +89,16 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 
     ImGuiLayer::OnEvent(event);
 
-    MCEngine::EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
-        MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
-        return true;
-    });
+    if (!event.IsHandled())
+    {
+        MCEngine::EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
+            MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
+            return true;
+        });
 
-    m_ScenePtr->OnEvent(event);
+        m_ScenePtr->OnEvent(event);
+    }
 }
 
 void MCEditor::EditorLayer::OnUpdate(float deltaTime)
@@ -103,29 +106,34 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
     ENGINE_PROFILE_FUNCTION();
 
     // Move Camera
+    if (m_SceneFocused)
     {
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_W))
+        if (ImGui::IsKeyDown(ImGuiKey_W))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
                                         glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_S))
+        if (ImGui::IsKeyDown(ImGuiKey_S))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
                                         glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_A))
+        if (ImGui::IsKeyDown(ImGuiKey_A))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
                                         glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_D))
+        if (ImGui::IsKeyDown(ImGuiKey_D))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
                                         glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_Q))
+        if (ImGui::IsKeyDown(ImGuiKey_Q))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
                                         glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_E))
+        if (ImGui::IsKeyDown(ImGuiKey_E))
             m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
                                         glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-    }
-    m_CameraPtr->Update(deltaTime);
 
-    m_ScenePtr->Update(deltaTime);
+        m_CameraPtr->Update(deltaTime);
+    }
+
+    if (m_GameFocused)
+    {
+        m_ScenePtr->Update(deltaTime);
+    }
 }
 
 void MCEditor::EditorLayer::OnRender()
@@ -328,6 +336,8 @@ void MCEditor::EditorLayer::RenderScene()
 {
     ImGui::Begin("Scene");
 
+    m_SceneFocused = ImGui::IsWindowFocused();
+
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if ((int)viewportSize.x != m_SceneFrameBufferPtr->GetWidth() ||
         (int)viewportSize.y != m_SceneFrameBufferPtr->GetHeight())
@@ -345,6 +355,8 @@ void MCEditor::EditorLayer::RenderScene()
 void MCEditor::EditorLayer::RenderGame()
 {
     ImGui::Begin("Game");
+
+    m_GameFocused = ImGui::IsWindowFocused();
 
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if ((int)viewportSize.x != m_GameFrameBufferPtr->GetWidth() ||
