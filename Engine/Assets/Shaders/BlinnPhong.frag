@@ -48,9 +48,10 @@ uniform Material u_Material;
 uniform DirectionalLight u_DirectionalLight;
 uniform PointLight u_PointLight;
 uniform SpotLight u_SpotLight;
+uniform samplerCube u_Skybox;
 
 // Inputs
-in vec3 o_FragPos;
+in vec3 o_GlobalPosistion;
 in vec3 o_Normal;
 
 // Function prototypes
@@ -63,12 +64,19 @@ float CalSpecularFactor(vec3 lightDir, vec3 viewDir, vec3 normal, float shinines
 // Main
 void main()
 {
-    vec3 viewDir = normalize(u_ViewPos - o_FragPos);
+    vec3 viewDir = normalize(u_ViewPos - o_GlobalPosistion);
 
+    // Light
     vec3 result = vec3(0.0);
     result += CalcDirectionalLight(u_DirectionalLight, viewDir);
     result += CalcPointLight(u_PointLight, viewDir);
     result += CalcSpotLight(u_SpotLight, viewDir);
+
+    // Skybox
+    vec3 I = normalize(o_GlobalPosistion - u_ViewPos);
+    vec3 R = reflect(I, normalize(o_Normal));
+    vec3 envColor = texture(u_Skybox, o_GlobalPosistion).rgb;
+    result = mix(result, envColor, 0.2);
 
     FragColor = vec4(result, u_Material.ObjectColor.a);
 }
@@ -86,13 +94,13 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir)
 
 vec3 CalcPointLight(PointLight light, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.Position - o_FragPos);
+    vec3 lightDir = normalize(light.Position - o_GlobalPosistion);
 
     float diff = CalDiffuseFactor(lightDir, o_Normal);
     float spec = CalSpecularFactor(lightDir, viewDir, o_Normal, u_Material.Shininess);
 
     // Attenuation
-    float distance = length(light.Position - o_FragPos);
+    float distance = length(light.Position - o_GlobalPosistion);
     float attenuation = 1.0 / (light.Constant + light.Linear * distance + light.Quadratic * (distance * distance));
 
     return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
@@ -102,13 +110,13 @@ vec3 CalcPointLight(PointLight light, vec3 viewDir)
 
 vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.Position - o_FragPos);
+    vec3 lightDir = normalize(light.Position - o_GlobalPosistion);
 
     float diff = CalDiffuseFactor(lightDir, o_Normal);
     float spec = CalSpecularFactor(lightDir, viewDir, o_Normal, u_Material.Shininess);
 
     // Attenuation
-    float distance = length(light.Position - o_FragPos);
+    float distance = length(light.Position - o_GlobalPosistion);
     float attenuation = 1.0 / (light.Constant + light.Linear * distance + light.Quadratic * (distance * distance));
 
     // Spotlight intensity

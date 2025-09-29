@@ -20,12 +20,12 @@ void MCEngine::Scene::Update(float deltaTime)
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_1))
         {
             m_MainCamera = m_Camera2D;
-            LOG_ENGINE_INFO("Switched to 2D Camera");
+            LOG_ENGINE_TRACE("Switched to 2D Camera");
         }
         if (KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_2))
         {
             m_MainCamera = m_Camera3D;
-            LOG_ENGINE_INFO("Switched to 3D Camera");
+            LOG_ENGINE_TRACE("Switched to 3D Camera");
         }
     }
 
@@ -57,10 +57,23 @@ void MCEngine::Scene::Render(const CameraComponent &camera) const
     RenderAll(camera.GetViewMatrix(), camera.GetProjectionMatrix(), camera.GetTransformComponent()->GetPosition());
 }
 
+void MCEngine::Scene::Resize(float width, float height)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto view = m_Registry.view<CameraComponent>();
+    for (auto entity : view)
+    {
+        auto &camera = view.get<CameraComponent>(entity);
+        camera.Resize(width, height);
+    }
+}
+
 void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 cameraPosition) const
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // 2D
     {
         auto &&shader = ShaderLibrary::GetInstance().GetShader("Texture");
         shader->Bind();
@@ -73,10 +86,7 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
         {
             auto &&[transform, sprite] = spriteView.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            // Transform component
             shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-
-            // Sprite component
             shader->SetUniformVec4("u_Color", sprite.GetColor());
             shader->SetUniformInt("u_Texture", 0);
             sprite.GetTexturePtr()->Bind(0);
@@ -87,6 +97,7 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
         shader->Unbind();
     }
 
+    // 3D
     {
         auto &&shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong");
         shader->Bind();
@@ -105,12 +116,12 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
             if (light.GetType() == LightType::Directional)
             {
                 shader->SetUniformVec3("u_DirectionalLight.Position", glm::normalize(-transform.GetPosition()));
-                shader->SetUniformVec3("u_DirectionalLight.Color", light.GetColor());
+                shader->SetUniformVec3("u_DirectionalLight.Color", light.GetColor() * light.GetIntensity());
             }
             else if (light.GetType() == LightType::Point)
             {
                 shader->SetUniformVec3("u_PointLight.Position", transform.GetPosition());
-                shader->SetUniformVec3("u_PointLight.Color", light.GetColor());
+                shader->SetUniformVec3("u_PointLight.Color", light.GetColor() * light.GetIntensity());
                 shader->SetUniformFloat("u_PointLight.Constant", light.GetConstant());
                 shader->SetUniformFloat("u_PointLight.Linear", light.GetLinear());
                 shader->SetUniformFloat("u_PointLight.Quadratic", light.GetQuadratic());
@@ -119,7 +130,7 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
             {
                 shader->SetUniformVec3("u_SpotLight.Position", transform.GetPosition());
                 shader->SetUniformVec3("u_SpotLight.Direction", -transform.GetUp());
-                shader->SetUniformVec3("u_SpotLight.Color", light.GetColor());
+                shader->SetUniformVec3("u_SpotLight.Color", light.GetColor() * light.GetIntensity());
                 shader->SetUniformFloat("u_SpotLight.Constant", light.GetConstant());
                 shader->SetUniformFloat("u_SpotLight.Linear", light.GetLinear());
                 shader->SetUniformFloat("u_SpotLight.Quadratic", light.GetQuadratic());
@@ -140,5 +151,31 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
         }
 
         shader->Unbind();
+    }
+
+    // Skybox
+    {
+        RendererCommand::DisableDepthTest();
+        RendererCommand::DisableFaceCulling();
+        auto &&shader = ShaderLibrary::GetInstance().GetShader("Skybox");
+        shader->Bind();
+
+        shader->SetUniformMat4("u_View", viewMatrix);
+        shader->SetUniformMat4("u_Projection", projectionMatrix);
+
+        auto skyboxView = m_Registry.view<SkyboxComponent>();
+        for (auto entity : skyboxView)
+        {
+            auto &&skybox = skyboxView.get<SkyboxComponent>(entity);
+
+            shader->SetUniformInt("u_Skybox", 0);
+            skybox.GetTextureCubePtr()->Bind(0);
+
+            VAOLibrary::GetInstance().GetVAO("Skybox")->Render();
+        }
+
+        shader->Unbind();
+        RendererCommand::EnableDepthTest();
+        RendererCommand::EnableFaceCulling();
     }
 }

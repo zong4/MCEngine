@@ -10,15 +10,15 @@ uniform mat4 u_View;
 uniform mat4 u_Projection;
 
 // Outputs
-out vec3 o_FragPos;
+out vec3 o_GlobalPosistion;
 out vec3 o_Normal;
 
 void main()
 {
     // Outputs
-    o_FragPos = vec3(u_Model * vec4(aPos, 1.0));
+    o_GlobalPosistion = vec3(u_Model * vec4(aPos, 1.0));
     o_Normal = normalize(mat3(transpose(inverse(u_Model))) * aNormal);
 
     // Final vertex position
-    gl_Position = u_Projection * u_View * vec4(o_FragPos, 1.0);
+    gl_Position = u_Projection * u_View * vec4(o_GlobalPosistion, 1.0);
 }

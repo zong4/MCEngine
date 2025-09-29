@@ -19,7 +19,7 @@ MCEngine::FrameBuffer::FrameBuffer(int width, int height, unsigned int renderBuf
     glGenFramebuffers(1, &m_RendererID);
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-    m_TexturePtr = std::make_shared<Texture>(width, height, nullptr);
+    m_TexturePtr = std::make_shared<Texture2D>(width, height, nullptr);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
     GL_ERROR();
 

@@ -52,3 +52,11 @@ void MCEngine::LightComponent::SetCutOff(float cutOff, float outerCutOff)
     m_CutOff = cutOff;
     m_OuterCutOff = outerCutOff;
 }
+
+MCEngine::SkyboxComponent::SkyboxComponent(const std::string &directory)
+{
+    m_TextureCubePtr = std::make_shared<TextureCube>(directory);
+    LOG_ENGINE_INFO("Skybox Component created with directory: " + directory);
+}
+
+MCEngine::SkyboxComponent::~SkyboxComponent() {}

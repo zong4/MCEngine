@@ -34,7 +34,7 @@ void MCEngine::CameraComponent::Resize(float width, float height)
 {
     if (m_Type == CameraType::Ortho)
     {
-        m_Size = glm::vec3(width, height, m_Size.z);
+        m_Size = glm::vec3(width / 100.0f, height / 100.0f, m_Size.z);
     }
     else if (m_Type == CameraType::Perspective)
     {

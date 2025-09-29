@@ -1,7 +1,7 @@
 #include "RendererComponent.hpp"
 
 MCEngine::SpriteRendererComponent::SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color,
-                                                           std::shared_ptr<Texture> texturePtr)
+                                                           std::shared_ptr<Texture2D> texturePtr)
     : m_VAOPtr(vaoPtr), m_Color(color), m_TexturePtr(texturePtr)
 {
     LOG_ENGINE_INFO(

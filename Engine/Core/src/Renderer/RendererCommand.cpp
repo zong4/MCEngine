@@ -34,15 +34,13 @@ void MCEngine::RendererCommand::EnableDepthTest()
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    LOG_ENGINE_INFO("Depth test enabled");
 }
 
 void MCEngine::RendererCommand::DisableDepthTest()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glDisable(GL_DEPTH_TEST);
-    LOG_ENGINE_INFO("Depth test disabled");
+    glDepthFunc(GL_LEQUAL);
 }
 
 void MCEngine::RendererCommand::EnableBlend()
@@ -51,7 +49,7 @@ void MCEngine::RendererCommand::EnableBlend()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    LOG_ENGINE_INFO("Blend enabled");
+    LOG_ENGINE_TRACE("Blend enabled");
 }
 
 void MCEngine::RendererCommand::DisableBlend()
@@ -59,7 +57,6 @@ void MCEngine::RendererCommand::DisableBlend()
     ENGINE_PROFILE_FUNCTION();
 
     glDisable(GL_BLEND);
-    LOG_ENGINE_INFO("Blend disabled");
 }
 
 void MCEngine::RendererCommand::EnableFaceCulling()
@@ -67,7 +64,6 @@ void MCEngine::RendererCommand::EnableFaceCulling()
     ENGINE_PROFILE_FUNCTION();
 
     glEnable(GL_CULL_FACE);
-    LOG_ENGINE_INFO("Face culling enabled");
 }
 
 void MCEngine::RendererCommand::DisableFaceCulling()
@@ -75,7 +71,6 @@ void MCEngine::RendererCommand::DisableFaceCulling()
     ENGINE_PROFILE_FUNCTION();
 
     glDisable(GL_CULL_FACE);
-    LOG_ENGINE_INFO("Face culling disabled");
 }
 
 void MCEngine::RendererCommand::EnableMultisampling()
@@ -85,7 +80,7 @@ void MCEngine::RendererCommand::EnableMultisampling()
     // Enable multi-sampling
     int maxSamples = 0;
     glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
-    LOG_ENGINE_INFO("Max samples supported: " + std::to_string(maxSamples));
+    LOG_ENGINE_TRACE("Max samples supported: " + std::to_string(maxSamples));
     glEnable(GL_MULTISAMPLE);
 }
 
@@ -94,5 +89,5 @@ void MCEngine::RendererCommand::DisableMultisampling()
     ENGINE_PROFILE_FUNCTION();
 
     glDisable(GL_MULTISAMPLE);
-    LOG_ENGINE_INFO("Multi-sampling disabled");
+    LOG_ENGINE_TRACE("Multi-sampling disabled");
 }

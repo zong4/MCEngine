@@ -20,7 +20,7 @@ public:
     unsigned int GetRendererID() const { return m_RendererID; }
     int GetWidth() const { return m_Width; }
     int GetHeight() const { return m_Height; }
-    std::shared_ptr<Texture> GetTexturePtr() const { return m_TexturePtr; }
+    std::shared_ptr<Texture2D> GetTexturePtr() const { return m_TexturePtr; }
 
 public:
     void Bind() const;
@@ -30,7 +30,7 @@ public:
 private:
     unsigned int m_RendererID = 0;
     int m_Width = 0, m_Height = 0;
-    std::shared_ptr<Texture> m_TexturePtr = nullptr;
+    std::shared_ptr<Texture2D> m_TexturePtr = nullptr;
     std::shared_ptr<RenderBuffer> m_RenderBufferPtr = nullptr;
 };
 

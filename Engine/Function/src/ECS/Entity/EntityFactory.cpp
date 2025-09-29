@@ -24,12 +24,11 @@ entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry
 entt::entity MCEngine::EntityFactory::CreateSquare(entt::registry &registry, const std::string &name,
                                                    const glm::vec3 &position, const glm::vec3 &rotation,
                                                    const glm::vec3 &scale, const glm::vec4 &color,
-                                                   std::shared_ptr<Texture> texturePtr)
+                                                   std::shared_ptr<Texture2D> texturePtr)
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
-    AddComponents(
-        registry, entity,
-        SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentitySquare"), color, texturePtr));
+    AddComponents(registry, entity,
+                  SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), color, texturePtr));
     LOG_ENGINE_TRACE("Basic Square Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
@@ -40,7 +39,7 @@ entt::entity MCEngine::EntityFactory::CreateCube(entt::registry &registry, const
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
     AddComponents(registry, entity,
-                  MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"), material));
+                  MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"), material));
     LOG_ENGINE_TRACE("Basic Cube Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }

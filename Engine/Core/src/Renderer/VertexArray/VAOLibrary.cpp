@@ -15,8 +15,8 @@ struct IdentitySquareData
     };
     unsigned int indices[6] = {
         // note that we start from 0!
-        0, 1, 3, // first Triangle
-        1, 2, 3  // second Triangle
+        0, 3, 1, // first Triangle
+        1, 3, 2  // second Triangle
     };
 };
 inline const IdentitySquareData g_IdentitySquareData;
@@ -72,6 +72,57 @@ struct IdentityCubeData
 };
 inline const IdentityCubeData g_IdentityCubeData;
 
+struct SkyboxCubeData
+{
+    float vertices[108] = {
+        // clang-format off
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+        // clang-format on
+    };
+};
+inline const SkyboxCubeData g_SkyboxCubeData;
+
 } // namespace MCEngine
 
 MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstance()
@@ -117,13 +168,18 @@ MCEngine::VAOLibrary::VAOLibrary()
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},
                                      {1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)(3 * sizeof(float))}},
         MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)));
-    AddVAO("IdentitySquare", vertexArray);
+    AddVAO("Square", vertexArray);
 
     vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentityCubeData.vertices, sizeof(g_IdentityCubeData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)0},
                                      {1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)(3 * sizeof(float))}});
-    AddVAO("IdentityCube", vertexArray);
+    AddVAO("Cube", vertexArray);
+
+    vertexArray = std::make_shared<VertexArray>(
+        MCEngine::VertexBuffer(g_SkyboxCubeData.vertices, sizeof(g_SkyboxCubeData.vertices)),
+        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0}});
+    AddVAO("Skybox", vertexArray);
 
     LOG_ENGINE_INFO("VAO Library initialized.");
 }

@@ -21,6 +21,8 @@ public:
     void Render(CameraComponent &camera) const;
     void Render(const CameraComponent &camera) const;
 
+    void Resize(float width, float height);
+
 protected:
     entt::registry m_Registry = {};
 

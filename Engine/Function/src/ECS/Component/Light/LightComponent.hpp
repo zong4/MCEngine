@@ -51,4 +51,21 @@ private:
     float m_CutOff, m_OuterCutOff;
 };
 
+class SkyboxComponent : public Component
+{
+public:
+    SkyboxComponent(const std::string &directory);
+    ~SkyboxComponent();
+
+    std::shared_ptr<TextureCube> &GetTextureCubePtr() { return m_TextureCubePtr; }
+    const std::shared_ptr<TextureCube> &GetTextureCubePtr() const { return m_TextureCubePtr; }
+
+    void SetTextureCube(const std::shared_ptr<TextureCube> &textureCube) { m_TextureCubePtr = textureCube; }
+
+    virtual void Update(float deltaTime) override {}
+
+private:
+    std::shared_ptr<TextureCube> m_TextureCubePtr;
+};
+
 } // namespace MCEngine

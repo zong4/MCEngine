@@ -14,11 +14,16 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
         100.0f);
     m_ScenePtr = std::make_unique<MCEngine::Scene>();
 
+    m_SceneFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
+                                                                    windowPtr->GetProps().GetHeight(), 0x88F0);
+    m_GameFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
+                                                                   windowPtr->GetProps().GetHeight(), 0x88F0);
+
     // 2D
     {
         entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
             m_ScenePtr->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
-            MCEngine::TextureLibrary::GetInstance().GetTexture("02BG"));
+            MCEngine::Texture2DLibrary::GetInstance().GetTexture("02BG"));
     }
 
     // 3D
@@ -42,7 +47,7 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
             MCEngine::EntityFactory::AddComponents(
                 m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
         {
@@ -50,7 +55,7 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
             MCEngine::EntityFactory::AddComponents(
                 m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
         {
@@ -58,15 +63,18 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
             MCEngine::EntityFactory::AddComponents(
                 m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
-    }
 
-    m_SceneFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
-                                                                    windowPtr->GetProps().GetHeight(), 0x88F0);
-    m_GameFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
-                                                                   windowPtr->GetProps().GetHeight(), 0x88F0);
+        // Skybox
+        {
+            entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Skybox");
+            MCEngine::EntityFactory::AddComponents(
+                m_ScenePtr->GetRegistry(), skybox,
+                MCEngine::SkyboxComponent(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/skybox"));
+        }
+    }
 };
 
 MCEditor::EditorLayer::~EditorLayer()
@@ -343,9 +351,7 @@ void MCEditor::EditorLayer::RenderGame()
         (int)viewportSize.y != m_GameFrameBufferPtr->GetHeight())
     {
         m_GameFrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_ScenePtr->GetRegistry()
-            .get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera())
-            .Resize(viewportSize.x, viewportSize.y);
+        m_ScenePtr->Resize(viewportSize.x, viewportSize.y);
     }
 
     ImGui::Image((ImTextureID)(intptr_t)m_GameFrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize,

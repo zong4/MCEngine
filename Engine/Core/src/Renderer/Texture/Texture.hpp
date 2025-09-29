@@ -5,12 +5,12 @@
 namespace MCEngine
 {
 
-class Texture
+class Texture2D
 {
 public:
-    Texture(int width, int height, void *data);
-    Texture(const std::string &path);
-    ~Texture();
+    Texture2D(int width, int height, void *data);
+    Texture2D(const std::string &path);
+    ~Texture2D();
 
     unsigned int GetRendererID() const { return m_RendererID; }
 
@@ -23,6 +23,25 @@ public:
 private:
     unsigned int m_RendererID;
     unsigned int m_Format;
+};
+
+class TextureCube
+{
+public:
+    TextureCube(const std::string &directory);
+    ~TextureCube();
+
+    unsigned int GetRendererID() const { return m_RendererID; }
+
+public:
+    void Bind(unsigned int slot) const;
+    void Unbind() const;
+
+private:
+    unsigned int m_RendererID = 0;
+
+private:
+    void LoadCubemap(const std::array<std::string, 6> &faces);
 };
 
 } // namespace MCEngine
