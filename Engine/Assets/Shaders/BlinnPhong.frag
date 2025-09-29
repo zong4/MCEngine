@@ -1,20 +1,5 @@
 #version 330 core
 
-struct Material
-{
-    vec4 ObjectColor;
-    float AmbientStrength;
-    float DiffuseStrength;
-    float SpecularStrength;
-    float Shininess;
-};
-
-struct DirectionalLight
-{
-    vec3 Direction;
-    vec3 Color;
-};
-
 struct PointLight
 {
     vec3 Position;
@@ -43,8 +28,15 @@ struct SpotLight
 out vec4 FragColor;
 
 // Uniforms
+struct Material
+{
+    vec4 ObjectColor;
+    float AmbientStrength;
+    float DiffuseStrength;
+    float SpecularStrength;
+    float Shininess;
+};
 uniform Material u_Material;
-uniform DirectionalLight u_DirectionalLight;
 uniform PointLight u_PointLight;
 uniform SpotLight u_SpotLight;
 uniform samplerCube u_Skybox;
@@ -55,11 +47,13 @@ in VS_OUT
     vec3 GlobalPosition;
     vec3 Normal;
     vec3 CameraPosition;
+    vec3 DirectionalLightDirection;
+    vec3 DirectionalLightColor;
 }
 fs_in;
 
 // Function prototypes
-vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir);
+vec3 CalcDirectionalLight(vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 viewDir);
 float CalDiffuseFactor(vec3 lightDir, vec3 normal);
@@ -72,7 +66,7 @@ void main()
 
     // Light
     vec3 resultLight = vec3(0.0);
-    // resultLight += CalcDirectionalLight(u_DirectionalLight, viewDir);
+    resultLight += CalcDirectionalLight(viewDir);
     resultLight += CalcPointLight(u_PointLight, viewDir);
     resultLight += CalcSpotLight(u_SpotLight, viewDir);
 
@@ -84,15 +78,15 @@ void main()
     FragColor = vec4(resultLight + resultSkybox, u_Material.ObjectColor.a);
 }
 
-vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir)
+vec3 CalcDirectionalLight(vec3 viewDir)
 {
-    vec3 lightDir = normalize(-light.Direction);
+    vec3 lightDir = normalize(-fs_in.DirectionalLightDirection);
     float diff = CalDiffuseFactor(lightDir, fs_in.Normal);
     float spec = CalSpecularFactor(lightDir, viewDir, fs_in.Normal, u_Material.Shininess);
 
     return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
             u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
-           light.Color;
+           fs_in.DirectionalLightColor;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 viewDir)

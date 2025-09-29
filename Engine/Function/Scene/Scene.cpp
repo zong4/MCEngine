@@ -114,8 +114,11 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
 
             if (light.GetType() == LightType::Directional)
             {
-                shader->SetUniformVec3("u_DirectionalLight.Position", glm::normalize(-transform.GetPosition()));
-                shader->SetUniformVec3("u_DirectionalLight.Color", light.GetColor() * light.GetIntensity());
+                UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
+                    "MainCamera", {{glm::value_ptr(glm::normalize(-transform.GetPosition())), sizeof(glm::vec3),
+                                    sizeof(glm::vec4) + sizeof(glm::mat4) + sizeof(glm::mat4)},
+                                   {glm::value_ptr(light.GetColor() * light.GetIntensity()), sizeof(glm::vec3),
+                                    sizeof(glm::vec4) + sizeof(glm::mat4) + sizeof(glm::mat4) + sizeof(glm::vec4)}});
             }
             else if (light.GetType() == LightType::Point)
             {
