@@ -5,13 +5,13 @@
 namespace MCEngine
 {
 
-class Buffer
+class BasicBuffer
 {
 public:
-    Buffer() = default;
-    virtual ~Buffer() = default;
-    Buffer(const Buffer &) = delete;
-    Buffer &operator=(const Buffer &) = delete;
+    BasicBuffer() = default;
+    virtual ~BasicBuffer() = default;
+    BasicBuffer(const BasicBuffer &) = delete;
+    BasicBuffer &operator=(const BasicBuffer &) = delete;
 
     unsigned int GetRendererID() const { return m_RendererID; }
     int GetCount() const { return m_Count; }

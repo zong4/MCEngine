@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Renderer/Buffer/IndexBuffer.hpp"
-#include "Renderer/Buffer/VertexBuffer.hpp"
+#include "Renderer/Buffer/BasicBuffer/IndexBuffer.hpp"
+#include "Renderer/Buffer/BasicBuffer/VertexBuffer.hpp"
 
 namespace MCEngine
 {

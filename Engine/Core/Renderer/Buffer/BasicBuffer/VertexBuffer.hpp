@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Buffer.hpp"
+#include "BasicBuffer.hpp"
 
 namespace MCEngine
 {
 
-class VertexBuffer : public Buffer
+class VertexBuffer : public BasicBuffer
 {
 public:
     VertexBuffer(const void *data, size_t size);

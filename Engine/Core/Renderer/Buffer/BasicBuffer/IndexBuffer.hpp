@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Buffer.hpp"
+#include "BasicBuffer.hpp"
 
 namespace MCEngine
 {
 
-class IndexBuffer : public Buffer
+class IndexBuffer : public BasicBuffer
 {
 public:
     // IndexBuffer() = default;
