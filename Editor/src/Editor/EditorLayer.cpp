@@ -53,6 +53,8 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
     }
+
+    m_FrameBuffer = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0); // GL_DEPTH24_STENCIL8
 };
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
@@ -81,8 +83,11 @@ void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    m_FrameBuffer->Bind();
+    MCEngine::RendererCommand::Clear();
     // m_Scene->Render2D();
     m_Scene->Render3D();
+    m_FrameBuffer->Unbind();
 }
 
 void MCEditor::EditorLayer::Begin(float deltaTime)
@@ -93,8 +98,9 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
 
     BeginDockSpace();
 
-    RenderSceneHierarchy();
+    RenderHierarchy();
     RenderInspector();
+    RenderScene();
 
     EndDockSpace();
 }
@@ -148,11 +154,11 @@ void MCEditor::EditorLayer::RenderMenuBar()
     }
 }
 
-void MCEditor::EditorLayer::RenderSceneHierarchy()
+void MCEditor::EditorLayer::RenderHierarchy()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    ImGui::Begin("Scene Hierarchy");
+    ImGui::Begin("Hierarchy");
 
     auto &&view = m_Scene->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
     for (auto entity : view)
@@ -260,6 +266,22 @@ void MCEditor::EditorLayer::RenderInspector()
             }
         }
     }
+
+    ImGui::End();
+}
+
+void MCEditor::EditorLayer::RenderScene()
+{
+    ImGui::Begin("Scene");
+
+    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+    if ((int)viewportSize.x != m_FrameBuffer->GetWidth() || (int)viewportSize.y != m_FrameBuffer->GetHeight())
+    {
+        m_FrameBuffer->Resize((int)viewportSize.x, (int)viewportSize.y);
+    }
+
+    ImGui::Image((ImTextureID)(intptr_t)m_FrameBuffer->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
+                 ImVec2(1, 0));
 
     ImGui::End();
 }

@@ -7,13 +7,9 @@ void MCEngine::Application::Run()
     Timer timer;
     while (!m_WindowPtr->ShouldClose())
     {
-        m_WindowPtr->PreUpdate();
-
         float deltaTime = timer.GetElapsedSeconds();
         m_WindowPtr->Update(deltaTime);
         m_WindowPtr->Render(deltaTime);
-
-        m_WindowPtr->PostUpdate();
     }
 }
 

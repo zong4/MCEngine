@@ -41,7 +41,7 @@ MCEngine::TextureLibrary::TextureLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    AddTexture("White", std::make_shared<Texture>(new unsigned char[4]{255, 255, 255, 255}, 1, 1));
+    AddTexture("White", std::make_shared<Texture>(1, 1, new unsigned char[4]{255, 255, 255, 255}));
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/");
     for (const auto &entry : std::filesystem::directory_iterator(path))

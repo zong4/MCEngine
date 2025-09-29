@@ -20,6 +20,8 @@ private:
     std::unique_ptr<MCEngine::Scene> m_Scene;
     entt::entity m_SelectedEntity = entt::null;
 
+    std::unique_ptr<MCEngine::FrameBuffer> m_FrameBuffer;
+
 protected:
     void Begin(float deltaTime) override;
 
@@ -28,9 +30,10 @@ private:
     void EndDockSpace();
 
     void RenderMenuBar();
-    void RenderSceneHierarchy();
+    void RenderHierarchy();
     void DrawEntityNode(entt::entity entity);
     void RenderInspector();
+    void RenderScene();
 };
 
 } // namespace MCEditor

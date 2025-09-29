@@ -8,6 +8,8 @@
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
 #include "Layer/ImGui/ImGuiLayer.hpp"
+#include "Renderer/FrameBuffer/FrameBuffer.hpp"
+#include "Renderer/RendererCommand.hpp"
 #include "Renderer/Shader/ShaderLibrary.hpp"
 #include "Renderer/Texture/TextureLibrary.hpp"
 #include "Renderer/VertexArray/VAOLibrary.hpp"

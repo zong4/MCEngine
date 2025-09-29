@@ -14,13 +14,15 @@
         }                                                                                                              \
     }
 
-MCEngine::Texture::Texture(void *data, int width, int height)
+MCEngine::Texture::Texture(int width, int height, void *data) : m_Format(GL_RGBA)
 {
     ENGINE_PROFILE_FUNCTION();
 
     glGenTextures(1, &m_RendererID);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     GL_ERROR();
 }
 
@@ -44,8 +46,8 @@ MCEngine::Texture::Texture(const std::string &path)
     unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
     if (imageData)
     {
-        GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, imageData);
+        m_Format = (channels == 4) ? GL_RGBA : GL_RGB;
+        glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, imageData);
         glGenerateMipmap(GL_TEXTURE_2D);
         GL_ERROR();
 
@@ -78,5 +80,14 @@ void MCEngine::Texture::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    GL_ERROR();
+}
+
+void MCEngine::Texture::Resize(int width, int height)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glBindTexture(GL_TEXTURE_2D, m_RendererID);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, nullptr);
     GL_ERROR();
 }

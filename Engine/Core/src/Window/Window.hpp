@@ -8,13 +8,13 @@ namespace MCEngine
 struct WindowProps
 {
 public:
-    WindowProps(const std::string &title, int width, int height, bool vsync, const float backgroundColor[4]);
+    WindowProps(const std::string &title, int width, int height, bool vsync, const glm::vec4 &backgroundColor);
 
     const std::string &GetTitle() const { return m_Title; }
     int GetWidth() const { return m_Width; }
     int GetHeight() const { return m_Height; }
     bool IsVSync() const { return m_VSync; }
-    const float *GetBackgroundColor() const { return m_BackgroundColor; }
+    const glm::vec4 &GetBackgroundColor() const { return m_BackgroundColor; }
 
     void SetWidth(int width) { m_Width = width; }
     void SetHeight(int height) { m_Height = height; }
@@ -27,7 +27,7 @@ private:
     int m_Width;
     int m_Height;
     bool m_VSync;
-    float m_BackgroundColor[4];
+    glm::vec4 m_BackgroundColor;
 };
 
 class Window
@@ -46,10 +46,8 @@ public:
     bool ShouldClose() const;
 
     void OnEvent(Event &e);
-    void PreUpdate();
     void Update(float deltaTime);
     void Render(float deltaTime);
-    void PostUpdate();
 
     void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
     void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }

@@ -4,22 +4,21 @@
 #include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
+#include "Renderer/RendererCommand.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 MCEngine::WindowProps::WindowProps(const std::string &title, int width, int height, bool vsync,
-                                   const float backgroundColor[4])
-    : m_Title(title), m_Width(width), m_Height(height), m_VSync(vsync)
+                                   const glm::vec4 &backgroundColor)
+    : m_Title(title), m_Width(width), m_Height(height), m_VSync(vsync), m_BackgroundColor(backgroundColor)
 {
-    std::copy(backgroundColor, backgroundColor + 4, m_BackgroundColor);
 }
 
 std::string MCEngine::WindowProps::ToString() const
 {
     std::stringstream ss;
     ss << "WindowProps: " << m_Title << " (" << m_Width << ", " << m_Height
-       << "), VSync: " << (m_VSync ? "true" : "false") << ", BackgroundColor: (" << m_BackgroundColor[0] << ", "
-       << m_BackgroundColor[1] << ", " << m_BackgroundColor[2] << ", " << m_BackgroundColor[3] << ")";
+       << "), VSync: " << (m_VSync ? "true" : "false") << ", BackgroundColor: " + MCEngine::ToString(m_BackgroundColor);
     return ss.str();
 }
 
@@ -39,35 +38,23 @@ void MCEngine::Window::OnEvent(Event &e)
     m_LayerStack.OnEvent(e);
 }
 
-void MCEngine::Window::PreUpdate()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glClearColor(m_Props.GetBackgroundColor()[0], m_Props.GetBackgroundColor()[1], m_Props.GetBackgroundColor()[2],
-                 m_Props.GetBackgroundColor()[3]);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
 void MCEngine::Window::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
     m_LayerStack.Update(deltaTime);
+
+    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindowPtr));
+    glfwPollEvents();
 }
 
 void MCEngine::Window::Render(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    MCEngine::RendererCommand::SetClearColor(m_Props.GetBackgroundColor());
+    MCEngine::RendererCommand::Clear();
     m_LayerStack.Render(deltaTime);
-}
-
-void MCEngine::Window::PostUpdate()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindowPtr));
-    glfwPollEvents();
 }
 
 void MCEngine::Window::Init()
@@ -79,7 +66,7 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
 #endif
     LOG_ENGINE_INFO("GLFW version: " + std::string(glfwGetVersionString()));
 
@@ -104,26 +91,7 @@ void MCEngine::Window::Init()
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     LOG_ENGINE_INFO("OpenGL version: " + std::string((const char *)glGetString(GL_VERSION)));
 
-    // Enable depth testing
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    LOG_ENGINE_INFO("Depth testing enabled");
-
-    // Enable blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    LOG_ENGINE_INFO("Blending enabled: SRC_ALPHA, ONE_MINUS_SRC_ALPHA");
-
-    // Enable face culling
-    glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
-    // glFrontFace(GL_CW);
-
-    // Enable multi-sampling
-    int maxSamples = 0;
-    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
-    LOG_ENGINE_INFO("Max samples supported: " + std::to_string(maxSamples));
-    glEnable(GL_MULTISAMPLE);
+    RendererCommand::Init();
 }
 
 void MCEngine::Window::Shutdown()
