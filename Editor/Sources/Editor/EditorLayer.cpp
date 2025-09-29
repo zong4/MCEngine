@@ -3,7 +3,7 @@
 #include <imgui.h>
 
 MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
-    : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/configs/imgui.ini", "EditorLayer")
+    : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -163,6 +163,7 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
     RenderInspector();
     RenderScene();
     RenderGame();
+    RenderFileBrowserPanel();
 
     EndDockSpace();
 }
@@ -370,4 +371,32 @@ void MCEditor::EditorLayer::RenderGame()
                  ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();
+}
+
+void MCEditor::EditorLayer::RenderFileBrowserPanel()
+{
+    ImGui::Begin("File Browser");
+
+    RenderFileBrowser(std::string(PROJECT_ROOT) + "Editor/Assets");
+
+    ImGui::End();
+}
+
+void MCEditor::EditorLayer::RenderFileBrowser(const std::filesystem::path &directory)
+{
+    for (auto &entry : std::filesystem::directory_iterator(directory))
+    {
+        if (entry.is_directory())
+        {
+            if (ImGui::TreeNode(entry.path().filename().string().c_str()))
+            {
+                RenderFileBrowser(entry.path());
+                ImGui::TreePop();
+            }
+        }
+        else
+        {
+            ImGui::BulletText("%s", entry.path().filename().string().c_str());
+        }
+    }
 }

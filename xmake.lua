@@ -14,7 +14,7 @@ if is_mode("debug") then
 end
 
 -- Global Defines
-add_defines("PROJECT_ROOT=\"$(projectdir)\"")
+add_defines("PROJECT_ROOT=\"$(projectdir)/\"")
 
 -- VS Code Specific
 add_rules("plugin.compile_commands.autoupdate", {outputdir = ".vscode"})

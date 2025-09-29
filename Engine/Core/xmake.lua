@@ -8,9 +8,9 @@ add_requires("imgui v1.92.1-docking", {configs = {glfw_opengl3 = true}})
 target("Core")
     set_kind("static")
     
-    add_headerfiles("src/**/*.hpp")
-    add_files("src/**/*.cpp")
-    add_includedirs("src", {public = true})
+    add_headerfiles("Sources/**/*.hpp")
+    add_files("Sources/**/*.cpp")
+    add_includedirs("Sources", {public = true})
 
     -- Common
     add_packages("spdlog")

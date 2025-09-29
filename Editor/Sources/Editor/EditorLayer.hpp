@@ -47,6 +47,8 @@ private:
     void RenderInspector();
     void RenderScene();
     void RenderGame();
+    void RenderFileBrowserPanel();
+    void RenderFileBrowser(const std::filesystem::path &directory);
 };
 
 } // namespace MCEditor

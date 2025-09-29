@@ -5,8 +5,8 @@ target("Function")
 
     add_deps("Core")
     
-    add_headerfiles("src/**/*.hpp")
-    add_files("src/**/*.cpp")
-    add_includedirs("src", {public = true})
+    add_headerfiles("Sources/**/*.hpp")
+    add_files("Sources/**/*.cpp")
+    add_includedirs("Sources", {public = true})
 
     add_packages("entt", {public = true})

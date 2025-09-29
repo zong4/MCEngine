@@ -9,5 +9,5 @@ target("Editor")
     add_deps("Function")
     add_deps("Engine")
     
-    add_files("src/**/*.cpp")
-    add_includedirs("src")
+    add_files("Sources/**/*.cpp")
+    add_includedirs("Sources")
