@@ -53,6 +53,8 @@ void MCEngine::TransformComponent::Update(float deltaTime)
 {
     if (m_Dirty)
     {
+        UpdateTransformMatrix();
+        UpdateRotationMatrix();
         m_Dirty = false;
     }
 }
@@ -61,28 +63,24 @@ glm::vec3 MCEngine::TransformComponent::GetForward() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glm::vec3 forward;
-    forward.x = cos(glm::radians(m_Rotation.y)) * cos(glm::radians(m_Rotation.x));
-    forward.y = sin(glm::radians(m_Rotation.x));
-    forward.z = sin(glm::radians(m_Rotation.y)) * cos(glm::radians(m_Rotation.x));
-    return glm::normalize(forward);
+    return glm::normalize(glm::vec3(m_RotationMatrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
 }
 
 glm::vec3 MCEngine::TransformComponent::GetRight() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    return glm::normalize(glm::vec3(m_RotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 }
 
 glm::vec3 MCEngine::TransformComponent::GetUp() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    return glm::normalize(glm::cross(GetRight(), GetForward()));
+    return glm::normalize(glm::vec3(m_RotationMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
 }
 
-glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
+void MCEngine::TransformComponent::UpdateTransformMatrix()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -95,7 +93,17 @@ glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
 
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), m_Scale);
 
-    return translationMatrix * rotationMatrix * scaleMatrix;
+    m_TransformMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+}
+
+void MCEngine::TransformComponent::UpdateRotationMatrix()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_RotationMatrix = rotationZ * rotationY * rotationX;
 }
 
 void MCEngine::RelationshipComponent::RemoveChild(entt::entity child)

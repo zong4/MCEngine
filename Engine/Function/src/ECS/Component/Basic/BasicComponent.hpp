@@ -34,7 +34,8 @@ public:
     glm::vec3 GetForward() const;
     glm::vec3 GetRight() const;
     glm::vec3 GetUp() const;
-    glm::mat4 GetTransformMatrix() const;
+    const glm::mat4 &GetTransformMatrix() const { return m_TransformMatrix; }
+    const glm::mat4 &GetRotationMatrix() const { return m_RotationMatrix; }
 
     void SetDirty(bool dirty) { m_Dirty = dirty; }
     void SetPosition(const glm::vec3 &position);
@@ -48,6 +49,12 @@ private:
     glm::vec3 m_Position;
     glm::vec3 m_Rotation;
     glm::vec3 m_Scale;
+    glm::mat4 m_TransformMatrix = glm::mat4(1.0f);
+    glm::mat4 m_RotationMatrix = glm::mat4(1.0f);
+
+private:
+    void UpdateTransformMatrix();
+    void UpdateRotationMatrix();
 };
 
 // todo
