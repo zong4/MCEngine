@@ -7,55 +7,70 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Scene = std::make_unique<MCEngine::Scene>();
+    m_TransformPtr =
+        new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+    m_CameraPtr = new MCEngine::CameraComponent(
+        m_TransformPtr, 45.0f, (float)windowPtr->GetProps().GetWidth() / (float)windowPtr->GetProps().GetHeight(), 0.1f,
+        100.0f);
+    m_ScenePtr = std::make_unique<MCEngine::Scene>();
 
-    entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(m_Scene->GetRegistry(), "Square", glm::vec3(0.0f),
-                                                                      glm::vec3(0.0f), glm::vec3(3.0f));
+    // 2D
+    {
+        entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
+            m_ScenePtr->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
+            MCEngine::TextureLibrary::GetInstance().GetTexture("02BG"));
+    }
 
     // 3D
     {
-        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_Scene->GetRegistry(), "Cubes");
+        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Cubes");
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_Scene->GetRegistry(), "Cube",
+                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_ScenePtr->GetRegistry(), "Cube",
                                                                               glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
-                m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
-                m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
+                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
+                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
             }
         }
 
         // Default light
         {
             entt::entity light =
-                MCEngine::EntityFactory::CreateDirectionalLight(m_Scene->GetRegistry(), "DirectionalLight");
+                MCEngine::EntityFactory::CreateDirectionalLight(m_ScenePtr->GetRegistry(), "DirectionalLight");
             MCEngine::EntityFactory::AddComponents(
-                m_Scene->GetRegistry(), light,
+                m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
                     MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
         {
-            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_Scene->GetRegistry(), "PointLight");
+            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_ScenePtr->GetRegistry(), "PointLight");
             MCEngine::EntityFactory::AddComponents(
-                m_Scene->GetRegistry(), light,
+                m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
                     MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
         {
-            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_Scene->GetRegistry(), "SpotLight");
+            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_ScenePtr->GetRegistry(), "SpotLight");
             MCEngine::EntityFactory::AddComponents(
-                m_Scene->GetRegistry(), light,
+                m_ScenePtr->GetRegistry(), light,
                 MCEngine::MeshRendererComponent(
                     MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
                     MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
     }
 
-    m_FrameBuffer = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0); // GL_DEPTH24_STENCIL8
+    m_FrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0); // GL_DEPTH24_STENCIL8
 };
+
+MCEditor::EditorLayer::~EditorLayer()
+{
+    delete m_TransformPtr;
+    delete m_CameraPtr;
+}
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
@@ -69,25 +84,47 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
         return true;
     });
 
-    m_Scene->OnEvent(event);
+    m_ScenePtr->OnEvent(event);
 }
 
 void MCEditor::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Scene->Update(deltaTime);
+    // Move Camera
+    {
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_W))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
+                                        glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_S))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
+                                        glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_A))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
+                                        glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_D))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
+                                        glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_Q))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
+                                        glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
+        if (MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_E))
+            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
+                                        glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
+    }
+    m_CameraPtr->Update(deltaTime);
+
+    m_ScenePtr->Update(deltaTime);
 }
 
 void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_FrameBuffer->Bind();
+    m_FrameBufferPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    // m_Scene->Render2D();
-    m_Scene->Render3D();
-    m_FrameBuffer->Unbind();
+    m_ScenePtr->Render(m_CameraPtr);
+    m_FrameBufferPtr->Unbind();
 }
 
 void MCEditor::EditorLayer::Begin(float deltaTime)
@@ -160,7 +197,7 @@ void MCEditor::EditorLayer::RenderHierarchy()
 
     ImGui::Begin("Hierarchy");
 
-    auto &&view = m_Scene->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
+    auto &&view = m_ScenePtr->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
     for (auto entity : view)
     {
         auto &&rel = view.get<MCEngine::RelationshipComponent>(entity);
@@ -173,7 +210,7 @@ void MCEditor::EditorLayer::RenderHierarchy()
 
 void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
 {
-    auto &&view = m_Scene->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
+    auto &&view = m_ScenePtr->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
 
     ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
     bool opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, node_flags,
@@ -199,7 +236,7 @@ void MCEditor::EditorLayer::RenderInspector()
 
     if (m_SelectedEntity != entt::null)
     {
-        auto &registry = m_Scene->GetRegistry();
+        auto &registry = m_ScenePtr->GetRegistry();
 
         // TagComponent
         if (auto &&tag = registry.try_get<MCEngine::TagComponent>(m_SelectedEntity))
@@ -275,12 +312,12 @@ void MCEditor::EditorLayer::RenderScene()
     ImGui::Begin("Scene");
 
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_FrameBuffer->GetWidth() || (int)viewportSize.y != m_FrameBuffer->GetHeight())
+    if ((int)viewportSize.x != m_FrameBufferPtr->GetWidth() || (int)viewportSize.y != m_FrameBufferPtr->GetHeight())
     {
-        m_FrameBuffer->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_FrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
     }
 
-    ImGui::Image((ImTextureID)(intptr_t)m_FrameBuffer->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
+    ImGui::Image((ImTextureID)(intptr_t)m_FrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
                  ImVec2(1, 0));
 
     ImGui::End();

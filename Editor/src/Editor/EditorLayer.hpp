@@ -10,6 +10,7 @@ class EditorLayer : public MCEngine::ImGuiLayer
 
 public:
     EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr);
+    virtual ~EditorLayer() override;
 
 public:
     void OnEvent(MCEngine::Event &event) override;
@@ -17,10 +18,16 @@ public:
     void OnRender() override;
 
 private:
-    std::unique_ptr<MCEngine::Scene> m_Scene;
-    entt::entity m_SelectedEntity = entt::null;
+    // Camera
+    MCEngine::TransformComponent *m_TransformPtr = nullptr;
+    MCEngine::CameraComponent *m_CameraPtr = nullptr;
+    float m_CameraMoveSpeed = 1.0f;
+    float m_CameraRotateSpeed = 15.0f;
 
-    std::unique_ptr<MCEngine::FrameBuffer> m_FrameBuffer;
+    // Scene
+    std::unique_ptr<MCEngine::Scene> m_ScenePtr;
+    entt::entity m_SelectedEntity = entt::null;
+    std::unique_ptr<MCEngine::FrameBuffer> m_FrameBufferPtr;
 
 protected:
     void Begin(float deltaTime) override;

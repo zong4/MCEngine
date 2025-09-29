@@ -12,22 +12,25 @@ public:
     ~Scene();
 
     entt::registry &GetRegistry() { return m_Registry; }
+    entt::entity GetMainCamera() const { return m_MainCamera; }
 
 public:
     void OnEvent(Event &event) {}
     void Update(float deltaTime);
-    void Render2D() const;
-    void Render3D() const;
+    void Render(CameraComponent *camera) const;
+    void Render(CameraComponent &camera) const;
+    void Render(const CameraComponent &camera) const;
 
 protected:
     entt::registry m_Registry = {};
 
     // Camera control
-    entt::entity m_Camera;
+    entt::entity m_MainCamera;
     entt::entity m_Camera2D;
     entt::entity m_Camera3D;
-    float m_CameraMoveSpeed = 1.0f;
-    float m_CameraRotateSpeed = 15.0f;
+
+private:
+    void RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 cameraPosition) const;
 };
 
 } // namespace MCEngine

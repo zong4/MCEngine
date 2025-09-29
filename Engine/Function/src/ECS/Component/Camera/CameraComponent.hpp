@@ -20,6 +20,7 @@ public:
     virtual ~CameraComponent() override;
 
     CameraType GetType() const { return m_Type; }
+    TransformComponent *GetTransformComponent() const { return m_TransformComponent; }
     const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
     const glm::mat4 &GetProjectionMatrix() const { return m_ProjectionMatrix; }
     const glm::vec3 &GetSize() const { return m_Size; }
