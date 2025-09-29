@@ -1,13 +1,17 @@
 #version 330 core
 
 // Layouts
-layout(location = 0) in vec3 aPos;
+layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec2 aTexCoord;
 
 // Uniforms
 uniform mat4 u_Model;
-uniform mat4 u_View;
-uniform mat4 u_Projection;
+layout(std140) uniform MainCamera
+{
+    vec3 u_Position;
+    mat4 u_View;
+    mat4 u_Projection;
+};
 
 // Outputs
 out vec2 v_TexCoord;
@@ -19,5 +23,5 @@ void main()
     v_TexCoord = aTexCoord;
 
     // Final vertex position
-    gl_Position = u_Projection * u_View * u_Model * vec4(aPos, 1.0);
+    gl_Position = u_Projection * u_View * u_Model * vec4(aPosition, 1.0);
 }

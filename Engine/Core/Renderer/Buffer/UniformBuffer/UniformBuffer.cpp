@@ -31,12 +31,15 @@ void MCEngine::UniformBuffer::Bind() const { glBindBuffer(GL_UNIFORM_BUFFER, m_R
 
 void MCEngine::UniformBuffer::Unbind() const { glBindBuffer(GL_UNIFORM_BUFFER, 0); }
 
-void MCEngine::UniformBuffer::SetData(const void *data, size_t size, size_t offset)
+void MCEngine::UniformBuffer::SetData(const std::initializer_list<UniformBufferData> &dataList)
 {
     ENGINE_PROFILE_FUNCTION();
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+    for (const auto &data : dataList)
+    {
+        glBufferSubData(GL_UNIFORM_BUFFER, data.GetOffset(), data.GetSize(), data.GetData());
+        GL_ERROR();
+    }
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    GL_ERROR();
 }

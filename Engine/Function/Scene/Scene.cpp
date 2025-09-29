@@ -75,13 +75,15 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
 {
     ENGINE_PROFILE_FUNCTION();
 
+    UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
+        "MainCamera", {{glm::value_ptr(cameraPosition), sizeof(glm::vec3), 0},
+                       {glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::vec4)},
+                       {glm::value_ptr(projectionMatrix), sizeof(glm::mat4), sizeof(glm::vec4) + sizeof(glm::mat4)}});
+
     // 2D
     {
         auto &&shader = ShaderLibrary::GetInstance().GetShader("Texture");
         shader->Bind();
-
-        shader->SetUniformMat4("u_View", viewMatrix);
-        shader->SetUniformMat4("u_Projection", projectionMatrix);
 
         auto &&spriteView = m_Registry.view<TransformComponent, SpriteRendererComponent>();
         for (auto entity : spriteView)
@@ -103,11 +105,6 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
     {
         auto &&shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong");
         shader->Bind();
-
-        // Camera
-        shader->SetUniformVec3("u_ViewPos", cameraPosition);
-        shader->SetUniformMat4("u_View", viewMatrix);
-        shader->SetUniformMat4("u_Projection", projectionMatrix);
 
         // Light
         auto &&lightView = m_Registry.view<TransformComponent, LightComponent>();
@@ -158,12 +155,8 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
     // Skybox
     {
         RendererCommand::DisableDepthTest();
-        RendererCommand::DisableFaceCulling();
         auto &&shader = ShaderLibrary::GetInstance().GetShader("Skybox");
         shader->Bind();
-
-        shader->SetUniformMat4("u_View", viewMatrix);
-        shader->SetUniformMat4("u_Projection", projectionMatrix);
 
         auto skyboxView = m_Registry.view<SkyboxComponent>();
         for (auto entity : skyboxView)
@@ -178,6 +171,5 @@ void MCEngine::Scene::RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix
 
         shader->Unbind();
         RendererCommand::EnableDepthTest();
-        RendererCommand::EnableFaceCulling();
     }
 }
