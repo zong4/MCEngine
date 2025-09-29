@@ -7,7 +7,7 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Scene = std::make_shared<MCEngine::Scene>();
+    m_Scene = std::make_unique<MCEngine::Scene>();
 
     entt::entity squareEntity = MCEngine::EntityFactory::CreateBasicSquare(
         m_Scene->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f));
@@ -68,13 +68,6 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
 
     RenderSceneHierarchy();
     RenderInspector();
-
-    // ImGui::Begin("Event Info");
-    // ImGui::Text("Delta Time: %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
-    // ImGui::Text("Mouse Position: (%.1f, %.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-    // ImGui::Text("Mouse Buttons: Left(%d), Right(%d), Middle(%d)", ImGui::GetIO().MouseDown[0],
-    //             ImGui::GetIO().MouseDown[1], ImGui::GetIO().MouseDown[2]);
-    // ImGui::End();
 
     EndDockSpace();
 }
@@ -218,7 +211,14 @@ void MCEditor::EditorLayer::RenderInspector()
             std::string header = "Mesh Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
             if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetColor()));
+                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetObjectColor()));
+                ImGui::DragFloat3("Ambient", glm::value_ptr(meshRenderer->GetMaterial().GetAmbientStrength()), 0.1f, 0.0f,
+                                  1.0f);
+                ImGui::DragFloat3("Diffuse", glm::value_ptr(meshRenderer->GetMaterial().GetDiffuseStrength()), 0.1f, 0.0f,
+                                  1.0f);
+                ImGui::DragFloat3("Specular", glm::value_ptr(meshRenderer->GetMaterial().GetSpecularStrength()), 0.1f, 0.0f,
+                                  1.0f);
+                ImGui::DragFloat("Shininess", &meshRenderer->GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
             }
         }
 
@@ -229,7 +229,7 @@ void MCEditor::EditorLayer::RenderInspector()
             if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::ColorEdit4("Light Color", glm::value_ptr(light->GetColor()));
-                ImGui::DragFloat("Intensity", &light->GetIntensity(), 0.1f, 0.0f, 100.0f);
+                ImGui::DragFloat("Intensity", &light->GetIntensity(), 1.0f, 0.0f, 100.0f);
             }
         }
     }

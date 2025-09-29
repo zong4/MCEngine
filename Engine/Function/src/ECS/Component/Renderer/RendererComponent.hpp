@@ -24,8 +24,6 @@ public:
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
-
-    // Color tint
     glm::vec4 m_Color;
     std::shared_ptr<Texture> m_TexturePtr;
 };
@@ -33,21 +31,21 @@ private:
 class MeshRendererComponent : public Component
 {
 public:
-    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color = glm::vec4(1.0f));
+    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr,
+                          const Material &material = Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f),
+                                                              glm::vec3(0.5f), 32.0f));
 
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
-    glm::vec4 &GetColor() { return m_Color; }
-    const glm::vec4 &GetColor() const { return m_Color; }
+    Material &GetMaterial() { return m_Material; }
+    const Material &GetMaterial() const { return m_Material; }
 
-    void SetColor(const glm::vec4 &color) { m_Color = color; }
+    void SetMaterial(const Material &material) { m_Material = material; }
 
     virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
-
-    // Color tint
-    glm::vec4 m_Color;
+    Material m_Material;
 };
 
 } // namespace MCEngine

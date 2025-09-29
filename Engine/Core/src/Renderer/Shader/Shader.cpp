@@ -34,30 +34,12 @@ MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fra
 
 MCEngine::Shader::~Shader() { glDeleteProgram(m_RendererID); }
 
-void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4)
+void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
 {
     ENGINE_PROFILE_FUNCTION();
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
-    GL_ERROR();
-}
-
-void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    int location = glGetUniformLocation(m_RendererID, name.c_str());
-    glUniform4fv(location, 1, &vector4[0]);
-    GL_ERROR();
-}
-
-void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    int location = glGetUniformLocation(m_RendererID, name.c_str());
-    glUniform3fv(location, 1, &vector3[0]);
+    glUniform1i(location, value);
     GL_ERROR();
 }
 
@@ -70,13 +52,42 @@ void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
     GL_ERROR();
 }
 
-void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
+void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3)
 {
     ENGINE_PROFILE_FUNCTION();
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
-    glUniform1i(location, value);
+    glUniform3fv(location, 1, &vector3[0]);
     GL_ERROR();
+}
+
+void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform4fv(location, 1, &vector4[0]);
+    GL_ERROR();
+}
+
+void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
+    GL_ERROR();
+}
+
+void MCEngine::Shader::SetUniformMaterial(const std::string &name, const Material &material)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    SetUniformVec4(name + ".ObjectColor", material.GetObjectColor());
+    SetUniformVec3(name + ".AmbientStrength", material.GetAmbientStrength());
+    SetUniformVec3(name + ".DiffuseStrength", material.GetDiffuseStrength());
+    SetUniformVec3(name + ".SpecularStrength", material.GetSpecularStrength());
+    SetUniformFloat(name + ".Shininess", material.GetShininess());
 }
 
 void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }

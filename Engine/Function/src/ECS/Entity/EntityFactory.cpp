@@ -27,8 +27,7 @@ entt::entity MCEngine::EntityFactory::CreateBasicSquare(entt::registry &registry
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
     AddComponents(registry, entity,
-                  SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentitySquare"), glm::vec4(1.0f),
-                                          MCEngine::TextureLibrary::GetInstance().GetTexture("White")));
+                  SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentitySquare")));
     LOG_ENGINE_TRACE("Basic Square Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
@@ -38,8 +37,7 @@ entt::entity MCEngine::EntityFactory::CreateBasicCube(entt::registry &registry, 
                                                       const glm::vec3 &scale)
 {
     entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
-    AddComponents(registry, entity,
-                  MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"), glm::vec4(1.0f)));
+    AddComponents(registry, entity, MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube")));
     LOG_ENGINE_TRACE("Basic Cube Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }

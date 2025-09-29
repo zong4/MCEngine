@@ -14,8 +14,7 @@ MCEngine::Scene::Scene()
     // Default light
     m_Light = EntityFactory::CreateBasicPointLight(m_Registry, "MainLight");
     EntityFactory::AddComponents(m_Registry, m_Light,
-                                 MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
-                                                       m_Registry.get<LightComponent>(m_Light).GetColor()));
+                                 MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube")));
 }
 
 MCEngine::Scene::~Scene() {}
@@ -118,12 +117,6 @@ void MCEngine::Scene::Render3D() const
     shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).GetColor() *
                                                m_Registry.get<LightComponent>(m_Light).GetIntensity());
 
-    // Shader
-    shader->SetUniformFloat("u_AmbientStrength", 0.3f);
-    shader->SetUniformFloat("u_DiffuseStrength", 1.0f);
-    shader->SetUniformFloat("u_SpecularStrength", 1.0f);
-    shader->SetUniformInt("u_Shininess", 32);
-
     auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
     for (auto entity : meshView)
     {
@@ -133,7 +126,7 @@ void MCEngine::Scene::Render3D() const
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
 
         // Mesh component
-        shader->SetUniformVec4("u_ObjectColor", mesh.GetColor());
+        shader->SetUniformMaterial("u_Material", mesh.GetMaterial());
 
         mesh.GetVAOPtr()->Render();
     }

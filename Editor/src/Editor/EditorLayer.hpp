@@ -17,7 +17,7 @@ public:
     void OnRender() override;
 
 private:
-    std::shared_ptr<MCEngine::Scene> m_Scene;
+    std::unique_ptr<MCEngine::Scene> m_Scene;
     entt::entity m_SelectedEntity = entt::null;
 
 protected:
