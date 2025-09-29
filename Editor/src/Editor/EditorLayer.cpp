@@ -63,7 +63,10 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
         }
     }
 
-    m_FrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0); // GL_DEPTH24_STENCIL8
+    m_SceneFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
+                                                                    windowPtr->GetProps().GetHeight(), 0x88F0);
+    m_GameFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
+                                                                   windowPtr->GetProps().GetHeight(), 0x88F0);
 };
 
 MCEditor::EditorLayer::~EditorLayer()
@@ -121,10 +124,15 @@ void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_FrameBufferPtr->Bind();
+    m_SceneFrameBufferPtr->Bind();
     MCEngine::RendererCommand::Clear();
     m_ScenePtr->Render(m_CameraPtr);
-    m_FrameBufferPtr->Unbind();
+    m_SceneFrameBufferPtr->Unbind();
+
+    m_GameFrameBufferPtr->Bind();
+    MCEngine::RendererCommand::Clear();
+    m_ScenePtr->Render(m_ScenePtr->GetRegistry().get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera()));
+    m_GameFrameBufferPtr->Unbind();
 }
 
 void MCEditor::EditorLayer::Begin(float deltaTime)
@@ -138,6 +146,7 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
     RenderHierarchy();
     RenderInspector();
     RenderScene();
+    RenderGame();
 
     EndDockSpace();
 }
@@ -312,13 +321,35 @@ void MCEditor::EditorLayer::RenderScene()
     ImGui::Begin("Scene");
 
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_FrameBufferPtr->GetWidth() || (int)viewportSize.y != m_FrameBufferPtr->GetHeight())
+    if ((int)viewportSize.x != m_SceneFrameBufferPtr->GetWidth() ||
+        (int)viewportSize.y != m_SceneFrameBufferPtr->GetHeight())
     {
-        m_FrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_SceneFrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_CameraPtr->Resize(viewportSize.x, viewportSize.y);
     }
 
-    ImGui::Image((ImTextureID)(intptr_t)m_FrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
-                 ImVec2(1, 0));
+    ImGui::Image((ImTextureID)(intptr_t)m_SceneFrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize,
+                 ImVec2(0, 1), ImVec2(1, 0));
+
+    ImGui::End();
+}
+
+void MCEditor::EditorLayer::RenderGame()
+{
+    ImGui::Begin("Game");
+
+    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+    if ((int)viewportSize.x != m_GameFrameBufferPtr->GetWidth() ||
+        (int)viewportSize.y != m_GameFrameBufferPtr->GetHeight())
+    {
+        m_GameFrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_ScenePtr->GetRegistry()
+            .get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera())
+            .Resize(viewportSize.x, viewportSize.y);
+    }
+
+    ImGui::Image((ImTextureID)(intptr_t)m_GameFrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize,
+                 ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();
 }

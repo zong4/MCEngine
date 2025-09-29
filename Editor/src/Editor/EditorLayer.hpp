@@ -27,7 +27,10 @@ private:
     // Scene
     std::unique_ptr<MCEngine::Scene> m_ScenePtr;
     entt::entity m_SelectedEntity = entt::null;
-    std::unique_ptr<MCEngine::FrameBuffer> m_FrameBufferPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_SceneFrameBufferPtr;
+
+    // Game
+    std::unique_ptr<MCEngine::FrameBuffer> m_GameFrameBufferPtr;
 
 protected:
     void Begin(float deltaTime) override;
@@ -41,6 +44,7 @@ private:
     void DrawEntityNode(entt::entity entity);
     void RenderInspector();
     void RenderScene();
+    void RenderGame();
 };
 
 } // namespace MCEditor

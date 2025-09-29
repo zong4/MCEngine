@@ -29,13 +29,14 @@ public:
     float GetNearClip() const { return m_NearClip; }
     float GetFarClip() const { return m_FarClip; }
 
-    void SetSize(const glm::vec3 &size);
     void SetFOV(float fov);
-    void SetAspectRatio(float aspectRatio);
     void SetNearClip(float nearClip);
     void SetFarClip(float farClip);
 
+public:
     virtual void Update(float deltaTime) override;
+
+    void Resize(float width, float height);
 
 private:
     CameraType m_Type;

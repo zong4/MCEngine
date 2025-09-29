@@ -30,15 +30,16 @@ void MCEngine::CameraComponent::Update(float deltaTime)
     }
 }
 
-void MCEngine::CameraComponent::SetSize(const glm::vec3 &size)
+void MCEngine::CameraComponent::Resize(float width, float height)
 {
-    if (m_Type != CameraType::Ortho)
+    if (m_Type == CameraType::Ortho)
     {
-        LOG_ENGINE_WARN("Trying to set size on a non-ortho camera.");
-        return;
+        m_Size = glm::vec3(width, height, m_Size.z);
     }
-
-    m_Size = size;
+    else if (m_Type == CameraType::Perspective)
+    {
+        m_AspectRatio = width / height;
+    }
     UpdateProjectionMatrix();
 }
 
@@ -51,18 +52,6 @@ void MCEngine::CameraComponent::SetFOV(float fov)
     }
 
     m_FOV = fov;
-    UpdateProjectionMatrix();
-}
-
-void MCEngine::CameraComponent::SetAspectRatio(float aspectRatio)
-{
-    if (m_Type != CameraType::Perspective)
-    {
-        LOG_ENGINE_WARN("Trying to set Aspect Ratio on a non-perspective camera.");
-        return;
-    }
-
-    m_AspectRatio = aspectRatio;
     UpdateProjectionMatrix();
 }
 
