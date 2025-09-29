@@ -17,7 +17,7 @@ void main()
 {
     // Outputs
     o_FragPos = vec3(u_Model * vec4(aPos, 1.0));
-    o_Normal = mat3(transpose(inverse(u_Model))) * aNormal;
+    o_Normal = normalize(mat3(transpose(inverse(u_Model))) * aNormal);
 
     // Final vertex position
     gl_Position = u_Projection * u_View * vec4(o_FragPos, 1.0);

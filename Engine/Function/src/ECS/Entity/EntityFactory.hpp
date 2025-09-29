@@ -18,23 +18,39 @@ public:
     static entt::entity CreateEmptyEntity(entt::registry &registry, const std::string &name,
                                           const TransformComponent &transform);
 
-    static entt::entity CreateBasicSquare(entt::registry &registry, const std::string &name,
+    static entt::entity CreateSquare(
+        entt::registry &registry, const std::string &name, const glm::vec3 &position = glm::vec3(0.0f),
+        const glm::vec3 &rotation = glm::vec3(0.0f), const glm::vec3 &scale = glm::vec3(1.0f),
+        const glm::vec4 &color = glm::vec4(1.0f),
+        std::shared_ptr<Texture> texturePtr = TextureLibrary::GetInstance().GetTexture("White"));
+    static entt::entity CreateCube(
+        entt::registry &registry, const std::string &name, const glm::vec3 &position = glm::vec3(0.0f),
+        const glm::vec3 &rotation = glm::vec3(0.0f), const glm::vec3 &scale = glm::vec3(1.0f),
+        const Material &material = Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f));
+
+    static entt::entity CreateOrthoCamera(entt::registry &registry, const std::string &name,
                                           const glm::vec3 &position = glm::vec3(0.0f),
                                           const glm::vec3 &rotation = glm::vec3(0.0f),
-                                          const glm::vec3 &scale = glm::vec3(1.0f));
-    static entt::entity CreateBasicCube(entt::registry &registry, const std::string &name,
-                                        const glm::vec3 &position = glm::vec3(0.0f),
-                                        const glm::vec3 &rotation = glm::vec3(0.0f),
-                                        const glm::vec3 &scale = glm::vec3(1.0f));
+                                          const glm::vec3 &size = glm::vec3(16.0f, 9.0f, 10.0f));
+    static entt::entity CreatePerspectiveCamera(entt::registry &registry, const std::string &name,
+                                                const glm::vec3 &position = glm::vec3(0.0f, 5.0f, 8.0f),
+                                                const glm::vec3 &rotation = glm::vec3(-30.0f, 0.0f, 0.0f),
+                                                float fov = 45.0f, float aspectRatio = 16.0f / 9.0f,
+                                                float nearClip = 0.1f, float farClip = 100.0f);
 
-    static entt::entity CreateBasicOrthoCamera(entt::registry &registry, const std::string &name,
-                                               const glm::vec3 &position, const glm::vec3 &rotation,
-                                               const glm::vec3 &size);
-    static entt::entity CreateBasicPerspectiveCamera(entt::registry &registry, const std::string &name,
-                                                     const glm::vec3 &position, const glm::vec3 &rotation, float fov,
-                                                     float aspectRatio, float nearClip, float farClip);
-
-    static entt::entity CreateBasicPointLight(entt::registry &registry, const std::string &name);
+    static entt::entity CreateDirectionalLight(entt::registry &registry, const std::string &name,
+                                               const glm::vec3 &position = glm::vec3(3.0f, 3.0f, 3.0f),
+                                               const glm::vec3 &color = glm::vec3(1.0f, 0.0f, 0.0f),
+                                               float intensity = 1.0f);
+    static entt::entity CreatePointLight(entt::registry &registry, const std::string &name,
+                                         const glm::vec3 &position = glm::vec3(3.0f, 3.0f, 0.0f),
+                                         const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f,
+                                         float constant = 1.0f, float linear = 0.09f, float quadratic = 0.032f);
+    static entt::entity CreateSpotLight(entt::registry &registry, const std::string &name,
+                                        const glm::vec3 &position = glm::vec3(0.0f, 3.0f, 3.0f),
+                                        const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f,
+                                        float constant = 1.0f, float linear = 0.09f, float quadratic = 0.032f,
+                                        float cutOff = 12.5f, float outerCutOff = 15.0f);
 
     // clang-format off
     template <typename... Components>

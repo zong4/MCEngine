@@ -9,8 +9,8 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 
     m_Scene = std::make_unique<MCEngine::Scene>();
 
-    entt::entity squareEntity = MCEngine::EntityFactory::CreateBasicSquare(
-        m_Scene->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(3.0f));
+    entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(m_Scene->GetRegistry(), "Square", glm::vec3(0.0f),
+                                                                      glm::vec3(0.0f), glm::vec3(3.0f));
 
     // 3D
     {
@@ -19,11 +19,38 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
         {
             for (int j = 0; j < 5; j++)
             {
-                entt::entity cubeEntity = MCEngine::EntityFactory::CreateBasicCube(m_Scene->GetRegistry(), "Cube",
-                                                                                   glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
+                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_Scene->GetRegistry(), "Cube",
+                                                                              glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
                 m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
                 m_Scene->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
             }
+        }
+
+        // Default light
+        {
+            entt::entity light =
+                MCEngine::EntityFactory::CreateDirectionalLight(m_Scene->GetRegistry(), "DirectionalLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_Scene->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
+        }
+        {
+            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_Scene->GetRegistry(), "PointLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_Scene->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
+        }
+        {
+            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_Scene->GetRegistry(), "SpotLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_Scene->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(
+                    MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube"),
+                    MCEngine::Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f)));
         }
     }
 };
@@ -212,12 +239,12 @@ void MCEditor::EditorLayer::RenderInspector()
             if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetObjectColor()));
-                ImGui::DragFloat3("Ambient", glm::value_ptr(meshRenderer->GetMaterial().GetAmbientStrength()), 0.1f, 0.0f,
-                                  1.0f);
-                ImGui::DragFloat3("Diffuse", glm::value_ptr(meshRenderer->GetMaterial().GetDiffuseStrength()), 0.1f, 0.0f,
-                                  1.0f);
-                ImGui::DragFloat3("Specular", glm::value_ptr(meshRenderer->GetMaterial().GetSpecularStrength()), 0.1f, 0.0f,
-                                  1.0f);
+                ImGui::DragFloat3("Ambient", glm::value_ptr(meshRenderer->GetMaterial().GetAmbientStrength()), 0.1f,
+                                  0.0f, 1.0f);
+                ImGui::DragFloat3("Diffuse", glm::value_ptr(meshRenderer->GetMaterial().GetDiffuseStrength()), 0.1f,
+                                  0.0f, 1.0f);
+                ImGui::DragFloat3("Specular", glm::value_ptr(meshRenderer->GetMaterial().GetSpecularStrength()), 0.1f,
+                                  0.0f, 1.0f);
                 ImGui::DragFloat("Shininess", &meshRenderer->GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
             }
         }
@@ -228,7 +255,7 @@ void MCEditor::EditorLayer::RenderInspector()
             std::string header = "Light Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
             if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::ColorEdit4("Light Color", glm::value_ptr(light->GetColor()));
+                ImGui::ColorEdit3("Light Color", glm::value_ptr(light->GetColor()));
                 ImGui::DragFloat("Intensity", &light->GetIntensity(), 1.0f, 0.0f, 100.0f);
             }
         }

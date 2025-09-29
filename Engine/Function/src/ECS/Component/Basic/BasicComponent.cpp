@@ -57,6 +57,31 @@ void MCEngine::TransformComponent::Update(float deltaTime)
     }
 }
 
+glm::vec3 MCEngine::TransformComponent::GetForward() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glm::vec3 forward;
+    forward.x = cos(glm::radians(m_Rotation.y)) * cos(glm::radians(m_Rotation.x));
+    forward.y = sin(glm::radians(m_Rotation.x));
+    forward.z = sin(glm::radians(m_Rotation.y)) * cos(glm::radians(m_Rotation.x));
+    return glm::normalize(forward);
+}
+
+glm::vec3 MCEngine::TransformComponent::GetRight() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+}
+
+glm::vec3 MCEngine::TransformComponent::GetUp() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    return glm::normalize(glm::cross(GetRight(), GetForward()));
+}
+
 glm::mat4 MCEngine::TransformComponent::GetTransformMatrix() const
 {
     ENGINE_PROFILE_FUNCTION();

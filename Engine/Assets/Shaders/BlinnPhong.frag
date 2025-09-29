@@ -1,9 +1,5 @@
 #version 330 core
 
-// Output
-out vec4 FragColor;
-
-// Uniforms
 struct Material
 {
     vec4 ObjectColor;
@@ -12,33 +8,122 @@ struct Material
     vec3 SpecularStrength;
     float Shininess;
 };
-uniform Material u_Material;
+
+struct DirectionalLight
+{
+    vec3 Direction;
+    vec3 Color;
+};
+
+struct PointLight
+{
+    vec3 Position;
+    vec3 Color;
+
+    float Constant;
+    float Linear;
+    float Quadratic;
+};
+
+struct SpotLight
+{
+    vec3 Position;
+    vec3 Direction;
+    vec3 Color;
+
+    float Constant;
+    float Linear;
+    float Quadratic;
+
+    float CutOff;
+    float OuterCutOff;
+};
+
+// Output
+out vec4 FragColor;
+
+// Uniforms
 uniform vec3 u_ViewPos;
-uniform vec3 u_LightPos;
-uniform vec4 u_LightColor;
+uniform Material u_Material;
+uniform DirectionalLight u_DirectionalLight;
+uniform PointLight u_PointLight;
+uniform SpotLight u_SpotLight;
 
 // Inputs
 in vec3 o_FragPos;
 in vec3 o_Normal;
 
+// Function prototypes
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir);
+vec3 CalcPointLight(PointLight light, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 viewDir);
+float CalDiffuseFactor(vec3 lightDir, vec3 normal);
+float CalSpecularFactor(vec3 lightDir, vec3 viewDir, vec3 normal, float shininess);
+
+// Main
 void main()
 {
-    // Ambient
-    vec3 ambient = u_Material.AmbientStrength * u_LightColor.rgb;
-
-    // Diffuse
-    vec3 norm = normalize(o_Normal);
-    vec3 lightDir = normalize(u_LightPos - o_FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = vec3(u_Material.DiffuseStrength * diff * u_LightColor.rgb);
-
-    // Specular
     vec3 viewDir = normalize(u_ViewPos - o_FragPos);
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), u_Material.Shininess);
-    vec3 specular = vec3(u_Material.SpecularStrength * spec * u_LightColor.rgb);
 
-    // Final color
-    vec3 result = (ambient + diffuse + specular) * u_Material.ObjectColor.rgb;
+    vec3 result = vec3(0.0);
+    result += CalcDirectionalLight(u_DirectionalLight, viewDir);
+    result += CalcPointLight(u_PointLight, viewDir);
+    result += CalcSpotLight(u_SpotLight, viewDir);
+
     FragColor = vec4(result, u_Material.ObjectColor.a);
+}
+
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.Direction);
+    float diff = CalDiffuseFactor(lightDir, o_Normal);
+    float spec = CalSpecularFactor(lightDir, viewDir, o_Normal, u_Material.Shininess);
+
+    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+           light.Color;
+}
+
+vec3 CalcPointLight(PointLight light, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.Position - o_FragPos);
+
+    float diff = CalDiffuseFactor(lightDir, o_Normal);
+    float spec = CalSpecularFactor(lightDir, viewDir, o_Normal, u_Material.Shininess);
+
+    // Attenuation
+    float distance = length(light.Position - o_FragPos);
+    float attenuation = 1.0 / (light.Constant + light.Linear * distance + light.Quadratic * (distance * distance));
+
+    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+           light.Color * attenuation;
+}
+
+vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.Position - o_FragPos);
+
+    float diff = CalDiffuseFactor(lightDir, o_Normal);
+    float spec = CalSpecularFactor(lightDir, viewDir, o_Normal, u_Material.Shininess);
+
+    // Attenuation
+    float distance = length(light.Position - o_FragPos);
+    float attenuation = 1.0 / (light.Constant + light.Linear * distance + light.Quadratic * (distance * distance));
+
+    // Spotlight intensity
+    float theta = dot(lightDir, normalize(-light.Direction));
+    float epsilon = light.CutOff - light.OuterCutOff;
+    float intensity = clamp((theta - light.OuterCutOff) / epsilon, 0.0, 1.0);
+
+    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+           light.Color * attenuation * intensity;
+}
+
+float CalDiffuseFactor(vec3 lightDir, vec3 normal) { return max(dot(normal, lightDir), 0.0); }
+float CalSpecularFactor(vec3 lightDir, vec3 viewDir, vec3 normal, float shininess)
+{
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    return pow(max(dot(normal, halfwayDir), 0.0), shininess);
 }

@@ -28,8 +28,6 @@ protected:
     entt::entity m_Camera3D;
     float m_CameraMoveSpeed = 1.0f;
     float m_CameraRotateSpeed = 15.0f;
-
-    entt::entity m_Light;
 };
 
 } // namespace MCEngine

@@ -4,17 +4,9 @@ MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Camera2D = EntityFactory::CreateBasicOrthoCamera(m_Registry, "MainCamera2D", glm::vec3(0.0f), glm::vec3(0.0f),
-                                                       glm::vec3(16.0f, 9.0f, 10.0f));
-    m_Camera3D =
-        EntityFactory::CreateBasicPerspectiveCamera(m_Registry, "MainCamera3D", glm::vec3(0.0f, 5.0f, 8.0f),
-                                                    glm::vec3(-30.0f, 0.0f, 0.0f), 45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+    m_Camera2D = EntityFactory::CreateOrthoCamera(m_Registry, "MainCamera2D");
+    m_Camera3D = EntityFactory::CreatePerspectiveCamera(m_Registry, "MainCamera3D");
     m_Camera = m_Camera3D;
-
-    // Default light
-    m_Light = EntityFactory::CreateBasicPointLight(m_Registry, "MainLight");
-    EntityFactory::AddComponents(m_Registry, m_Light,
-                                 MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("IdentityCube")));
 }
 
 MCEngine::Scene::~Scene() {}
@@ -113,19 +105,43 @@ void MCEngine::Scene::Render3D() const
     shader->SetUniformMat4("u_Projection", m_Registry.get<CameraComponent>(m_Camera).GetProjectionMatrix());
 
     // Light
-    shader->SetUniformVec3("u_LightPos", m_Registry.get<TransformComponent>(m_Light).GetPosition());
-    shader->SetUniformVec4("u_LightColor", m_Registry.get<LightComponent>(m_Light).GetColor() *
-                                               m_Registry.get<LightComponent>(m_Light).GetIntensity());
+    auto &&lightView = m_Registry.view<TransformComponent, LightComponent>();
+    for (auto entity : lightView)
+    {
+        auto &&[transform, light] = lightView.get<TransformComponent, LightComponent>(entity);
+
+        if (light.GetType() == LightType::Directional)
+        {
+            shader->SetUniformVec3("u_DirectionalLight.Position", glm::normalize(-transform.GetPosition()));
+            shader->SetUniformVec3("u_DirectionalLight.Color", light.GetColor());
+        }
+        else if (light.GetType() == LightType::Point)
+        {
+            shader->SetUniformVec3("u_PointLight.Position", transform.GetPosition());
+            shader->SetUniformVec3("u_PointLight.Color", light.GetColor());
+            shader->SetUniformFloat("u_PointLight.Constant", light.GetConstant());
+            shader->SetUniformFloat("u_PointLight.Linear", light.GetLinear());
+            shader->SetUniformFloat("u_PointLight.Quadratic", light.GetQuadratic());
+        }
+        else if (light.GetType() == LightType::Spot)
+        {
+            shader->SetUniformVec3("u_SpotLight.Position", transform.GetPosition());
+            shader->SetUniformVec3("u_SpotLight.Direction", -transform.GetUp());
+            shader->SetUniformVec3("u_SpotLight.Color", light.GetColor());
+            shader->SetUniformFloat("u_SpotLight.Constant", light.GetConstant());
+            shader->SetUniformFloat("u_SpotLight.Linear", light.GetLinear());
+            shader->SetUniformFloat("u_SpotLight.Quadratic", light.GetQuadratic());
+            shader->SetUniformFloat("u_SpotLight.CutOff", glm::cos(glm::radians(light.GetCutOff())));
+            shader->SetUniformFloat("u_SpotLight.OuterCutOff", glm::cos(glm::radians(light.GetOuterCutOff())));
+        }
+    }
 
     auto meshView = m_Registry.view<TransformComponent, MeshRendererComponent>();
     for (auto entity : meshView)
     {
         auto &&[transform, mesh] = meshView.get<TransformComponent, MeshRendererComponent>(entity);
 
-        // Transform component
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-
-        // Mesh component
         shader->SetUniformMaterial("u_Material", mesh.GetMaterial());
 
         mesh.GetVAOPtr()->Render();

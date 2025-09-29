@@ -22,8 +22,7 @@ private:
 class TransformComponent : public Component
 {
 public:
-    TransformComponent(const glm::vec3 &position = glm::vec3(0.0f), const glm::vec3 &rotation = glm::vec3(0.0f),
-                       const glm::vec3 &scale = glm::vec3(1.0f));
+    TransformComponent(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3 &scale);
 
     bool IsDirty() const { return m_Dirty; }
     glm::vec3 &GetPosition();
@@ -32,6 +31,9 @@ public:
     const glm::vec3 &GetPosition() const { return m_Position; }
     const glm::vec3 &GetRotation() const { return m_Rotation; }
     const glm::vec3 &GetScale() const { return m_Scale; }
+    glm::vec3 GetForward() const;
+    glm::vec3 GetRight() const;
+    glm::vec3 GetUp() const;
     glm::mat4 GetTransformMatrix() const;
 
     void SetDirty(bool dirty) { m_Dirty = dirty; }
