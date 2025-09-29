@@ -23,10 +23,11 @@ public:
         const glm::vec3 &rotation = glm::vec3(0.0f), const glm::vec3 &scale = glm::vec3(1.0f),
         const glm::vec4 &color = glm::vec4(1.0f),
         std::shared_ptr<Texture2D> texturePtr = Texture2DLibrary::GetInstance().GetTexture("White"));
-    static entt::entity CreateCube(
-        entt::registry &registry, const std::string &name, const glm::vec3 &position = glm::vec3(0.0f),
-        const glm::vec3 &rotation = glm::vec3(0.0f), const glm::vec3 &scale = glm::vec3(1.0f),
-        const Material &material = Material(glm::vec4(1.0f), glm::vec3(0.3f), glm::vec3(1.0f), glm::vec3(0.5f), 32.0f));
+    static entt::entity CreateCube(entt::registry &registry, const std::string &name,
+                                   const glm::vec3 &position = glm::vec3(0.0f),
+                                   const glm::vec3 &rotation = glm::vec3(0.0f),
+                                   const glm::vec3 &scale = glm::vec3(1.0f),
+                                   const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
 
     static entt::entity CreateOrthoCamera(entt::registry &registry, const std::string &name,
                                           const glm::vec3 &position = glm::vec3(0.0f),

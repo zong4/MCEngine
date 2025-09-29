@@ -3,9 +3,9 @@
 struct Material
 {
     vec4 ObjectColor;
-    vec3 AmbientStrength;
-    vec3 DiffuseStrength;
-    vec3 SpecularStrength;
+    float AmbientStrength;
+    float DiffuseStrength;
+    float SpecularStrength;
     float Shininess;
 };
 
@@ -67,18 +67,17 @@ void main()
     vec3 viewDir = normalize(u_ViewPos - o_GlobalPosistion);
 
     // Light
-    vec3 result = vec3(0.0);
-    result += CalcDirectionalLight(u_DirectionalLight, viewDir);
-    result += CalcPointLight(u_PointLight, viewDir);
-    result += CalcSpotLight(u_SpotLight, viewDir);
+    vec3 resultLight = vec3(0.0);
+    // resultLight += CalcDirectionalLight(u_DirectionalLight, viewDir);
+    resultLight += CalcPointLight(u_PointLight, viewDir);
+    resultLight += CalcSpotLight(u_SpotLight, viewDir);
 
     // Skybox
-    vec3 I = normalize(o_GlobalPosistion - u_ViewPos);
-    vec3 R = reflect(I, normalize(o_Normal));
-    vec3 envColor = texture(u_Skybox, o_GlobalPosistion).rgb;
-    result = mix(result, envColor, 0.2);
+    vec3 resultSkybox = vec3(0.0);
+    resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(o_Normal))).rgb * u_Material.SpecularStrength;
+    // resultSkybox += texture(u_Skybox, refract(-viewDir, normalize(o_Normal), 1.00 / 1.52)).rgb * 0.5;
 
-    FragColor = vec4(result, u_Material.ObjectColor.a);
+    FragColor = vec4(resultLight + resultSkybox, u_Material.ObjectColor.a);
 }
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 viewDir)

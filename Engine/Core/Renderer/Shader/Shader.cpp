@@ -84,9 +84,9 @@ void MCEngine::Shader::SetUniformMaterial(const std::string &name, const Materia
     ENGINE_PROFILE_FUNCTION();
 
     SetUniformVec4(name + ".ObjectColor", material.GetObjectColor());
-    SetUniformVec3(name + ".AmbientStrength", material.GetAmbientStrength());
-    SetUniformVec3(name + ".DiffuseStrength", material.GetDiffuseStrength());
-    SetUniformVec3(name + ".SpecularStrength", material.GetSpecularStrength());
+    SetUniformFloat(name + ".AmbientStrength", material.GetAmbientStrength());
+    SetUniformFloat(name + ".DiffuseStrength", material.GetDiffuseStrength());
+    SetUniformFloat(name + ".SpecularStrength", material.GetSpecularStrength());
     SetUniformFloat(name + ".Shininess", material.GetShininess());
 }
 
