@@ -10,6 +10,7 @@ void MCEngine::RendererCommand::Init()
     EnableBlend();
     EnableFaceCulling();
     EnableMultisampling();
+    glEnable(GL_FRAMEBUFFER_SRGB);
 
     LOG_ENGINE_INFO("RendererCommand initialized.");
 }

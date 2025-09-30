@@ -55,7 +55,7 @@ MCEngine::ShaderLibrary::ShaderLibrary()
     ENGINE_PROFILE_FUNCTION();
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
-    for (const auto &entry : std::filesystem::directory_iterator(path))
+    for (const auto &entry : std::filesystem::recursive_directory_iterator(path))
     {
         if (entry.path().extension() == ".vs")
         {
