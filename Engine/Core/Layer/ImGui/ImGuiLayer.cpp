@@ -100,7 +100,8 @@ void MCEngine::ImGuiLayer::End()
     ENGINE_PROFILE_FUNCTION();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.DisplaySize = ImVec2((float)m_WindowPtr->GetProps().GetWidth(), (float)m_WindowPtr->GetProps().GetHeight());
+    io.DisplaySize =
+        ImVec2((float)m_WindowPtr->GetProperty().GetWidth(), (float)m_WindowPtr->GetProperty().GetHeight());
 
     // Rendering
     ImGui::Render();

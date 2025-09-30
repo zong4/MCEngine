@@ -123,5 +123,5 @@ void MCEngine::VertexArray::SetVertexAttributes(const std::vector<VertexAttribut
     Unbind();
 
     LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) + " vertex attributes(" +
-                    std::to_string(m_AttributeCount) + ") set/updated.");
+                    std::to_string(m_AttributeCount) + ") set/updated");
 }

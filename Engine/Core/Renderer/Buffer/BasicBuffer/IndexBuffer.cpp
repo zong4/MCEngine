@@ -66,7 +66,7 @@ void MCEngine::IndexBuffer::SetData(const void *data, size_t size)
 
     if (data == nullptr || size == 0)
     {
-        LOG_ENGINE_WARN("Invalid IndexBuffer data or size.");
+        LOG_ENGINE_WARN("Invalid IndexBuffer data or size");
         return;
     }
 
@@ -84,7 +84,7 @@ void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
 
     if (data == nullptr || size == 0)
     {
-        LOG_ENGINE_WARN("Invalid IndexBuffer data or size.");
+        LOG_ENGINE_WARN("Invalid IndexBuffer data or size");
         return;
     }
 

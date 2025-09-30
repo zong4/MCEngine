@@ -110,8 +110,8 @@ void MCEditor::EditorLayer::InitCamera(std::shared_ptr<MCEngine::Window> windowP
     m_TransformPtr =
         new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     m_CameraPtr = new MCEngine::CameraComponent(
-        m_TransformPtr, 45.0f, (float)windowPtr->GetProps().GetWidth() / (float)windowPtr->GetProps().GetHeight(), 0.1f,
-        100.0f);
+        m_TransformPtr, 45.0f, (float)windowPtr->GetProperty().GetWidth() / (float)windowPtr->GetProperty().GetHeight(),
+        0.1f, 100.0f);
 }
 
 void MCEditor::EditorLayer::InitScenePanel()

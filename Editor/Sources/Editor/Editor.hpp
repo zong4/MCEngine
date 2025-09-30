@@ -8,7 +8,7 @@ namespace MCEditor
 class Editor : public MCEngine::Application
 {
 public:
-    Editor(const MCEngine::WindowProps &props);
+    Editor(const MCEngine::WindowProperty &props);
     ~Editor() override;
 };
 

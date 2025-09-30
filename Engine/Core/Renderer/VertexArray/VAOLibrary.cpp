@@ -181,5 +181,5 @@ MCEngine::VAOLibrary::VAOLibrary()
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0}});
     AddVAO("Skybox", vertexArray);
 
-    LOG_ENGINE_INFO("VAO Library initialized.");
+    LOG_ENGINE_INFO("VAO Library initialized");
 }

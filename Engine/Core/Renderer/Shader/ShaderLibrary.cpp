@@ -95,7 +95,7 @@ MCEngine::ShaderLibrary::ShaderLibrary()
         }
     }
 
-    LOG_ENGINE_INFO("ShaderLibrary initialized.");
+    LOG_ENGINE_INFO("ShaderLibrary initialized");
 }
 
 bool MCEngine::ShaderLibrary::Exists(const std::string &name) const

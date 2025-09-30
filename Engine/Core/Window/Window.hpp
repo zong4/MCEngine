@@ -1,70 +1,51 @@
 #pragma once
 
 #include "Layer/LayerStack.hpp"
+#include "WindowProperty.hpp"
 
 namespace MCEngine
 {
 
-struct WindowProps
-{
-public:
-    WindowProps(const std::string &title, int width, int height, bool vsync, const glm::vec4 &backgroundColor);
-
-    const std::string &GetTitle() const { return m_Title; }
-    int GetWidth() const { return m_Width; }
-    int GetHeight() const { return m_Height; }
-    bool IsVSync() const { return m_VSync; }
-    const glm::vec4 &GetBackgroundColor() const { return m_BackgroundColor; }
-
-    void SetWidth(int width) { m_Width = width; }
-    void SetHeight(int height) { m_Height = height; }
-    void SetVSync(bool vsync) { m_VSync = vsync; }
-
-    std::string ToString() const;
-
-private:
-    std::string m_Title;
-    int m_Width;
-    int m_Height;
-    bool m_VSync;
-    glm::vec4 m_BackgroundColor;
-};
-
 class Window
 {
 public:
-    Window(const WindowProps &props);
+    Window(const WindowProperty &property);
     ~Window();
 
+    // Getters
+    bool IsRunning() const;
     void *GetNativeWindowPtr() const { return m_NativeWindowPtr; }
-    WindowProps &GetProps() { return m_Props; }
-    const WindowProps &GetProps() const { return m_Props; }
+    WindowProperty &GetProperty() { return m_Property; }
+    const WindowProperty &GetProperty() const { return m_Property; }
 
+    // Setters
     void SetRunning(bool running) { m_Running = running; }
+    void SetVSync(bool enabled);
 
 public:
-    bool ShouldClose() const;
-
+    // Main loop
     void OnEvent(Event &e);
     void Update(float deltaTime);
     void Render(float deltaTime);
 
+    // Layer management
     void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
     void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }
 
 private:
     bool m_Running = true;
     void *m_NativeWindowPtr = nullptr;
-    WindowProps m_Props;
+    WindowProperty m_Property;
 
     LayerStack m_LayerStack;
 
 private:
+    // Initialization
     void Init();
-    void Shutdown();
-
     void SetCallbacks();
-    void SetVSync(bool enabled);
+
+    // Cleanup
+    void Shutdown();
 };
 
 } // namespace MCEngine

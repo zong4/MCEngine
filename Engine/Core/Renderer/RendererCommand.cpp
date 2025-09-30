@@ -12,7 +12,7 @@ void MCEngine::RendererCommand::Init()
     EnableMultisampling();
     glEnable(GL_FRAMEBUFFER_SRGB);
 
-    LOG_ENGINE_INFO("RendererCommand initialized.");
+    LOG_ENGINE_INFO("RendererCommand initialized");
 }
 
 void MCEngine::RendererCommand::SetClearColor(const glm::vec4 &color)
@@ -78,10 +78,10 @@ void MCEngine::RendererCommand::EnableMultisampling()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // Enable multi-sampling
-    int maxSamples = 0;
-    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
-    LOG_ENGINE_TRACE("Max samples supported: " + std::to_string(maxSamples));
+    int samples = 0;
+    glGetIntegerv(GL_SAMPLES, &samples);
+    LOG_ENGINE_INFO("MSAA samples = " + std::to_string(samples));
+
     glEnable(GL_MULTISAMPLE);
 }
 

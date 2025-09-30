@@ -8,27 +8,24 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-MCEngine::WindowProps::WindowProps(const std::string &title, int width, int height, bool vsync,
-                                   const glm::vec4 &backgroundColor)
-    : m_Title(title), m_Width(width), m_Height(height), m_VSync(vsync), m_BackgroundColor(backgroundColor)
-{
-}
-
-std::string MCEngine::WindowProps::ToString() const
-{
-    std::stringstream ss;
-    ss << "WindowProps: " << m_Title << " (" << m_Width << ", " << m_Height
-       << "), VSync: " << (m_VSync ? "true" : "false") << ", BackgroundColor: " + MCEngine::ToString(m_BackgroundColor);
-    return ss.str();
-}
-
-MCEngine::Window::Window(const WindowProps &props) : m_Props(props) { Init(); }
+MCEngine::Window::Window(const WindowProperty &property) : m_Property(property) { Init(); }
 
 MCEngine::Window::~Window() { Shutdown(); }
 
-bool MCEngine::Window::ShouldClose() const
+bool MCEngine::Window::IsRunning() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindowPtr)) || !m_Running;
+}
+
+void MCEngine::Window::SetVSync(bool enabled)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_Property.SetVSync(enabled);
+    enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
+    LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
 
 void MCEngine::Window::OnEvent(Event &e)
@@ -42,8 +39,10 @@ void MCEngine::Window::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // Update
     m_LayerStack.Update(deltaTime);
 
+    // Post-update
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     glfwPollEvents();
 }
@@ -52,8 +51,11 @@ void MCEngine::Window::Render(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    MCEngine::RendererCommand::SetClearColor(m_Props.GetBackgroundColor());
+    // Pre-render
+    MCEngine::RendererCommand::SetClearColor(m_Property.GetBackgroundColor());
     MCEngine::RendererCommand::Clear();
+
+    // Render
     m_LayerStack.Render(deltaTime);
 }
 
@@ -72,27 +74,29 @@ void MCEngine::Window::Init()
 #endif
     LOG_ENGINE_INFO("GLFW version: " + std::string(glfwGetVersionString()));
 
-    // Enable 4x MSAA
+    // Other window hints
     glfwWindowHint(GLFW_SAMPLES, 4);
-    LOG_ENGINE_INFO("4x MSAA enabled");
 
-    m_NativeWindowPtr =
-        glfwCreateWindow(m_Props.GetWidth(), m_Props.GetHeight(), m_Props.GetTitle().c_str(), nullptr, nullptr);
+    // Create window
+    m_NativeWindowPtr = glfwCreateWindow(m_Property.GetWidth(), m_Property.GetHeight(), m_Property.GetTitle().c_str(),
+                                         nullptr, nullptr);
     if (!m_NativeWindowPtr)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
-    LOG_ENGINE_INFO("GLFW window created: " + m_Props.ToString());
+    LOG_ENGINE_INFO("GLFW window created: " + m_Property.ToString());
 
+    // Make context current
     glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     SetCallbacks();
-    SetVSync(m_Props.IsVSync());
+    SetVSync(m_Property.IsVSync());
 
     // Initialize GLAD
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     LOG_ENGINE_INFO("OpenGL version: " + std::string((const char *)glGetString(GL_VERSION)));
 
+    // Initialize Renderer
     RendererCommand::Init();
 }
 
@@ -102,8 +106,7 @@ void MCEngine::Window::Shutdown()
 
     glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindowPtr));
     glfwTerminate();
-
-    LOG_ENGINE_INFO("Window destroyed.");
+    LOG_ENGINE_INFO("Window destroyed");
 }
 
 void MCEngine::Window::SetCallbacks()
@@ -113,49 +116,43 @@ void MCEngine::Window::SetCallbacks()
     glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindowPtr), this);
 
     glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
-                                   [](GLFWwindow *window, int width, int height) {
+                                   [](GLFWwindow *nativeWindow, int width, int height) {
+                                       // Framebuffer size
                                        glViewport(0, 0, width, height);
 
-                                       glfwGetWindowSize(window, &width, &height);
-                                       WindowResizeEvent event(width, height);
+                                       // Window size
+                                       glfwGetWindowSize(nativeWindow, &width, &height);
 
-                                       Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-                                       win->GetProps().SetWidth(width);
-                                       win->GetProps().SetHeight(height);
-                                       win->OnEvent(event);
+                                       // OnEvent
+                                       Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
+                                       window->GetProperty().SetWidth(width);
+                                       window->GetProperty().SetHeight(height);
+
+                                       // Notify event
+                                       WindowResizeEvent event(width, height);
+                                       window->OnEvent(event);
                                    });
 
+    // todo: add mods
     glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
-                       [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+                       [](GLFWwindow *nativeWindow, int key, int scancode, int action, int mods) {
+                           Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
                            KeyEvent event(key, action);
-
-                           Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-                           win->OnEvent(event);
+                           window->OnEvent(event);
                        });
 
+    // todo: add mods
     glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
-                               [](GLFWwindow *window, int button, int action, int mods) {
+                               [](GLFWwindow *nativeWindow, int button, int action, int mods) {
+                                   Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
                                    MouseButtonEvent event(button, action);
-
-                                   Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-                                   win->OnEvent(event);
+                                   window->OnEvent(event);
                                });
 
     glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
-                             [](GLFWwindow *window, double xpos, double ypos) {
-                                 MouseMoveEvent event(xpos, ypos);
-
-                                 Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-                                 win->OnEvent(event);
+                             [](GLFWwindow *nativeWindow, double xPos, double yPos) {
+                                 Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
+                                 MouseMoveEvent event(xPos, yPos);
+                                 window->OnEvent(event);
                              });
-}
-
-void MCEngine::Window::SetVSync(bool enabled)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_Props.SetVSync(enabled);
-    enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
-
-    LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }

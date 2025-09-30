@@ -53,5 +53,5 @@ MCEngine::Texture2DLibrary::Texture2DLibrary()
         }
     }
 
-    LOG_ENGINE_INFO("Texture2DLibrary initialized.");
+    LOG_ENGINE_INFO("Texture2DLibrary initialized");
 }

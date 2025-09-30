@@ -32,7 +32,7 @@ void MCEngine::LightComponent::SetAttenuation(float constant, float linear, floa
 {
     if (m_LightType == LightType::Directional)
     {
-        LOG_ENGINE_WARN("Trying to set attenuation on a directional light.");
+        LOG_ENGINE_WARN("Trying to set attenuation on a directional light");
         return;
     }
 
@@ -45,7 +45,7 @@ void MCEngine::LightComponent::SetCutOff(float cutOff, float outerCutOff)
 {
     if (m_LightType != LightType::Spot)
     {
-        LOG_ENGINE_WARN("Trying to set cutOff on a non-spot light.");
+        LOG_ENGINE_WARN("Trying to set cutOff on a non-spot light");
         return;
     }
 

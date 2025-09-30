@@ -22,7 +22,7 @@ void MCEngine::Logger::Init(std::string dirPath)
         spdlog::register_logger(s_EngineLoggerPtr);
         s_EngineLoggerPtr->set_pattern("%^[%T] [Engine] [thread %t] %v%$");
         s_EngineLoggerPtr->set_level(spdlog::level::trace);
-        LOG_ENGINE_INFO("Engine logger initialized.");
+        LOG_ENGINE_INFO("Engine logger initialized");
     }
 
     {
@@ -35,7 +35,7 @@ void MCEngine::Logger::Init(std::string dirPath)
         spdlog::register_logger(s_EditorLoggerPtr);
         s_EditorLoggerPtr->set_pattern("%^[%T] [Editor] [thread %t] %v%$");
         s_EditorLoggerPtr->set_level(spdlog::level::trace);
-        LOG_EDITOR_INFO("Editor logger initialized.");
+        LOG_EDITOR_INFO("Editor logger initialized");
     }
 }
 

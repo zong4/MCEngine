@@ -47,7 +47,7 @@ void MCEngine::CameraComponent::SetFOV(float fov)
 {
     if (m_Type != CameraType::Perspective)
     {
-        LOG_ENGINE_WARN("Trying to set FOV on a non-perspective camera.");
+        LOG_ENGINE_WARN("Trying to set FOV on a non-perspective camera");
         return;
     }
 
@@ -59,7 +59,7 @@ void MCEngine::CameraComponent::SetNearClip(float nearClip)
 {
     if (m_Type != CameraType::Perspective)
     {
-        LOG_ENGINE_WARN("Trying to set Near Clip on a non-perspective camera.");
+        LOG_ENGINE_WARN("Trying to set Near Clip on a non-perspective camera");
         return;
     }
 
@@ -71,7 +71,7 @@ void MCEngine::CameraComponent::SetFarClip(float farClip)
 {
     if (m_Type != CameraType::Perspective)
     {
-        LOG_ENGINE_WARN("Trying to set Far Clip on a non-perspective camera.");
+        LOG_ENGINE_WARN("Trying to set Far Clip on a non-perspective camera");
         return;
     }
 

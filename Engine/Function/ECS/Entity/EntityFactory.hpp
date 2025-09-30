@@ -60,7 +60,7 @@ public:
     {
         if (!registry.valid(entity) || !registry.try_get<TagComponent>(entity))
         {
-            LOG_ENGINE_ERROR("Entity is not valid. Cannot add components.");
+            LOG_ENGINE_ERROR("Entity is not valid. Cannot add components");
             return entt::null;
         }
         (registry.emplace<std::decay_t<Components>>(entity, std::forward<Components>(components)), ...);
