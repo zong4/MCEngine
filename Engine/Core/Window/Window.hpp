@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Layer/LayerStack.hpp"
+#include "Renderer/RendererAPIProperty.hpp"
 #include "WindowProperty.hpp"
 
 namespace MCEngine
@@ -17,6 +18,7 @@ public:
     void *GetNativeWindowPtr() const { return m_NativeWindowPtr; }
     WindowProperty &GetProperty() { return m_Property; }
     const WindowProperty &GetProperty() const { return m_Property; }
+    const RendererAPIProperty &GetRendererAPIProperty() const { return m_RendererAPIProperty; }
 
     // Setters
     void SetRunning(bool running) { m_Running = running; }
@@ -26,7 +28,7 @@ public:
     // Main loop
     void OnEvent(Event &e);
     void Update(float deltaTime);
-    void Render(float deltaTime);
+    void Render();
 
     // Layer management
     void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
@@ -37,6 +39,12 @@ private:
     void *m_NativeWindowPtr = nullptr;
     WindowProperty m_Property;
 
+    // Renderer
+#ifdef __APPLE__
+    RendererAPIProperty m_RendererAPIProperty = RendererAPIProperty(RendererAPI::OpenGL, 4, 1);
+#else
+    RendererAPIProperty m_RendererAPIProperty = RendererAPIProperty(RendererAPI::OpenGL, 4, 2);
+#endif
     LayerStack m_LayerStack;
 
 private:

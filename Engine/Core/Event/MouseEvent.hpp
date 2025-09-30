@@ -13,6 +13,7 @@ public:
     double GetX() const { return m_X; }
     double GetY() const { return m_Y; }
 
+public:
     std::string ToString() const override
     {
         std::stringstream ss;
@@ -30,9 +31,10 @@ class MouseButtonEvent : public MCEngine::Event
 public:
     MouseButtonEvent(int button, int action) : m_Button(button), m_Action(action) {}
 
-    inline int GetButton() const { return m_Button; }
-    inline int GetAction() const { return m_Action; }
+    int GetButton() const { return m_Button; }
+    int GetAction() const { return m_Action; }
 
+public:
     std::string ToString() const override
     {
         std::stringstream ss;

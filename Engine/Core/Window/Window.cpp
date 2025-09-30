@@ -47,7 +47,7 @@ void MCEngine::Window::Update(float deltaTime)
     glfwPollEvents();
 }
 
-void MCEngine::Window::Render(float deltaTime)
+void MCEngine::Window::Render()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -56,25 +56,23 @@ void MCEngine::Window::Render(float deltaTime)
     MCEngine::RendererCommand::Clear();
 
     // Render
-    m_LayerStack.Render(deltaTime);
+    m_LayerStack.Render();
 }
 
 void MCEngine::Window::Init()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // Initialize GLFW
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
-#endif
     LOG_ENGINE_INFO("GLFW version: " + std::string(glfwGetVersionString()));
 
+    // Set OpenGL version
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_RendererAPIProperty.GetMajorVersion());
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_RendererAPIProperty.GetMinorVersion());
+
     // Other window hints
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Create window

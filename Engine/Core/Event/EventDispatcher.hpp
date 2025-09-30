@@ -10,6 +10,7 @@ class EventDispatcher
 public:
     EventDispatcher(Event &event) : m_Event(event) {}
 
+public:
     template <typename T> bool Dispatch(const std::function<bool(T &)> &func)
     {
         if (T *ev = dynamic_cast<T *>(&m_Event))

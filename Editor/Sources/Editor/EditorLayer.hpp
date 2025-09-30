@@ -41,7 +41,7 @@ private:
     std::unique_ptr<MCEngine::FrameBuffer> m_GameMultisampleFBOPtr;
 
 protected:
-    void Begin(float deltaTime) override;
+    void Begin() override;
 
     void InitCamera(std::shared_ptr<MCEngine::Window> windowPtr);
     void InitScenePanel();

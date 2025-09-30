@@ -88,11 +88,11 @@ void MCEditor::EditorLayer::OnRender()
     m_GameMultisampleFBOPtr->Unbind();
 }
 
-void MCEditor::EditorLayer::Begin(float deltaTime)
+void MCEditor::EditorLayer::Begin()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    ImGuiLayer::Begin(deltaTime);
+    ImGuiLayer::Begin();
 
     BeginDockSpace();
 

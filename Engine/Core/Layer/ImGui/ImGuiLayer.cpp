@@ -9,50 +9,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(std::shared_ptr<Window> windowPtr, const std::string &filePath,
+MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &windowPtr, const std::string &filePath,
                                  const std::string &name)
     : Layer(name), m_WindowPtr(windowPtr), m_ImGuiFilePath(filePath)
 {
-}
-
-void MCEngine::ImGuiLayer::OnAttach()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
-
-    // Setup Dear ImGui style
-    // ImGui::StyleColorsDark();
-    ImGui::StyleColorsClassic();
-
-    // Read ini file
-    ImGui::GetIO().IniFilename = m_ImGuiFilePath.c_str();
-    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_WindowPtr->GetNativeWindowPtr()), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-}
-
-void MCEngine::ImGuiLayer::OnDetach()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    // Save ini file
-    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.c_str());
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }
 
 void MCEngine::ImGuiLayer::OnEvent(Event &event)
@@ -61,32 +21,32 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
     EventDispatcher dispatcher(event);
 
-    dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &e) {
+    dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
         ImGuiIO &io = ImGui::GetIO();
-        io.AddMouseButtonEvent(e.GetButton(), e.GetAction() == 1);
+        io.AddMouseButtonEvent(event.GetButton(), event.GetAction() == 1 || event.GetAction() == 2);
         return io.WantCaptureMouse;
     });
 
-    dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &e) {
+    dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
         ImGuiIO &io = ImGui::GetIO();
-        io.AddMousePosEvent((float)e.GetX(), (float)e.GetY());
+        io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
         return io.WantCaptureMouse;
     });
 
-    dispatcher.Dispatch<KeyEvent>([](KeyEvent &e) {
+    dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
         ImGuiIO &io = ImGui::GetIO();
-        io.AddKeyEvent(static_cast<ImGuiKey>(e.GetKeyCode()), e.GetAction() == 1 || e.GetAction() == 2);
+        io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), event.GetAction() == 1 || event.GetAction() == 2);
         return io.WantCaptureKeyboard;
     });
 }
 
-void MCEngine::ImGuiLayer::OnImGuiRender(float deltaTime)
+void MCEngine::ImGuiLayer::OnImGuiRender()
 {
-    Begin(deltaTime);
+    Begin();
     End();
 }
 
-void MCEngine::ImGuiLayer::Begin(float deltaTime)
+void MCEngine::ImGuiLayer::Begin()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -114,4 +74,46 @@ void MCEngine::ImGuiLayer::End()
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
     }
+}
+
+void MCEngine::ImGuiLayer::OnAttach()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
+
+    // Setup Dear ImGui style
+    // ImGui::StyleColorsDark();
+    ImGui::StyleColorsClassic();
+
+    // Read ini file
+    ImGui::GetIO().IniFilename = m_ImGuiFilePath.c_str();
+    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
+
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_WindowPtr->GetNativeWindowPtr()), true);
+    std::string glsl_version = "#version " + std::to_string(m_WindowPtr->GetRendererAPIProperty().GetMajorVersion()) +
+                               std::to_string(m_WindowPtr->GetRendererAPIProperty().GetMinorVersion()) + "0";
+    ImGui_ImplOpenGL3_Init(glsl_version.c_str());
+}
+
+void MCEngine::ImGuiLayer::OnDetach()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    // Save ini file
+    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.c_str());
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }

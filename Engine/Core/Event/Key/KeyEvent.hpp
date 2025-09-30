@@ -13,6 +13,7 @@ public:
     int GetKeyCode() const { return m_KeyCode; }
     int GetAction() const { return m_Action; }
 
+public:
     std::string ToString() const override
     {
         std::stringstream ss;

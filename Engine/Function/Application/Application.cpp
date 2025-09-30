@@ -9,7 +9,7 @@ void MCEngine::Application::Run()
     {
         float deltaTime = timer.GetElapsedSeconds();
         m_WindowPtr->Update(deltaTime);
-        m_WindowPtr->Render(deltaTime);
+        m_WindowPtr->Render();
     }
 }
 
