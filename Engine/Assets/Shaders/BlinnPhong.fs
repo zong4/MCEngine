@@ -75,7 +75,15 @@ void main()
     resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(fs_in.Normal))).rgb * u_Material.SpecularStrength;
     // resultSkybox += texture(u_Skybox, refract(-viewDir, normalize(fs_in.Normal), 1.00 / 1.52)).rgb * 0.5;
 
-    FragColor = vec4(resultLight + resultSkybox, u_Material.ObjectColor.a);
+    vec3 result = resultLight + resultSkybox;
+
+    // HDR tonemapping
+    result = vec3(1.0) - exp(-result * 1.0);
+
+    // Gamma correction
+    // result = pow(result, vec3(1.0 / 2.2));
+
+    FragColor = vec4(result, u_Material.ObjectColor.a);
 }
 
 vec3 CalcDirectionalLight(vec3 viewDir)
