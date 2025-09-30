@@ -7,7 +7,7 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_ScenePtr = std::make_unique<MCEditor::SampleScene>();
+    m_ScenePtr = std::make_unique<MCEditor::InstanceScene>();
 
     InitCamera(windowPtr);
 
@@ -77,7 +77,7 @@ void MCEditor::EditorLayer::OnRender()
 
     m_SceneMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_CameraPtr);
+    m_ScenePtr->Render(*m_CameraPtr);
     m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
     m_SceneFBOPtr->Unbind();
 

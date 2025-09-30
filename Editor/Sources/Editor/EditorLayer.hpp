@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Scene/InstanceScene.hpp"
 #include "Scene/SampleScene.hpp"
 
 namespace MCEditor

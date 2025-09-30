@@ -5,13 +5,16 @@
 namespace MCEditor
 {
 
-class SampleScene : public MCEngine::Scene
+class InstanceScene : public MCEngine::Scene
 {
 public:
-    SampleScene();
-    virtual ~SampleScene() override = default;
+    InstanceScene();
+    virtual ~InstanceScene() override = default;
 
     void Render(MCEngine::CameraComponent &camera) const override;
+
+private:
+    std::vector<glm::mat4> m_Offsets;
 };
 
 } // namespace MCEditor

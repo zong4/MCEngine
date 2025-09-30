@@ -17,9 +17,8 @@ public:
 public:
     void OnEvent(Event &event) {}
     void Update(float deltaTime);
-    void Render(CameraComponent *camera) const;
-    void Render(CameraComponent &camera) const;
-    void Render(const CameraComponent &camera) const;
+
+    virtual void Render(CameraComponent &camera) const;
 
     void Resize(float width, float height);
 
@@ -30,9 +29,6 @@ protected:
     entt::entity m_MainCamera;
     entt::entity m_Camera2D;
     entt::entity m_Camera3D;
-
-private:
-    void RenderAll(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 cameraPosition) const;
 };
 
 } // namespace MCEngine

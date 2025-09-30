@@ -32,6 +32,7 @@ public:
 
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
+    void SetCount(int count) { m_Count = count; }
 
 public:
     void Render() const;
