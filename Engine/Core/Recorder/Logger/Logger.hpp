@@ -13,7 +13,7 @@ namespace MCEngine
 class Logger
 {
 public:
-    static void Init(std::string dirPath);
+    static void Init(const std::string &dirPath);
 
     static void LogEngineTrace(const std::string &message);
     static void LogEngineInfo(const std::string &message);
@@ -28,6 +28,9 @@ public:
 private:
     static std::shared_ptr<spdlog::logger> s_EngineLoggerPtr;
     static std::shared_ptr<spdlog::logger> s_EditorLoggerPtr;
+
+private:
+    static std::shared_ptr<spdlog::logger> CreateLoggerPtr(const std::string &dirPath, const std::string &name);
 };
 
 #ifdef DEBUG

@@ -15,21 +15,21 @@ struct ProfileResult
 class Instrumentor
 {
 public:
-    Instrumentor() = default;
-    ~Instrumentor() = default;
-
     static Instrumentor &GetInstance();
 
+public:
     void BeginSession(const std::string &filepath);
-    void EndSession();
-
     void WriteProfile(const ProfileResult &result);
+    void EndSession();
 
 private:
     std::ofstream m_OutputStream = {};
     int m_ProfileCount = 0;
 
-protected:
+private:
+    Instrumentor() = default;
+    ~Instrumentor() = default;
+
     void WriteHeader();
     void WriteFooter();
 };

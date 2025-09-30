@@ -17,7 +17,8 @@ protected:
     std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
 
 private:
-    void Start();
+    void Start() { m_StartTime = std::chrono::high_resolution_clock::now(); }
+
     float GetElapsedTime();
 };
 
