@@ -27,11 +27,11 @@ struct IdentityCubeData
         // clang-format off
         // positions          // normals
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, // back face
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
         -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, // front face
          0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,

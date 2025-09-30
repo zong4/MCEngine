@@ -27,13 +27,15 @@ private:
     float m_CameraRotateSpeed = 15.0f;
 
     // Scene
-    bool m_SceneFocused = false;
     std::unique_ptr<MCEngine::Scene> m_ScenePtr;
     entt::entity m_SelectedEntity = entt::null;
+
+    // Scene Panel
+    bool m_SceneFocused = false;
     std::unique_ptr<MCEngine::FrameBuffer> m_SceneFBOPtr;
     std::unique_ptr<MCEngine::FrameBuffer> m_SceneMultisampleFBOPtr;
 
-    // Game
+    // Game Panel
     bool m_GameFocused = false;
     std::unique_ptr<MCEngine::FrameBuffer> m_GameFBOPtr;
     std::unique_ptr<MCEngine::FrameBuffer> m_GameMultisampleFBOPtr;

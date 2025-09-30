@@ -22,11 +22,13 @@ out VS_OUT
 }
 vs_out;
 
+uniform float u_Magnitude;
+
 void main()
 {
     // Outputs
-    vs_out.GlobalPosition = vec3(u_Model * vec4(aPosition, 1.0));
     vs_out.Normal = normalize(mat3(transpose(inverse(u_Model))) * aNormal);
+    vs_out.GlobalPosition = vec3(u_Model * vec4(aPosition + vs_out.Normal * u_Magnitude, 1.0));
     vs_out.CameraPosition = u_Position;
     // vs_out.DirectionalLightDirection = u_DirectionalLightDirection;
     // vs_out.DirectionalLightColor = u_DirectionalLightColor;

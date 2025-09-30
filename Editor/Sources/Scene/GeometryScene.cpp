@@ -11,8 +11,11 @@ void MCEditor::GeometryScene::Render(MCEngine::CameraComponent &camera) const
 
     MCEngine::Scene::Render(camera);
 
+    MCEngine::RendererCommand::DisableFaceCulling();
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry");
     shader->Bind();
+
+    shader->SetUniformFloat("u_Magnitude", m_Magnitude);
 
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto entity : meshView)
@@ -22,8 +25,9 @@ void MCEditor::GeometryScene::Render(MCEngine::CameraComponent &camera) const
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
         shader->SetUniformMaterial("u_Material", mesh.GetMaterial());
 
-        mesh.GetVAOPtr()->Render(MCEngine::RendererType::Points);
+        mesh.GetVAOPtr()->Render(MCEngine::RendererType::Triangles);
     }
 
     shader->Unbind();
+    MCEngine::RendererCommand::EnableFaceCulling();
 }
