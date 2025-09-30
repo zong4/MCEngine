@@ -34,7 +34,8 @@ void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shar
 
 std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std::string &name,
                                                                       const std::string &vertexSource,
-                                                                      const std::string &fragmentSource)
+                                                                      const std::string &fragmentSource,
+                                                                      const std::string &geometrySource)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -44,7 +45,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
         return m_ShaderMap[name];
     }
 
-    auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource);
+    auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource, geometrySource);
     AddShader(name, shader);
     return shader;
 }
@@ -56,24 +57,36 @@ MCEngine::ShaderLibrary::ShaderLibrary()
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
     for (const auto &entry : std::filesystem::directory_iterator(path))
     {
-        if (entry.path().extension() == ".vert")
+        if (entry.path().extension() == ".vs")
         {
             std::string vertexPath = entry.path().string();
             auto fragPath = entry.path();
-            std::string fragmentPath = fragPath.replace_extension(".frag").string();
-
+            std::string fragmentPath = fragPath.replace_extension(".fs").string();
             if (std::filesystem::exists(fragmentPath))
             {
-                std::ifstream vertexFile(vertexPath);
-                std::ifstream fragmentFile(fragmentPath);
+                std::string shaderName = entry.path().stem().string();
 
+                std::ifstream vertexFile(vertexPath);
                 std::string vertexSource((std::istreambuf_iterator<char>(vertexFile)),
                                          std::istreambuf_iterator<char>());
+
+                std::ifstream fragmentFile(fragmentPath);
                 std::string fragmentSource((std::istreambuf_iterator<char>(fragmentFile)),
                                            std::istreambuf_iterator<char>());
 
-                std::string shaderName = entry.path().stem().string();
-                LoadShader(shaderName, vertexSource, fragmentSource);
+                auto geomPath = entry.path();
+                std::string geometryPath = geomPath.replace_extension(".gs").string();
+                if (std::filesystem::exists(geometryPath))
+                {
+                    std::ifstream geometryFile(geometryPath);
+                    std::string geometrySource((std::istreambuf_iterator<char>(geometryFile)),
+                                               std::istreambuf_iterator<char>());
+                    LoadShader(shaderName, vertexSource, fragmentSource, geometrySource);
+                }
+                else
+                {
+                    LoadShader(shaderName, vertexSource, fragmentSource);
+                }
             }
             else
             {

@@ -11,7 +11,8 @@
         }                                                                                                              \
     }
 
-MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
+MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource,
+                         const std::string &geometrySource)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -24,10 +25,23 @@ MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fra
     m_RendererID = glCreateProgram();
     glAttachShader(m_RendererID, vertexShader);
     glAttachShader(m_RendererID, fragmentShader);
+
+    unsigned int geometryShader = 0;
+    if (!geometrySource.empty())
+    {
+        geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        CompileShader(geometryShader, geometrySource);
+
+        glAttachShader(m_RendererID, geometryShader);
+    }
     LinkProgram(m_RendererID);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    if (!geometrySource.empty())
+    {
+        glDeleteShader(geometryShader);
+    }
 
     LOG_ENGINE_INFO("Shader program created with ID: " + std::to_string(m_RendererID));
 }

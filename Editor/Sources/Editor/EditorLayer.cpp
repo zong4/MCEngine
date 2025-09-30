@@ -7,7 +7,7 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_ScenePtr = std::make_unique<MCEditor::InstanceScene>();
+    m_ScenePtr = std::make_unique<MCEditor::GeometryScene>();
 
     InitCamera(windowPtr);
 

@@ -75,7 +75,7 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
                     " set with new IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
 }
 
-void MCEngine::VertexArray::Render() const
+void MCEngine::VertexArray::Render(RendererType renderType) const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -84,15 +84,17 @@ void MCEngine::VertexArray::Render() const
 
     if (m_IndexBuffer.GetRendererID() == 0)
     {
-        m_Count == 1 ? glDrawArrays(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount)
-                     : glDrawArraysInstanced(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount, m_Count);
+        m_Count == 1 ? glDrawArrays(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount)
+                     : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0,
+                                             m_VertexBuffer.GetCount() / m_AttributeCount, m_Count);
         GL_ERROR();
     }
     else
     {
         m_IndexBuffer.Bind();
-        m_Count == 1 ? glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
-                     : glDrawElementsInstanced(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0, m_Count);
+        m_Count == 1 ? glDrawElements(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
+                     : glDrawElementsInstanced(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(),
+                                               GL_UNSIGNED_INT, 0, m_Count);
         GL_ERROR();
         m_IndexBuffer.Unbind();
     }

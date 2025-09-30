@@ -6,6 +6,13 @@
 namespace MCEngine
 {
 
+enum class RendererType
+{
+    Points = 0,
+    Lines = 1,
+    Triangles = 4
+};
+
 struct VertexAttribute
 {
     unsigned int location;
@@ -35,7 +42,7 @@ public:
     void SetCount(int count) { m_Count = count; }
 
 public:
-    void Render() const;
+    void Render(RendererType renderType = RendererType::Triangles) const;
 
 private:
     unsigned int m_RendererID = 0;

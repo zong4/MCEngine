@@ -8,7 +8,7 @@ namespace MCEngine
 class Shader
 {
 public:
-    Shader(const std::string &vertexSource, const std::string &fragmentSource);
+    Shader(const std::string &vertexSource, const std::string &fragmentSource, const std::string &geometrySource = "");
     ~Shader();
 
     unsigned int GetRendererID() const { return m_RendererID; }

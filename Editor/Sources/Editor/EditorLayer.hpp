@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
 #include "Scene/SampleScene.hpp"
 
