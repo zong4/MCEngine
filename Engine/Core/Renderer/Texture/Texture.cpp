@@ -13,31 +13,42 @@
         }                                                                                                              \
     }
 
-MCEngine::Texture2D::Texture2D(int width, int height, void *data) : m_Format(GL_RGBA)
+MCEngine::Texture2D::Texture2D(int width, int height, void *data) : m_Format(GL_RGBA), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
     glGenTextures(1, &m_RendererID);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
+
     glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     GL_ERROR();
-}
-
-MCEngine::Texture2D::Texture2D(const std::string &path)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glGenTextures(1, &m_RendererID);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
     // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+MCEngine::Texture2D::Texture2D(int width, int height, int samples) : m_Format(GL_RGBA), m_Samples(samples)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glGenTextures(1, &m_RendererID);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
+
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, m_Format, width, height, GL_TRUE);
     GL_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+}
+
+MCEngine::Texture2D::Texture2D(const std::string &path) : m_Samples(0)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glGenTextures(1, &m_RendererID);
+    glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
     // Load image
     int width, height, channels;
@@ -56,6 +67,15 @@ MCEngine::Texture2D::Texture2D(const std::string &path)
     {
         LOG_ENGINE_ERROR("Failed to load texture: " + path);
     }
+
+    // Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    GL_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 MCEngine::Texture2D::~Texture2D()
@@ -86,8 +106,18 @@ void MCEngine::Texture2D::Resize(int width, int height)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
-    glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, nullptr);
+    if (m_Samples == 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, m_RendererID);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, nullptr);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else
+    {
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_Format, width, height, GL_TRUE);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+    }
     GL_ERROR();
 }
 
@@ -145,13 +175,16 @@ void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
                          data);
             GL_ERROR();
+
+            stbi_image_free(data);
         }
         else
         {
             LOG_ENGINE_ERROR("Failed to load TextureCube texture at path: " + faces[i]);
         }
-        stbi_image_free(data);
     }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     LOG_ENGINE_INFO("TextureCube created with RendererID: " + std::to_string((uint32_t)m_RendererID));
 }

@@ -11,8 +11,8 @@
         }                                                                                                              \
     }
 
-MCEngine::RenderBuffer::RenderBuffer(int width, int height, unsigned int internalFormat)
-    : m_InternalFormat(internalFormat)
+MCEngine::RenderBuffer::RenderBuffer(int width, int height, unsigned int internalFormat, int samples)
+    : m_InternalFormat(internalFormat), m_Samples(samples)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -21,7 +21,8 @@ MCEngine::RenderBuffer::RenderBuffer(int width, int height, unsigned int interna
     Unbind();
 
     LOG_ENGINE_INFO("RenderBuffer created with ID: " + std::to_string(m_RendererID) +
-                    ", Width: " + std::to_string(width) + ", Height: " + std::to_string(height));
+                    ", Width: " + std::to_string(width) + ", Height: " + std::to_string(height) +
+                    ", InternalFormat: " + std::to_string(internalFormat) + ", Samples: " + std::to_string(samples));
 }
 
 MCEngine::RenderBuffer::~RenderBuffer()
@@ -44,7 +45,8 @@ void MCEngine::RenderBuffer::Bind(int width, int height) const
     ENGINE_PROFILE_FUNCTION();
 
     glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID);
-    glRenderbufferStorage(GL_RENDERBUFFER, m_InternalFormat, width, height);
+    m_Samples == 0 ? glRenderbufferStorage(GL_RENDERBUFFER, m_InternalFormat, width, height)
+                   : glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_Samples, m_InternalFormat, width, height);
     GL_ERROR();
 }
 

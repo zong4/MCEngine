@@ -7,71 +7,11 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_TransformPtr =
-        new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    m_CameraPtr = new MCEngine::CameraComponent(
-        m_TransformPtr, 45.0f, (float)windowPtr->GetProps().GetWidth() / (float)windowPtr->GetProps().GetHeight(), 0.1f,
-        100.0f);
-    m_ScenePtr = std::make_unique<MCEngine::Scene>();
+    InitCamera(windowPtr);
+    InitScene();
 
-    m_SceneFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
-                                                                    windowPtr->GetProps().GetHeight(), 0x88F0);
-    m_GameFrameBufferPtr = std::make_unique<MCEngine::FrameBuffer>(windowPtr->GetProps().GetWidth(),
-                                                                   windowPtr->GetProps().GetHeight(), 0x88F0);
-
-    // 2D
-    {
-        entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
-            m_ScenePtr->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
-            MCEngine::Texture2DLibrary::GetInstance().GetTexture("02BG"));
-    }
-
-    // 3D
-    {
-        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Cubes");
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
-                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_ScenePtr->GetRegistry(), "Cube",
-                                                                              glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
-                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
-                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
-            }
-        }
-
-        // Default light
-        {
-            entt::entity light =
-                MCEngine::EntityFactory::CreateDirectionalLight(m_ScenePtr->GetRegistry(), "DirectionalLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-        {
-            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_ScenePtr->GetRegistry(), "PointLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-        {
-            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_ScenePtr->GetRegistry(), "SpotLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-
-        // Skybox
-        {
-            entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Skybox");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), skybox,
-                MCEngine::SkyboxComponent(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/skybox"));
-        }
-    }
+    InitScenePanel();
+    InitGamePanel();
 };
 
 MCEditor::EditorLayer::~EditorLayer()
@@ -134,15 +74,17 @@ void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_SceneFrameBufferPtr->Bind();
+    m_SceneMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
     m_ScenePtr->Render(m_CameraPtr);
-    m_SceneFrameBufferPtr->Unbind();
+    m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
+    m_SceneFBOPtr->Unbind();
 
-    m_GameFrameBufferPtr->Bind();
+    m_GameMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
     m_ScenePtr->Render(m_ScenePtr->GetRegistry().get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera()));
-    m_GameFrameBufferPtr->Unbind();
+    m_GameMultisampleFBOPtr->Blit(m_GameFBOPtr->GetRendererID());
+    m_GameMultisampleFBOPtr->Unbind();
 }
 
 void MCEditor::EditorLayer::Begin(float deltaTime)
@@ -153,16 +95,99 @@ void MCEditor::EditorLayer::Begin(float deltaTime)
 
     BeginDockSpace();
 
-    RenderHierarchy();
-    RenderInspector();
-    RenderScene();
-    RenderGame();
+    RenderHierarchyPanel();
+    RenderInspectorPanel();
+    RenderScenePanel();
+    RenderGamePanel();
     RenderFileBrowserPanel();
 
     EndDockSpace();
 }
 
-void MCEditor::EditorLayer::BeginDockSpace()
+void MCEditor::EditorLayer::InitCamera(std::shared_ptr<MCEngine::Window> windowPtr)
+{
+    m_TransformPtr =
+        new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+    m_CameraPtr = new MCEngine::CameraComponent(
+        m_TransformPtr, 45.0f, (float)windowPtr->GetProps().GetWidth() / (float)windowPtr->GetProps().GetHeight(), 0.1f,
+        100.0f);
+}
+
+void MCEditor::EditorLayer::InitScene()
+{
+    m_ScenePtr = std::make_unique<MCEngine::Scene>();
+    // 2D
+    {
+        entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
+            m_ScenePtr->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
+            MCEngine::Texture2DLibrary::GetInstance().GetTexture("02BG"));
+    }
+
+    // 3D
+    {
+        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Cubes");
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_ScenePtr->GetRegistry(), "Cube",
+                                                                              glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
+                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
+                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
+            }
+        }
+
+        // Default light
+        {
+            entt::entity light =
+                MCEngine::EntityFactory::CreateDirectionalLight(m_ScenePtr->GetRegistry(), "DirectionalLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_ScenePtr->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
+        }
+        {
+            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_ScenePtr->GetRegistry(), "PointLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_ScenePtr->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
+        }
+        {
+            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_ScenePtr->GetRegistry(), "SpotLight");
+            MCEngine::EntityFactory::AddComponents(
+                m_ScenePtr->GetRegistry(), light,
+                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
+        }
+
+        // Skybox
+        {
+            entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Skybox");
+            MCEngine::EntityFactory::AddComponents(
+                m_ScenePtr->GetRegistry(), skybox,
+                MCEngine::SkyboxComponent(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/skybox"));
+        }
+    }
+}
+
+void MCEditor::EditorLayer::InitScenePanel()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_SceneFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0);
+    m_SceneMultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0, 4);
+}
+
+void MCEditor::EditorLayer::InitGamePanel()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0);
+    m_GameMultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0, 4);
+}
+
+void MCEditor::EditorLayer::BeginDockSpace() const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -186,14 +211,14 @@ void MCEditor::EditorLayer::BeginDockSpace()
     RenderMenuBar();
 }
 
-void MCEditor::EditorLayer::EndDockSpace()
+void MCEditor::EditorLayer::EndDockSpace() const
 {
     ENGINE_PROFILE_FUNCTION();
 
     ImGui::End();
 }
 
-void MCEditor::EditorLayer::RenderMenuBar()
+void MCEditor::EditorLayer::RenderMenuBar() const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -211,7 +236,7 @@ void MCEditor::EditorLayer::RenderMenuBar()
     }
 }
 
-void MCEditor::EditorLayer::RenderHierarchy()
+void MCEditor::EditorLayer::RenderHierarchyPanel()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -250,7 +275,7 @@ void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
 }
 
 // todo: add components
-void MCEditor::EditorLayer::RenderInspector()
+void MCEditor::EditorLayer::RenderInspectorPanel()
 {
     ImGui::Begin("Inspector");
 
@@ -324,42 +349,38 @@ void MCEditor::EditorLayer::RenderInspector()
     ImGui::End();
 }
 
-void MCEditor::EditorLayer::RenderScene()
+void MCEditor::EditorLayer::RenderScenePanel()
 {
     ImGui::Begin("Scene");
 
     m_SceneFocused = ImGui::IsWindowFocused();
-
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_SceneFrameBufferPtr->GetWidth() ||
-        (int)viewportSize.y != m_SceneFrameBufferPtr->GetHeight())
+    if ((int)viewportSize.x != m_SceneFBOPtr->GetWidth() || (int)viewportSize.y != m_SceneFBOPtr->GetHeight())
     {
-        m_SceneFrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_SceneFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_SceneMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
         m_CameraPtr->Resize(viewportSize.x, viewportSize.y);
     }
-
-    ImGui::Image((ImTextureID)(intptr_t)m_SceneFrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize,
-                 ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Image((ImTextureID)(intptr_t)m_SceneFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
+                 ImVec2(1, 0));
 
     ImGui::End();
 }
 
-void MCEditor::EditorLayer::RenderGame()
+void MCEditor::EditorLayer::RenderGamePanel()
 {
     ImGui::Begin("Game");
 
     m_GameFocused = ImGui::IsWindowFocused();
-
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_GameFrameBufferPtr->GetWidth() ||
-        (int)viewportSize.y != m_GameFrameBufferPtr->GetHeight())
+    if ((int)viewportSize.x != m_GameFBOPtr->GetWidth() || (int)viewportSize.y != m_GameFBOPtr->GetHeight())
     {
-        m_GameFrameBufferPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_GameFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+        m_GameMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
         m_ScenePtr->Resize(viewportSize.x, viewportSize.y);
     }
-
-    ImGui::Image((ImTextureID)(intptr_t)m_GameFrameBufferPtr->GetTexturePtr()->GetRendererID(), viewportSize,
-                 ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Image((ImTextureID)(intptr_t)m_GameFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
+                 ImVec2(1, 0));
 
     ImGui::End();
 }

@@ -8,7 +8,7 @@ namespace MCEngine
 class RenderBuffer
 {
 public:
-    RenderBuffer(int width, int height, unsigned int internalFormat = 0x88F0); // GL_DEPTH24_STENCIL8
+    RenderBuffer(int width, int height, unsigned int internalFormat = 0, int samples = 0); // GL_DEPTH24_STENCIL8
     ~RenderBuffer();
 
     RenderBuffer(const RenderBuffer &) = delete;
@@ -23,6 +23,7 @@ public:
 
 private:
     unsigned int m_RendererID = 0;
+    int m_Samples;
     unsigned int m_InternalFormat;
 
 private:

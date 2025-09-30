@@ -28,25 +28,31 @@ private:
     bool m_SceneFocused = false;
     std::unique_ptr<MCEngine::Scene> m_ScenePtr;
     entt::entity m_SelectedEntity = entt::null;
-    std::unique_ptr<MCEngine::FrameBuffer> m_SceneFrameBufferPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_SceneFBOPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_SceneMultisampleFBOPtr;
 
     // Game
     bool m_GameFocused = false;
-    std::unique_ptr<MCEngine::FrameBuffer> m_GameFrameBufferPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_GameFBOPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_GameMultisampleFBOPtr;
 
 protected:
     void Begin(float deltaTime) override;
 
-private:
-    void BeginDockSpace();
-    void EndDockSpace();
+    void InitCamera(std::shared_ptr<MCEngine::Window> windowPtr);
+    void InitScene();
+    void InitScenePanel();
+    void InitGamePanel();
 
-    void RenderMenuBar();
-    void RenderHierarchy();
+private:
+    void BeginDockSpace() const;
+    void EndDockSpace() const;
+    void RenderMenuBar() const;
+    void RenderHierarchyPanel();
     void DrawEntityNode(entt::entity entity);
-    void RenderInspector();
-    void RenderScene();
-    void RenderGame();
+    void RenderInspectorPanel();
+    void RenderScenePanel();
+    void RenderGamePanel();
     void RenderFileBrowserPanel();
     void RenderFileBrowser(const std::filesystem::path &directory);
 };

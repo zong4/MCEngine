@@ -9,6 +9,7 @@ class Texture2D
 {
 public:
     Texture2D(int width, int height, void *data);
+    Texture2D(int width, int height, int samples);
     Texture2D(const std::string &path);
     ~Texture2D();
 
@@ -23,6 +24,7 @@ public:
 private:
     unsigned int m_RendererID;
     unsigned int m_Format;
+    int m_Samples;
 };
 
 class TextureCube

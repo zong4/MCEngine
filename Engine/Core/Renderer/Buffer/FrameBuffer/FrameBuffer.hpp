@@ -9,7 +9,7 @@ namespace MCEngine
 class FrameBuffer
 {
 public:
-    FrameBuffer(int width, int height, unsigned int renderBufferFormat = 0);
+    FrameBuffer(int width, int height, unsigned int renderBufferFormat = 0, int samples = 0);
     ~FrameBuffer();
 
     FrameBuffer(const FrameBuffer &) = delete;
@@ -25,6 +25,7 @@ public:
 public:
     void Bind() const;
     void Unbind() const;
+    void Blit(unsigned int resolveID) const;
     void Resize(int width, int height);
 
 private:
