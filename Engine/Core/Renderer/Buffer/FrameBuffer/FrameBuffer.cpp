@@ -99,6 +99,4 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
     glViewport(0, 0, m_Width, m_Height);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     GL_ERROR();
-
-    LOG_ENGINE_TRACE("FrameBuffer resized to Width: " + std::to_string(width) + ", Height: " + std::to_string(height));
 }

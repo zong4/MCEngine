@@ -7,8 +7,9 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    m_ScenePtr = std::make_unique<MCEditor::SampleScene>();
+
     InitCamera(windowPtr);
-    InitScene();
 
     InitScenePanel();
     InitGamePanel();
@@ -111,64 +112,6 @@ void MCEditor::EditorLayer::InitCamera(std::shared_ptr<MCEngine::Window> windowP
     m_CameraPtr = new MCEngine::CameraComponent(
         m_TransformPtr, 45.0f, (float)windowPtr->GetProps().GetWidth() / (float)windowPtr->GetProps().GetHeight(), 0.1f,
         100.0f);
-}
-
-void MCEditor::EditorLayer::InitScene()
-{
-    m_ScenePtr = std::make_unique<MCEngine::Scene>();
-    // 2D
-    {
-        entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
-            m_ScenePtr->GetRegistry(), "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
-            MCEngine::Texture2DLibrary::GetInstance().GetTexture("02BG"));
-    }
-
-    // 3D
-    {
-        entt::entity cubes = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Cubes");
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
-                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(m_ScenePtr->GetRegistry(), "Cube",
-                                                                              glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
-                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
-                m_ScenePtr->GetRegistry().get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
-            }
-        }
-
-        // Default light
-        {
-            entt::entity light =
-                MCEngine::EntityFactory::CreateDirectionalLight(m_ScenePtr->GetRegistry(), "DirectionalLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-        {
-            entt::entity light = MCEngine::EntityFactory::CreatePointLight(m_ScenePtr->GetRegistry(), "PointLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-        {
-            entt::entity light = MCEngine::EntityFactory::CreateSpotLight(m_ScenePtr->GetRegistry(), "SpotLight");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), light,
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
-        }
-
-        // Skybox
-        {
-            entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_ScenePtr->GetRegistry(), "Skybox");
-            MCEngine::EntityFactory::AddComponents(
-                m_ScenePtr->GetRegistry(), skybox,
-                MCEngine::SkyboxComponent(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/skybox"));
-        }
-    }
 }
 
 void MCEditor::EditorLayer::InitScenePanel()
@@ -357,9 +300,12 @@ void MCEditor::EditorLayer::RenderScenePanel()
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if ((int)viewportSize.x != m_SceneFBOPtr->GetWidth() || (int)viewportSize.y != m_SceneFBOPtr->GetHeight())
     {
+        m_CameraPtr->Resize(viewportSize.x, viewportSize.y);
+
         m_SceneFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
         m_SceneMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_CameraPtr->Resize(viewportSize.x, viewportSize.y);
+        LOG_EDITOR_INFO("Resize Scene Framebuffer to width: " + std::to_string((int)viewportSize.x) +
+                        " height: " + std::to_string((int)viewportSize.y));
     }
     ImGui::Image((ImTextureID)(intptr_t)m_SceneFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
                  ImVec2(1, 0));
@@ -375,9 +321,12 @@ void MCEditor::EditorLayer::RenderGamePanel()
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if ((int)viewportSize.x != m_GameFBOPtr->GetWidth() || (int)viewportSize.y != m_GameFBOPtr->GetHeight())
     {
+        m_ScenePtr->Resize(viewportSize.x, viewportSize.y);
+
         m_GameFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
         m_GameMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_ScenePtr->Resize(viewportSize.x, viewportSize.y);
+        LOG_EDITOR_INFO("Resize Game Framebuffer to width: " + std::to_string((int)viewportSize.x) +
+                        " height: " + std::to_string((int)viewportSize.y));
     }
     ImGui::Image((ImTextureID)(intptr_t)m_GameFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
                  ImVec2(1, 0));

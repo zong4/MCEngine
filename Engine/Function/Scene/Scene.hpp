@@ -9,7 +9,7 @@ class Scene
 {
 public:
     Scene();
-    ~Scene();
+    virtual ~Scene();
 
     entt::registry &GetRegistry() { return m_Registry; }
     entt::entity GetMainCamera() const { return m_MainCamera; }

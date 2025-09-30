@@ -12,8 +12,8 @@
     }
 
 MCEngine::VertexArray::VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
-                                   IndexBuffer &&indexBuffer)
-    : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer))
+                                   IndexBuffer &&indexBuffer, int count)
+    : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer)), m_Count(count)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -28,12 +28,13 @@ MCEngine::VertexArray::~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); 
 
 MCEngine::VertexArray::VertexArray(VertexArray &&other)
     : m_RendererID(other.m_RendererID), m_IndexBuffer(std::move(other.m_IndexBuffer)),
-      m_VertexBuffer(std::move(other.m_VertexBuffer))
+      m_VertexBuffer(std::move(other.m_VertexBuffer)), m_Count(other.m_Count)
 {
     LOG_ENGINE_INFO("VertexArray moved with ID: " + std::to_string(m_RendererID));
 
     // Invalidate the moved-from object
     other.m_RendererID = 0;
+    other.m_Count = 1;
 }
 
 MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
@@ -45,10 +46,12 @@ MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
         m_RendererID = other.m_RendererID;
         m_IndexBuffer = std::move(other.m_IndexBuffer);
         m_VertexBuffer = std::move(other.m_VertexBuffer);
+        m_Count = other.m_Count;
         LOG_ENGINE_INFO("VertexArray move-assigned with ID: " + std::to_string(m_RendererID));
 
         // Invalidate the moved-from object
         other.m_RendererID = 0;
+        other.m_Count = 1;
     }
     return *this;
 }
@@ -81,13 +84,15 @@ void MCEngine::VertexArray::Render() const
 
     if (m_IndexBuffer.GetRendererID() == 0)
     {
-        glDrawArrays(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount);
+        m_Count == 1 ? glDrawArrays(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount)
+                     : glDrawArraysInstanced(GL_TRIANGLES, 0, m_VertexBuffer.GetCount() / m_AttributeCount, m_Count);
         GL_ERROR();
     }
     else
     {
         m_IndexBuffer.Bind();
-        glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0);
+        m_Count == 1 ? glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
+                     : glDrawElementsInstanced(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0, m_Count);
         GL_ERROR();
         m_IndexBuffer.Unbind();
     }

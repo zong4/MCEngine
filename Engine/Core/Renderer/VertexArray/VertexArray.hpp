@@ -20,7 +20,7 @@ class VertexArray
 {
 public:
     VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
-                IndexBuffer &&indexBuffer = IndexBuffer(nullptr, 0));
+                IndexBuffer &&indexBuffer = IndexBuffer(nullptr, 0), int count = 1);
     ~VertexArray();
 
     VertexArray(const VertexArray &) = delete;
@@ -41,6 +41,7 @@ private:
     VertexBuffer m_VertexBuffer;
     int m_AttributeCount = 0;
     IndexBuffer m_IndexBuffer;
+    int m_Count = 1;
 
 protected:
     void Bind() const;

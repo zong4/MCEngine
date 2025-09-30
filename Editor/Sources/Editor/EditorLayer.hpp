@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Function.hpp>
+#include "Scene/SampleScene.hpp"
 
 namespace MCEditor
 {
@@ -40,7 +40,6 @@ protected:
     void Begin(float deltaTime) override;
 
     void InitCamera(std::shared_ptr<MCEngine::Window> windowPtr);
-    void InitScene();
     void InitScenePanel();
     void InitGamePanel();
 
