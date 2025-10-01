@@ -11,12 +11,12 @@ public:
     SampleScene();
     virtual ~SampleScene() override = default;
 
-public:
-    void Render(MCEngine::CameraComponent &camera) const override;
-    void RenderShadowMap() const override;
-
 private:
     entt::entity m_Light;
+
+protected:
+    void RenderShadowMapReally() const override;
+    void RenderReally(MCEngine::CameraComponent &camera) const override;
 };
 
 } // namespace MCEditor

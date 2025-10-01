@@ -11,13 +11,13 @@ public:
     GeometryScene();
     virtual ~GeometryScene() override = default;
 
-public:
-    void Render(MCEngine::CameraComponent &camera) const override;
-    void RenderShadowMap() const override {}
-
 private:
     std::vector<glm::mat4> m_Offsets;
     float m_Magnitude = 0.1f;
+
+protected:
+    void RenderShadowMapReally() const override {}
+    void RenderReally(MCEngine::CameraComponent &camera) const override;
 };
 
 } // namespace MCEditor

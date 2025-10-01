@@ -7,11 +7,9 @@ MCEditor::GeometryScene::GeometryScene()
                                             MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry"));
 }
 
-void MCEditor::GeometryScene::Render(MCEngine::CameraComponent &camera) const
+void MCEditor::GeometryScene::RenderReally(MCEngine::CameraComponent &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
-
-    MCEngine::Scene::Render(camera);
 
     MCEngine::RendererCommand::DisableFaceCulling();
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry");

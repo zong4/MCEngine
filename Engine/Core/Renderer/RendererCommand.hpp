@@ -15,6 +15,8 @@ public:
 public:
     static void SetClearColor(const glm::vec4 &color);
     static void Clear();
+    static void ClearColorBuffer();
+    static void ClearDepthBuffer();
 
     static void EnableDepthTest();
     static void DisableDepthTest();

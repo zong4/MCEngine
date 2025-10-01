@@ -24,10 +24,14 @@ MCEditor::FullScene::FullScene() : MCEngine::Scene()
                 m_Registry.get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
             }
         }
+        MCEngine::EntityFactory::CreateCube(m_Registry, "Cube",
+                                            MCEngine::TransformComponent(glm::vec3(2.0f, 2.0f, 2.0f)));
 
         // Default light
         {
-            m_Light = MCEngine::EntityFactory::CreateDirectionalLight(m_Registry, "DirectionalLight");
+            m_Light = MCEngine::EntityFactory::CreateDirectionalLight(
+                m_Registry, "DirectionalLight",
+                MCEngine::TransformComponent(glm::vec3(3.0f), glm::vec3(0.0f), glm::vec3(0.5f)));
             MCEngine::EntityFactory::AddComponents(
                 m_Registry, m_Light,
                 MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
@@ -61,16 +65,51 @@ MCEditor::FullScene::FullScene() : MCEngine::Scene()
     }
 }
 
-void MCEditor::FullScene::Render(MCEngine::CameraComponent &camera) const
+void MCEditor::FullScene::RenderShadowMapReally() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    MCEngine::Scene::Render(camera);
+    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
+    shader->Bind();
+    // todo
+    {
+        glm::vec3 position = m_Registry.get<MCEngine::TransformComponent>(m_Light).GetPosition();
+        shader->SetUniformMat4("u_LightView", glm::lookAt(position, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    }
+    shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
+
+    auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+    for (auto &&entity : meshView)
+    {
+        auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
+
+        // transform
+        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+
+        // mesh
+        mesh.GetVAOPtr()->Render(MCEngine::RendererType::Triangles);
+    }
+    shader->Unbind();
+}
+
+void MCEditor::FullScene::RenderReally(MCEngine::CameraComponent &camera) const
+{
+    ENGINE_PROFILE_FUNCTION();
 
     // 3D
     {
         auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong");
         shader->Bind();
+
+        shader->SetUniformInt("u_ShadowMap", 0);
+        m_ShadowMapPtr->GetTexturePtr()->Bind(0);
+
+        // todo
+        {
+            glm::vec3 position = m_Registry.get<MCEngine::TransformComponent>(m_Light).GetPosition();
+            shader->SetUniformMat4("u_LightView", glm::lookAt(position, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+        }
+        shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
 
         // Light
         auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
@@ -143,41 +182,4 @@ void MCEditor::FullScene::Render(MCEngine::CameraComponent &camera) const
         shader->Unbind();
         MCEngine::RendererCommand::EnableDepthTest();
     }
-}
-
-void MCEditor::FullScene::RenderShadowMap() const
-{
-
-    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
-    shader->Bind();
-
-    // todo
-    {
-        glm::vec3 position = m_Registry.get<MCEngine::TransformComponent>(m_Light).GetPosition();
-        glm::vec3 rotation = m_Registry.get<MCEngine::TransformComponent>(m_Light).GetRotation();
-
-        glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        glm::mat4 rotationXYZ = rotationZ * rotationY * rotationX;
-
-        glm::vec3 front = glm::normalize(glm::vec3(rotationXYZ * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-        glm::vec3 up = glm::normalize(glm::vec3(rotationXYZ * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
-        shader->SetUniformMat4("u_LightView", glm::lookAt(position, position + front, up));
-    }
-    shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
-
-    auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-    for (auto &&entity : meshView)
-    {
-        auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
-
-        // transform
-        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-
-        // mesh
-        mesh.GetVAOPtr()->Render(MCEngine::RendererType::Triangles);
-    }
-
-    shader->Unbind();
 }

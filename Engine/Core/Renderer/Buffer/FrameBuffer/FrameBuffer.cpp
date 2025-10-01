@@ -73,6 +73,7 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
 
     m_Width = width;
     m_Height = height;
+
     m_TexturePtr->Resize(width, height);
     if (m_RenderBufferPtr)
         m_RenderBufferPtr->Resize(width, height);

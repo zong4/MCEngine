@@ -19,11 +19,9 @@ MCEditor::InstanceScene::InstanceScene() : MCEngine::Scene()
     }
 }
 
-void MCEditor::InstanceScene::Render(MCEngine::CameraComponent &camera) const
+void MCEditor::InstanceScene::RenderReally(MCEngine::CameraComponent &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
-
-    MCEngine::Scene::Render(camera);
 
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Instance");
     shader->Bind();

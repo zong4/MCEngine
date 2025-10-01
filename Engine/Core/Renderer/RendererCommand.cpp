@@ -40,6 +40,20 @@ void MCEngine::RendererCommand::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void MCEngine::RendererCommand::ClearColorBuffer()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void MCEngine::RendererCommand::ClearDepthBuffer()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 void MCEngine::RendererCommand::EnableDepthTest()
 {
     ENGINE_PROFILE_FUNCTION();

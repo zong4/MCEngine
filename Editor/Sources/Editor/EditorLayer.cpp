@@ -70,11 +70,13 @@ void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    m_ScenePtr->RenderShadowMap();
+
     m_SceneMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
     m_ScenePtr->Render(*m_CameraPtr);
     m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
-    m_SceneFBOPtr->Unbind();
+    m_SceneMultisampleFBOPtr->Unbind();
 
     m_GameMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();

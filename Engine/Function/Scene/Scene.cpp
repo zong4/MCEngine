@@ -50,6 +50,18 @@ void MCEngine::Scene::Update(float deltaTime)
     }
 }
 
+void MCEngine::Scene::RenderShadowMap() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_ShadowMapPtr->Bind();
+    RendererCommand::ClearDepthBuffer();
+
+    RenderShadowMapReally();
+
+    m_ShadowMapPtr->Unbind();
+}
+
 void MCEngine::Scene::Render(CameraComponent &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
@@ -84,6 +96,8 @@ void MCEngine::Scene::Render(CameraComponent &camera) const
 
         shader->Unbind();
     }
+
+    RenderReally(camera);
 }
 
 void MCEngine::Scene::Resize(float width, float height)
