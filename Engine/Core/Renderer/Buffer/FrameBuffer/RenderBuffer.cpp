@@ -10,7 +10,6 @@ MCEngine::RenderBuffer::RenderBuffer(int width, int height, unsigned int interna
     glGenRenderbuffers(1, &m_RendererID);
     Bind(width, height);
     Unbind();
-
     LOG_ENGINE_INFO("RenderBuffer created with ID: " + std::to_string(m_RendererID) +
                     ", Width: " + std::to_string(width) + ", Height: " + std::to_string(height) +
                     ", InternalFormat: " + std::to_string(internalFormat) + ", Samples: " + std::to_string(samples));

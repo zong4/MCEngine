@@ -5,19 +5,14 @@
 namespace MCEngine
 {
 
-class UniformBufferData
+struct UniformBufferData
 {
+    const void *Data;
+    size_t Size;
+    size_t Offset;
+
 public:
-    UniformBufferData(const void *data, size_t size, size_t offset) : m_Data(data), m_Size(size), m_Offset(offset) {}
-
-    const void *GetData() const { return m_Data; }
-    size_t GetSize() const { return m_Size; }
-    size_t GetOffset() const { return m_Offset; }
-
-private:
-    const void *m_Data;
-    size_t m_Size;
-    size_t m_Offset;
+    UniformBufferData(const void *data, size_t size, size_t offset) : Data(data), Size(size), Offset(offset) {}
 };
 
 class UniformBuffer
@@ -31,6 +26,7 @@ public:
     UniformBuffer(UniformBuffer &&) = delete;
     UniformBuffer &operator=(UniformBuffer &&) = delete;
 
+    // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
 
 public:

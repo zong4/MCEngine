@@ -118,16 +118,18 @@ void MCEditor::EditorLayer::InitScenePanel()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_SceneFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0);
-    m_SceneMultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0, 4);
+    m_SceneFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
+    m_SceneMultisampleFBOPtr =
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
 }
 
 void MCEditor::EditorLayer::InitGamePanel()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0);
-    m_GameMultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(1280, 720, 0x88F0, 4);
+    m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
+    m_GameMultisampleFBOPtr =
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
 }
 
 void MCEditor::EditorLayer::BeginDockSpace() const

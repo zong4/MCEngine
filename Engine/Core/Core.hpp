@@ -12,6 +12,6 @@
 #include "Renderer/Buffer/UniformBuffer/UniformBufferLibrary.hpp"
 #include "Renderer/RendererCommand.hpp"
 #include "Renderer/Shader/ShaderLibrary.hpp"
-#include "Renderer/Texture/Texture2DLibrary.hpp"
+#include "Renderer/Texture/TextureLibrary.hpp"
 #include "Renderer/VertexArray/VAOLibrary.hpp"
 #include "Window/Window.hpp"

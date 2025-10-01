@@ -2,60 +2,54 @@
 
 #include <glad/glad.h>
 
-MCEngine::FrameBuffer::FrameBuffer(int width, int height, unsigned int renderBufferFormat, int samples)
-    : m_Width(width), m_Height(height)
+MCEngine::FrameBuffer::FrameBuffer(FrameBufferType type, int width, int height, int samples)
+    : m_Type(type), m_Width(width), m_Height(height)
 {
     ENGINE_PROFILE_FUNCTION();
 
     glGenFramebuffers(1, &m_RendererID);
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-    if (samples == 0)
-    {
-        m_TexturePtr = std::make_shared<Texture2D>(width, height, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
-    }
+    if (type != FrameBufferType::MultiSample)
+        BindBasicTexture(width, height);
     else
-    {
-        m_TexturePtr = std::make_shared<Texture2D>(width, height, samples);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                               m_TexturePtr->GetRendererID(), 0);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
-    }
+        BindMultiSampleTexture(width, height, samples);
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
-    if (renderBufferFormat != 0)
-    {
-        m_RenderBufferPtr = std::make_shared<RenderBuffer>(width, height, renderBufferFormat, samples);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                  m_RenderBufferPtr->GetRendererID());
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
-    }
+    if (type != FrameBufferType::Depth)
+        BindRenderBuffer(width, height, GL_DEPTH24_STENCIL8, samples);
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
         LOG_ENGINE_ERROR("FrameBuffer is incomplete!");
-    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     LOG_ENGINE_INFO("FrameBuffer created with ID: " + std::to_string(m_RendererID) +
-                    ", Width: " + std::to_string(width) + ", Height: " + std::to_string(height) +
-                    ", RenderBufferFormat: " + std::to_string(renderBufferFormat) +
-                    ", Samples: " + std::to_string(samples));
+                    ", Type: " + std::to_string(static_cast<int>(m_Type)) + ", Width: " + std::to_string(width) +
+                    ", Height: " + std::to_string(height) +
+                    (type == FrameBufferType::MultiSample ? ", Samples: " + std::to_string(samples) : ""));
 }
 
-MCEngine::FrameBuffer::~FrameBuffer() { glDeleteFramebuffers(1, &m_RendererID); }
+MCEngine::FrameBuffer::~FrameBuffer()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glDeleteFramebuffers(1, &m_RendererID);
+}
 
 void MCEngine::FrameBuffer::Bind() const
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    ENGINE_PROFILE_FUNCTION();
 
+    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
     glViewport(0, 0, m_Width, m_Height);
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::FrameBuffer::Unbind() const
 {
+    ENGINE_PROFILE_FUNCTION();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
@@ -66,7 +60,6 @@ void MCEngine::FrameBuffer::Blit(unsigned int resolveID) const
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveID);
-
     glBlitFramebuffer(0, 0, m_Width, m_Height, 0, 0, m_Width, m_Height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
@@ -82,12 +75,50 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
     m_Height = height;
     m_TexturePtr->Resize(width, height);
     if (m_RenderBufferPtr)
-    {
         m_RenderBufferPtr->Resize(width, height);
+
+    Bind();
+    Unbind();
+}
+
+void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    if (m_Type == FrameBufferType::Color)
+    {
+        m_TexturePtr = std::make_shared<Texture2D>(width, height, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
+    }
+    else if (m_Type == FrameBufferType::Depth)
+    {
+        m_TexturePtr = std::make_shared<Texture2D>(width, height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+    }
+}
+
+void MCEngine::FrameBuffer::BindMultiSampleTexture(int width, int height, int samples)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    if (samples <= 0)
+    {
+        LOG_ENGINE_ERROR("Samples must be greater than 0 for multisample texture.");
+        return;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-    glViewport(0, 0, m_Width, m_Height);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    m_TexturePtr = std::make_shared<Texture2D>(width, height, samples);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           m_TexturePtr->GetRendererID(), 0);
+}
+
+void MCEngine::FrameBuffer::BindRenderBuffer(int width, int height, unsigned int internalFormat, int samples)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_RenderBufferPtr = std::make_shared<RenderBuffer>(width, height, internalFormat, samples);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              m_RenderBufferPtr->GetRendererID());
 }

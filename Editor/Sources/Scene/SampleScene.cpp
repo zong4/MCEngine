@@ -8,7 +8,7 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
     {
         entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
             m_Registry, "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
-            MCEngine::Texture2DLibrary::GetInstance().GetTexture("02BG"));
+            MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG"));
     }
 
     // 3D
