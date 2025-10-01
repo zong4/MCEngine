@@ -14,11 +14,11 @@ MCEngine::FrameBuffer::FrameBuffer(FrameBufferType type, int width, int height, 
         BindBasicTexture(width, height);
     else
         BindMultiSampleTexture(width, height, samples);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     if (type != FrameBufferType::Depth)
         BindRenderBuffer(width, height, GL_DEPTH24_STENCIL8, samples);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         LOG_ENGINE_ERROR("FrameBuffer is incomplete!");
@@ -43,7 +43,7 @@ void MCEngine::FrameBuffer::Bind() const
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
     glViewport(0, 0, m_Width, m_Height);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::FrameBuffer::Unbind() const
@@ -51,7 +51,7 @@ void MCEngine::FrameBuffer::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::FrameBuffer::Blit(unsigned int resolveID) const
@@ -61,7 +61,7 @@ void MCEngine::FrameBuffer::Blit(unsigned int resolveID) const
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveID);
     glBlitFramebuffer(0, 0, m_Width, m_Height, 0, 0, m_Width, m_Height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::FrameBuffer::Resize(int width, int height)

@@ -45,7 +45,7 @@ void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform1i(location, value);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
@@ -54,7 +54,7 @@ void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform1f(location, value);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3)
@@ -63,7 +63,7 @@ void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform3fv(location, 1, &vector3[0]);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
@@ -72,7 +72,7 @@ void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform4fv(location, 1, &vector4[0]);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4)
@@ -81,7 +81,7 @@ void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }

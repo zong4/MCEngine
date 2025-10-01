@@ -37,7 +37,7 @@ void MCEngine::RenderBuffer::Bind(int width, int height) const
     glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID);
     m_Samples == 0 ? glRenderbufferStorage(GL_RENDERBUFFER, m_InternalFormat, width, height)
                    : glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_Samples, m_InternalFormat, width, height);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::RenderBuffer::Unbind() const
@@ -45,5 +45,5 @@ void MCEngine::RenderBuffer::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }

@@ -81,7 +81,7 @@ void MCEngine::IndexBuffer::SetData(const void *data, size_t size, size_t offset
 
     Bind();
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
     LOG_ENGINE_INFO("IndexBuffer data updated for ID: " + std::to_string(m_RendererID));
@@ -100,7 +100,7 @@ void MCEngine::IndexBuffer::CreateBuffer(const void *data, size_t size)
     glGenBuffers(1, &m_RendererID);
     Bind();
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
     LOG_ENGINE_INFO("IndexBuffer created with ID: " + std::to_string(m_RendererID) +

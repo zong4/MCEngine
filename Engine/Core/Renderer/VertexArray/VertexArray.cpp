@@ -93,7 +93,7 @@ void MCEngine::VertexArray::Render(RendererType renderType) const
             ? glDrawArrays(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount)
             : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount,
                                     m_InstanceCount);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+        RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     }
     else
     {
@@ -102,7 +102,7 @@ void MCEngine::VertexArray::Render(RendererType renderType) const
             ? glDrawElements(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
             : glDrawElementsInstanced(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0,
                                       m_InstanceCount);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+        RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
         m_IndexBuffer.Unbind();
     }
     m_VertexBuffer.Unbind();
@@ -135,7 +135,7 @@ void MCEngine::VertexArray::SetVertexAttributes(const std::vector<VertexAttribut
         glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
                               static_cast<GLsizei>(attribute.stride), attribute.offset);
         glEnableVertexAttribArray(attribute.location);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+        RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     }
     m_VertexBuffer.Unbind();
     Unbind();

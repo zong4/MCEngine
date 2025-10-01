@@ -22,7 +22,7 @@ void MCEngine::TextureCube::Bind(unsigned int slot) const
 
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::TextureCube::Unbind() const
@@ -30,7 +30,7 @@ void MCEngine::TextureCube::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
 void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
@@ -46,7 +46,7 @@ void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     int width, height, channels;
     unsigned char *data = nullptr;
@@ -62,7 +62,7 @@ void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
         else if (channels == 4)
             format = GL_RGBA;
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+        RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
         FreeImage(data);
     }

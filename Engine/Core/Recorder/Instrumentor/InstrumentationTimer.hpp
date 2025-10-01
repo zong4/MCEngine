@@ -17,6 +17,12 @@ private:
 };
 
 #define ENGINE_PROFILE_SCOPE(name) MCEngine::InstrumentationTimer timer##__LINE__(name);
-#define ENGINE_PROFILE_FUNCTION() ENGINE_PROFILE_SCOPE(__PRETTY_FUNCTION__)
+
+#ifdef _MSC_VER
+#define FUNCTION_SIGNATURE __FUNCSIG__
+#else
+#define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
+#endif
+#define ENGINE_PROFILE_FUNCTION() ENGINE_PROFILE_SCOPE(FUNCTION_SIGNATURE)
 
 } // namespace MCEngine

@@ -76,7 +76,7 @@ void MCEngine::VertexBuffer::SetData(const void *data, size_t size, size_t offse
 
     Bind();
     glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
     LOG_ENGINE_INFO("VertexBuffer data updated for ID: " + std::to_string(m_RendererID));
@@ -89,7 +89,7 @@ void MCEngine::VertexBuffer::CreateBuffer(const void *data, size_t size)
     glGenBuffers(1, &m_RendererID);
     Bind();
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
     LOG_ENGINE_INFO("VertexBuffer created with ID: " + std::to_string(m_RendererID) +
