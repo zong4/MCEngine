@@ -11,6 +11,7 @@ public:
     Component() = default;
     virtual ~Component() = default;
 
+public:
     virtual void Update(float deltaTime) = 0;
 };
 

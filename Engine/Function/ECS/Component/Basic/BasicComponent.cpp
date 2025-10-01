@@ -51,10 +51,11 @@ void MCEngine::TransformComponent::SetScale(const glm::vec3 &scale)
 
 void MCEngine::TransformComponent::Update(float deltaTime)
 {
+    // ENGINE_PROFILE_FUNCTION();
+
     if (m_Dirty)
     {
         UpdateTransformMatrix();
-        UpdateRotationMatrix();
         m_Dirty = false;
     }
 }
@@ -89,24 +90,16 @@ void MCEngine::TransformComponent::UpdateTransformMatrix()
     glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 rotationMatrix = rotationZ * rotationY * rotationX;
+    m_RotationMatrix = rotationZ * rotationY * rotationX;
 
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), m_Scale);
 
-    m_TransformMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-}
-
-void MCEngine::TransformComponent::UpdateRotationMatrix()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    m_RotationMatrix = rotationZ * rotationY * rotationX;
+    m_TransformMatrix = translationMatrix * m_RotationMatrix * scaleMatrix;
 }
 
 void MCEngine::RelationshipComponent::RemoveChild(entt::entity child)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), child), m_Children.end());
 }

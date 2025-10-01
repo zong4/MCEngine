@@ -4,6 +4,8 @@ entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry
                                                         const glm::vec3 &position, const glm::vec3 &rotation,
                                                         const glm::vec3 &scale)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     entt::entity entity = registry.create();
     registry.emplace<TagComponent>(entity, name);
     registry.emplace<TransformComponent>(entity, position, rotation, scale);
@@ -14,6 +16,8 @@ entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry
 entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry, const std::string &name,
                                                         const TransformComponent &transform)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     entt::entity entity = registry.create();
     registry.emplace<TagComponent>(entity, name);
     registry.emplace<TransformComponent>(entity, transform);
@@ -22,44 +26,43 @@ entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry
 }
 
 entt::entity MCEngine::EntityFactory::CreateSquare(entt::registry &registry, const std::string &name,
-                                                   const glm::vec3 &position, const glm::vec3 &rotation,
-                                                   const glm::vec3 &scale, const glm::vec4 &color,
-                                                   std::shared_ptr<Texture2D> texturePtr)
+                                                   const TransformComponent &transform,
+                                                   const SpriteRendererComponent &spriteRenderer)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
-    AddComponents(registry, entity,
-                  SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), color, texturePtr));
+    ENGINE_PROFILE_FUNCTION();
+
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
+    AddComponents(registry, entity, spriteRenderer);
     LOG_ENGINE_TRACE("Basic Square Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreateCube(entt::registry &registry, const std::string &name,
-                                                 const glm::vec3 &position, const glm::vec3 &rotation,
-                                                 const glm::vec3 &scale, const Material &material)
+                                                 const TransformComponent &transform,
+                                                 const MeshRendererComponent &meshRenderer)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, scale);
-    AddComponents(registry, entity,
-                  MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"), material));
+    ENGINE_PROFILE_FUNCTION();
+
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
+    AddComponents(registry, entity, meshRenderer);
     LOG_ENGINE_TRACE("Basic Cube Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreateOrthoCamera(entt::registry &registry, const std::string &name,
-                                                        const glm::vec3 &position, const glm::vec3 &rotation,
-                                                        const glm::vec3 &size)
+                                                        const TransformComponent &transform, const glm::vec3 &size)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, glm::vec3(1.0f));
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity, CameraComponent(&registry.get<TransformComponent>(entity), size));
     LOG_ENGINE_TRACE("Basic Orthographic Camera Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreatePerspectiveCamera(entt::registry &registry, const std::string &name,
-                                                              const glm::vec3 &position, const glm::vec3 &rotation,
-                                                              float fov, float aspectRatio, float nearClip,
-                                                              float farClip)
+                                                              const TransformComponent &transform, float fov,
+                                                              float aspectRatio, float nearClip, float farClip)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position, rotation, glm::vec3(1.0f));
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity,
                   CameraComponent(&registry.get<TransformComponent>(entity), fov, aspectRatio, nearClip, farClip));
     LOG_ENGINE_TRACE("Basic Perspective Camera Entity created with ID: " + std::to_string((uint32_t)entity));

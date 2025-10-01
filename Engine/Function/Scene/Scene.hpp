@@ -11,13 +11,14 @@ public:
     Scene();
     virtual ~Scene();
 
+    // Getters
     entt::registry &GetRegistry() { return m_Registry; }
     entt::entity GetMainCamera() const { return m_MainCamera; }
 
 public:
+    // Main loop
     void OnEvent(Event &event) {}
     void Update(float deltaTime);
-
     virtual void Render(CameraComponent &camera) const;
 
     void Resize(float width, float height);

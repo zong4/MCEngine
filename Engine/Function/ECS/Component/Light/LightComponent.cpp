@@ -35,7 +35,6 @@ void MCEngine::LightComponent::SetAttenuation(float constant, float linear, floa
         LOG_ENGINE_WARN("Trying to set attenuation on a directional light");
         return;
     }
-
     m_Constant = constant;
     m_Linear = linear;
     m_Quadratic = quadratic;
@@ -48,15 +47,6 @@ void MCEngine::LightComponent::SetCutOff(float cutOff, float outerCutOff)
         LOG_ENGINE_WARN("Trying to set cutOff on a non-spot light");
         return;
     }
-
     m_CutOff = cutOff;
     m_OuterCutOff = outerCutOff;
 }
-
-MCEngine::SkyboxComponent::SkyboxComponent(const std::string &directory)
-{
-    m_TextureCubePtr = std::make_shared<TextureCube>(directory);
-    LOG_ENGINE_INFO("Skybox Component created with directory: " + directory);
-}
-
-MCEngine::SkyboxComponent::~SkyboxComponent() {}

@@ -7,8 +7,9 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
     // 2D
     {
         entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
-            m_Registry, "Square", glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f),
-            MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG"));
+            m_Registry, "Square", MCEngine::TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f)),
+            MCEngine::SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), glm::vec4(1.0f),
+                                              MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG")));
     }
 
     // 3D
@@ -18,8 +19,8 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
         {
             for (int j = 0; j < 5; j++)
             {
-                entt::entity cubeEntity =
-                    MCEngine::EntityFactory::CreateCube(m_Registry, "Cube", glm::vec3(i * 1.0f, 0.0f, j * 1.0f));
+                entt::entity cubeEntity = MCEngine::EntityFactory::CreateCube(
+                    m_Registry, "Cube", MCEngine::TransformComponent(glm::vec3(i * 1.0f, 0.0f, j * 1.0f)));
                 m_Registry.get<MCEngine::RelationshipComponent>(cubeEntity).SetParent(cubes);
                 m_Registry.get<MCEngine::RelationshipComponent>(cubes).AddChild(cubeEntity);
             }
@@ -31,6 +32,7 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
             MCEngine::EntityFactory::AddComponents(
                 m_Registry, light,
                 MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
                                                 MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
         }
         {
@@ -38,6 +40,7 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
             MCEngine::EntityFactory::AddComponents(
                 m_Registry, light,
                 MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
                                                 MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
         }
         {
@@ -45,15 +48,14 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
             MCEngine::EntityFactory::AddComponents(
                 m_Registry, light,
                 MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
+                                                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
                                                 MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
         }
 
         // Skybox
         {
             entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_Registry, "Skybox");
-            MCEngine::EntityFactory::AddComponents(
-                m_Registry, skybox,
-                MCEngine::SkyboxComponent(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/skybox"));
+            MCEngine::EntityFactory::AddComponents(m_Registry, skybox, MCEngine::SkyboxComponent("Skybox"));
         }
     }
 }
@@ -63,28 +65,6 @@ void MCEditor::SampleScene::Render(MCEngine::CameraComponent &camera) const
     ENGINE_PROFILE_FUNCTION();
 
     MCEngine::Scene::Render(camera);
-
-    // 2D
-    {
-        auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Texture");
-        shader->Bind();
-
-        auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
-        for (auto entity : spriteView)
-        {
-            auto &&[transform, sprite] =
-                spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
-
-            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-            shader->SetUniformVec4("u_Color", sprite.GetColor());
-            shader->SetUniformInt("u_Texture", 0);
-            sprite.GetTexturePtr()->Bind(0);
-
-            sprite.GetVAOPtr()->Render();
-        }
-
-        shader->Unbind();
-    }
 
     // 3D
     {

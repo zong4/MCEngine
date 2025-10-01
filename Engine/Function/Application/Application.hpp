@@ -11,6 +11,7 @@ public:
     Application(const WindowProperty &props) { Init(props); }
     virtual ~Application() { Shutdown(); }
 
+public:
     void Run();
 
 protected:

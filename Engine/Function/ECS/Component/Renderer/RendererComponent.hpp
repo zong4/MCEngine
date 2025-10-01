@@ -10,22 +10,26 @@ class SpriteRendererComponent : public Component
 {
 
 public:
-    SpriteRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const glm::vec4 &color,
-                            std::shared_ptr<Texture2D> texturePtr);
+    SpriteRendererComponent(const std::shared_ptr<VertexArray> &vaoPtr, const glm::vec4 &color,
+                            const std::shared_ptr<Texture2D> &texturePtr);
 
+    // Getters
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
     glm::vec4 &GetColor() { return m_Color; }
     const glm::vec4 &GetColor() const { return m_Color; }
     std::shared_ptr<Texture2D> GetTexturePtr() const { return m_TexturePtr; }
 
-    void SetVAOPtr(std::shared_ptr<VertexArray> vaoPtr) { m_VAOPtr = vaoPtr; }
+    // Setters
+    void SetVAOPtr(const std::shared_ptr<VertexArray> &vaoPtr) { m_VAOPtr = vaoPtr; }
     void SetColor(const glm::vec4 &color) { m_Color = color; }
-    void SetTexturePtr(std::shared_ptr<Texture2D> texturePtr) { m_TexturePtr = texturePtr; }
+    void SetTexturePtr(const std::shared_ptr<Texture2D> &texturePtr) { m_TexturePtr = texturePtr; }
 
     virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
+
+    // Rendering properties
     glm::vec4 m_Color;
     std::shared_ptr<Texture2D> m_TexturePtr;
 };
@@ -33,19 +37,28 @@ private:
 class MeshRendererComponent : public Component
 {
 public:
-    MeshRendererComponent(std::shared_ptr<VertexArray> vaoPtr, const Material &material);
+    MeshRendererComponent(const std::shared_ptr<VertexArray> &vaoPtr, const std::shared_ptr<Shader> &shaderPtr,
+                          const Material &material);
 
+    // Getters
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
+    std::shared_ptr<Shader> GetShaderPtr() const { return m_ShaderPtr; }
     Material &GetMaterial() { return m_Material; }
     const Material &GetMaterial() const { return m_Material; }
 
-    void SetVAOPtr(std::shared_ptr<VertexArray> vaoPtr) { m_VAOPtr = vaoPtr; }
+    // Setters
+    void SetVAOPtr(const std::shared_ptr<VertexArray> &vaoPtr) { m_VAOPtr = vaoPtr; }
+    void SetShaderPtr(const std::shared_ptr<Shader> &shaderPtr) { m_ShaderPtr = shaderPtr; }
     void SetMaterial(const Material &material) { m_Material = material; }
 
+public:
     virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
+    std::shared_ptr<Shader> m_ShaderPtr;
+
+    // Rendering properties
     Material m_Material;
 };
 

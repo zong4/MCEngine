@@ -19,8 +19,9 @@ public:
                     float farClip);
     virtual ~CameraComponent() override;
 
+    // Getters
     CameraType GetType() const { return m_Type; }
-    TransformComponent *GetTransformComponent() const { return m_TransformComponent; }
+    const TransformComponent *GetTransformComponent() const { return m_TransformComponent; }
     const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
     const glm::mat4 &GetProjectionMatrix() const { return m_ProjectionMatrix; }
     const glm::vec3 &GetSize() const { return m_Size; }
@@ -29,22 +30,24 @@ public:
     float GetNearClip() const { return m_NearClip; }
     float GetFarClip() const { return m_FarClip; }
 
+    // Setters
     void SetFOV(float fov);
     void SetNearClip(float nearClip);
     void SetFarClip(float farClip);
 
 public:
     virtual void Update(float deltaTime) override;
-
     void Resize(float width, float height);
 
 private:
     CameraType m_Type;
 
-    TransformComponent *m_TransformComponent = nullptr;
+    // Common
+    const TransformComponent *m_TransformComponent = nullptr;
     glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
 
+    // Specific
     glm::vec3 m_Size;
     float m_FOV, m_AspectRatio, m_NearClip, m_FarClip;
 

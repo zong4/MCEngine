@@ -20,27 +20,30 @@ public:
     LightComponent(const glm::vec3 &color, float intensity, float constant, float linear, float quadratic, float cutOff,
                    float outerCutOff);
 
+    // Getters
     LightType GetType() const { return m_LightType; }
     glm::vec3 &GetColor() { return m_Color; }
-    const glm::vec3 &GetColor() const { return m_Color; }
     float &GetIntensity() { return m_Intensity; }
-    float GetIntensity() const { return m_Intensity; }
     float &GetConstant() { return m_Constant; }
-    float GetConstant() const { return m_Constant; }
     float &GetLinear() { return m_Linear; }
-    float GetLinear() const { return m_Linear; }
     float &GetQuadratic() { return m_Quadratic; }
-    float GetQuadratic() const { return m_Quadratic; }
     float &GetCutOff() { return m_CutOff; }
-    float GetCutOff() const { return m_CutOff; }
     float &GetOuterCutOff() { return m_OuterCutOff; }
+    const glm::vec3 &GetColor() const { return m_Color; }
+    float GetIntensity() const { return m_Intensity; }
+    float GetConstant() const { return m_Constant; }
+    float GetLinear() const { return m_Linear; }
+    float GetQuadratic() const { return m_Quadratic; }
+    float GetCutOff() const { return m_CutOff; }
     float GetOuterCutOff() const { return m_OuterCutOff; }
 
+    // Setters
     void SetColor(const glm::vec4 &color) { m_Color = color; }
     void SetIntensity(float intensity) { m_Intensity = intensity; }
     void SetAttenuation(float constant, float linear, float quadratic);
     void SetCutOff(float cutOff, float outerCutOff);
 
+public:
     virtual void Update(float deltaTime) override {}
 
 private:
@@ -49,23 +52,6 @@ private:
     float m_Intensity;
     float m_Constant, m_Linear, m_Quadratic;
     float m_CutOff, m_OuterCutOff;
-};
-
-class SkyboxComponent : public Component
-{
-public:
-    SkyboxComponent(const std::string &directory);
-    ~SkyboxComponent();
-
-    std::shared_ptr<TextureCube> &GetTextureCubePtr() { return m_TextureCubePtr; }
-    const std::shared_ptr<TextureCube> &GetTextureCubePtr() const { return m_TextureCubePtr; }
-
-    void SetTextureCube(const std::shared_ptr<TextureCube> &textureCube) { m_TextureCubePtr = textureCube; }
-
-    virtual void Update(float deltaTime) override {}
-
-private:
-    std::shared_ptr<TextureCube> m_TextureCubePtr;
 };
 
 } // namespace MCEngine

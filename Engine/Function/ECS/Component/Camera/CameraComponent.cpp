@@ -24,6 +24,8 @@ MCEngine::CameraComponent::~CameraComponent() { m_TransformComponent = nullptr; 
 
 void MCEngine::CameraComponent::Update(float deltaTime)
 {
+    // ENGINE_PROFILE_FUNCTION();
+
     if (m_TransformComponent->IsDirty())
     {
         UpdateViewMatrix();
@@ -50,7 +52,6 @@ void MCEngine::CameraComponent::SetFOV(float fov)
         LOG_ENGINE_WARN("Trying to set FOV on a non-perspective camera");
         return;
     }
-
     m_FOV = fov;
     UpdateProjectionMatrix();
 }
@@ -62,7 +63,6 @@ void MCEngine::CameraComponent::SetNearClip(float nearClip)
         LOG_ENGINE_WARN("Trying to set Near Clip on a non-perspective camera");
         return;
     }
-
     m_NearClip = nearClip;
     UpdateProjectionMatrix();
 }
@@ -74,7 +74,6 @@ void MCEngine::CameraComponent::SetFarClip(float farClip)
         LOG_ENGINE_WARN("Trying to set Far Clip on a non-perspective camera");
         return;
     }
-
     m_FarClip = farClip;
     UpdateProjectionMatrix();
 }

@@ -13,6 +13,7 @@ public:
     const std::string &GetTag() const { return m_Tag; }
     void SetTag(const std::string &tag) { m_Tag = tag; }
 
+public:
     virtual void Update(float deltaTime) override {}
 
 private:
@@ -22,8 +23,10 @@ private:
 class TransformComponent : public Component
 {
 public:
-    TransformComponent(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3 &scale);
+    TransformComponent(const glm::vec3 &position = glm::vec3(0.0f), const glm::vec3 &rotation = glm::vec3(0.0f),
+                       const glm::vec3 &scale = glm::vec3(1.0f));
 
+    // Getters
     bool IsDirty() const { return m_Dirty; }
     glm::vec3 &GetPosition();
     glm::vec3 &GetRotation();
@@ -31,17 +34,19 @@ public:
     const glm::vec3 &GetPosition() const { return m_Position; }
     const glm::vec3 &GetRotation() const { return m_Rotation; }
     const glm::vec3 &GetScale() const { return m_Scale; }
+    const glm::mat4 &GetTransformMatrix() const { return m_TransformMatrix; }
+    const glm::mat4 &GetRotationMatrix() const { return m_RotationMatrix; }
     glm::vec3 GetForward() const;
     glm::vec3 GetRight() const;
     glm::vec3 GetUp() const;
-    const glm::mat4 &GetTransformMatrix() const { return m_TransformMatrix; }
-    const glm::mat4 &GetRotationMatrix() const { return m_RotationMatrix; }
 
+    // Setters
     void SetDirty(bool dirty) { m_Dirty = dirty; }
     void SetPosition(const glm::vec3 &position);
     void SetRotation(const glm::vec3 &rotation);
     void SetScale(const glm::vec3 &scale);
 
+public:
     virtual void Update(float deltaTime) override;
 
 private:
@@ -54,7 +59,6 @@ private:
 
 private:
     void UpdateTransformMatrix();
-    void UpdateRotationMatrix();
 };
 
 // todo
@@ -63,13 +67,16 @@ class RelationshipComponent : public Component
 public:
     RelationshipComponent(entt::entity parent = entt::null) : m_Parent(parent) {}
 
+    // Getters
     entt::entity GetParent() const { return m_Parent; }
     const std::vector<entt::entity> &GetChildren() const { return m_Children; }
 
+    // Setters
     void SetParent(entt::entity parent) { m_Parent = parent; }
     void AddChild(entt::entity child) { m_Children.push_back(child); }
     void RemoveChild(entt::entity child);
 
+public:
     virtual void Update(float deltaTime) override {}
 
 private:

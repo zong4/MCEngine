@@ -12,14 +12,14 @@ public:
 
     // Getters
     glm::vec4 &GetColor() { return m_Color; }
-    const glm::vec4 &GetColor() const { return m_Color; }
     float &GetAmbientStrength() { return m_AmbientStrength; }
-    const float &GetAmbientStrength() const { return m_AmbientStrength; }
     float &GetDiffuseStrength() { return m_DiffuseStrength; }
-    const float &GetDiffuseStrength() const { return m_DiffuseStrength; }
     float &GetSpecularStrength() { return m_SpecularStrength; }
-    const float &GetSpecularStrength() const { return m_SpecularStrength; }
     float &GetShininess() { return m_Shininess; }
+    const glm::vec4 &GetColor() const { return m_Color; }
+    const float &GetAmbientStrength() const { return m_AmbientStrength; }
+    const float &GetDiffuseStrength() const { return m_DiffuseStrength; }
+    const float &GetSpecularStrength() const { return m_SpecularStrength; }
     float GetShininess() const { return m_Shininess; }
 
     // Setters

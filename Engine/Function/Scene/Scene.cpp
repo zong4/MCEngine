@@ -48,21 +48,44 @@ void MCEngine::Scene::Render(CameraComponent &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // todo: uniform buffer automatic calulation
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
         "MainCamera",
         {{glm::value_ptr(camera.GetTransformComponent()->GetPosition()), sizeof(glm::vec3), 0},
          {glm::value_ptr(camera.GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::vec4)},
          {glm::value_ptr(camera.GetProjectionMatrix()), sizeof(glm::mat4), sizeof(glm::vec4) + sizeof(glm::mat4)}});
+
+    // 2D
+    {
+        auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Texture");
+        shader->Bind();
+
+        auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
+        for (auto &&entity : spriteView)
+        {
+            auto &&[transform, sprite] =
+                spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
+
+            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+            shader->SetUniformVec4("u_Color", sprite.GetColor());
+            shader->SetUniformInt("u_Texture", 0);
+            sprite.GetTexturePtr()->Bind(0);
+
+            sprite.GetVAOPtr()->Render();
+        }
+
+        shader->Unbind();
+    }
 }
 
 void MCEngine::Scene::Resize(float width, float height)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto view = m_Registry.view<CameraComponent>();
-    for (auto entity : view)
+    auto &&view = m_Registry.view<CameraComponent>();
+    for (auto &&entity : view)
     {
-        auto &camera = view.get<CameraComponent>(entity);
+        auto &&camera = view.get<CameraComponent>(entity);
         camera.Resize(width, height);
     }
 }
