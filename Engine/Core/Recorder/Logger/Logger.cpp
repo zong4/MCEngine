@@ -21,7 +21,7 @@ void MCEngine::Logger::Init(const std::string &dirPath)
 
 void MCEngine::Logger::LogEngineTrace(const std::string &message) { s_EngineLoggerPtr->trace(message); }
 void MCEngine::Logger::LogEngineInfo(const std::string &message) { s_EngineLoggerPtr->info(message); }
-void MCEngine::Logger::LogEngineWarn(const std::string &message) { s_EngineLoggerPtr->warn(message); }
+void MCEngine::Logger::LogEngineWarn(const std::string &message) { s_EngineLoggerPtr->warn("Warning: " + message); }
 void MCEngine::Logger::LogEngineError(const std::string &message)
 {
     s_EngineLoggerPtr->error(message);
@@ -30,7 +30,7 @@ void MCEngine::Logger::LogEngineError(const std::string &message)
 
 void MCEngine::Logger::LogEditorTrace(const std::string &message) { s_EditorLoggerPtr->trace(message); }
 void MCEngine::Logger::LogEditorInfo(const std::string &message) { s_EditorLoggerPtr->info(message); }
-void MCEngine::Logger::LogEditorWarn(const std::string &message) { s_EditorLoggerPtr->warn(message); }
+void MCEngine::Logger::LogEditorWarn(const std::string &message) { s_EditorLoggerPtr->warn("Warning: " + message); }
 void MCEngine::Logger::LogEditorError(const std::string &message)
 {
     s_EditorLoggerPtr->error(message);

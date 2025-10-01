@@ -54,43 +54,65 @@ MCEngine::ShaderLibrary::ShaderLibrary()
     ENGINE_PROFILE_FUNCTION();
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
+
+    // Load common vertex shader if exists
+    std::string commonVertexSource;
+    std::filesystem::path commonVertexPath = path.string() + "Common.vs";
+    if (std::filesystem::exists(commonVertexPath))
+    {
+        std::ifstream commonVertexFile(commonVertexPath);
+        commonVertexSource =
+            std::string((std::istreambuf_iterator<char>(commonVertexFile)), std::istreambuf_iterator<char>());
+    }
+    else
+    {
+        LOG_ENGINE_WARN("Common vertex shader not found: " + commonVertexPath.string());
+    }
+
+    // Load all shaders
     for (auto &&entry : std::filesystem::recursive_directory_iterator(path))
     {
-        if (entry.path().extension() == ".vs")
+        if (entry.path().extension() == ".fs")
         {
-            std::string vertexPath = entry.path().string();
+            std::string shaderName = entry.path().stem().string();
 
-            auto fragPath = entry.path();
-            std::string fragmentPath = fragPath.replace_extension(".fs").string();
-            if (std::filesystem::exists(fragmentPath))
+            std::filesystem::path fragmentPath = entry.path();
+            std::ifstream fragmentFile(fragmentPath);
+            std::string fragmentSource =
+                std::string((std::istreambuf_iterator<char>(fragmentFile)), std::istreambuf_iterator<char>());
+
+            std::string vertexSource = commonVertexSource;
+            std::filesystem::path vertexPath = entry.path();
+            vertexPath.replace_extension(".vs");
+            if (std::filesystem::exists(vertexPath))
             {
-                std::string shaderName = entry.path().stem().string();
-
                 std::ifstream vertexFile(vertexPath);
-                std::string vertexSource((std::istreambuf_iterator<char>(vertexFile)),
-                                         std::istreambuf_iterator<char>());
-
-                std::ifstream fragmentFile(fragmentPath);
-                std::string fragmentSource((std::istreambuf_iterator<char>(fragmentFile)),
-                                           std::istreambuf_iterator<char>());
-
-                auto geomPath = entry.path();
-                std::string geometryPath = geomPath.replace_extension(".gs").string();
-                if (std::filesystem::exists(geometryPath))
-                {
-                    std::ifstream geometryFile(geometryPath);
-                    std::string geometrySource((std::istreambuf_iterator<char>(geometryFile)),
-                                               std::istreambuf_iterator<char>());
-                    LoadShader(shaderName, vertexSource, fragmentSource, geometrySource);
-                }
-                else
-                {
-                    LoadShader(shaderName, vertexSource, fragmentSource);
-                }
+                vertexSource =
+                    std::string((std::istreambuf_iterator<char>(vertexFile)), std::istreambuf_iterator<char>());
+            }
+            else if (!commonVertexSource.empty())
+            {
+                LOG_ENGINE_INFO("Vertex shader not found for: " + fragmentPath.string() +
+                                ", using common vertex shader");
             }
             else
             {
-                LOG_ENGINE_ERROR("Fragment shader not found for: " + vertexPath);
+                LOG_ENGINE_WARN("Vertex shader not found for: " + fragmentPath.string());
+                continue;
+            }
+
+            std::filesystem::path geometryPath = entry.path();
+            geometryPath.replace_extension(".gs");
+            if (std::filesystem::exists(geometryPath))
+            {
+                std::ifstream geometryFile(geometryPath);
+                std::string geometrySource =
+                    std::string((std::istreambuf_iterator<char>(geometryFile)), std::istreambuf_iterator<char>());
+                LoadShader(shaderName, vertexSource, fragmentSource, geometrySource);
+            }
+            else
+            {
+                LoadShader(shaderName, vertexSource, fragmentSource);
             }
         }
     }
