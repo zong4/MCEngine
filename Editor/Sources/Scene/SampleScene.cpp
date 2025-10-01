@@ -8,8 +8,7 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
     {
         entt::entity squareEntity = MCEngine::EntityFactory::CreateSquare(
             m_Registry, "Square", MCEngine::TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f)),
-            MCEngine::SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), glm::vec4(1.0f),
-                                              MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG")));
+            glm::vec4(1.0f), MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG"));
     }
 
     // 3D
@@ -55,7 +54,9 @@ MCEditor::SampleScene::SampleScene() : MCEngine::Scene()
         // Skybox
         {
             entt::entity skybox = MCEngine::EntityFactory::CreateEmptyEntity(m_Registry, "Skybox");
-            MCEngine::EntityFactory::AddComponents(m_Registry, skybox, MCEngine::SkyboxComponent("Skybox"));
+            MCEngine::EntityFactory::AddComponents(
+                m_Registry, skybox,
+                MCEngine::SkyboxComponent(MCEngine::TextureLibrary::GetInstance().GetTextureCube("Skybox")));
         }
     }
 }
@@ -73,7 +74,7 @@ void MCEditor::SampleScene::Render(MCEngine::CameraComponent &camera) const
 
         // Light
         auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
-        for (auto entity : lightView)
+        for (auto &&entity : lightView)
         {
             auto &&[transform, light] = lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(entity);
 
@@ -106,8 +107,8 @@ void MCEditor::SampleScene::Render(MCEngine::CameraComponent &camera) const
             }
         }
 
-        auto meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-        for (auto entity : meshView)
+        auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+        for (auto &&entity : meshView)
         {
             auto &&[transform, mesh] =
                 meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
@@ -127,8 +128,8 @@ void MCEditor::SampleScene::Render(MCEngine::CameraComponent &camera) const
         auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Skybox");
         shader->Bind();
 
-        auto skyboxView = m_Registry.view<MCEngine::SkyboxComponent>();
-        for (auto entity : skyboxView)
+        auto &&skyboxView = m_Registry.view<MCEngine::SkyboxComponent>();
+        for (auto &&entity : skyboxView)
         {
             auto &&skybox = skyboxView.get<MCEngine::SkyboxComponent>(entity);
 

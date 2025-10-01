@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 
-MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
+MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr)
     : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
 {
     ENGINE_PROFILE_FUNCTION();
@@ -10,16 +10,11 @@ MCEditor::EditorLayer::EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr)
     m_ScenePtr = std::make_unique<MCEditor::SampleScene>();
 
     InitCamera(windowPtr);
-
     InitScenePanel();
     InitGamePanel();
-};
-
-MCEditor::EditorLayer::~EditorLayer()
-{
-    delete m_TransformPtr;
-    delete m_CameraPtr;
 }
+
+MCEditor::EditorLayer::~EditorLayer() { ShutdownCamera(); }
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
@@ -88,27 +83,9 @@ void MCEditor::EditorLayer::OnRender()
     m_GameMultisampleFBOPtr->Unbind();
 }
 
-void MCEditor::EditorLayer::Begin()
+void MCEditor::EditorLayer::InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr)
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    ImGuiLayer::Begin();
-
-    BeginDockSpace();
-
-    RenderHierarchyPanel();
-    RenderInspectorPanel();
-    RenderScenePanel();
-    RenderGamePanel();
-    RenderFileBrowserPanel();
-
-    EndDockSpace();
-}
-
-void MCEditor::EditorLayer::InitCamera(std::shared_ptr<MCEngine::Window> windowPtr)
-{
-    m_TransformPtr =
-        new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+    m_TransformPtr = new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f));
     m_CameraPtr = new MCEngine::CameraComponent(
         m_TransformPtr, 45.0f, (float)windowPtr->GetProperty().GetWidth() / (float)windowPtr->GetProperty().GetHeight(),
         0.1f, 100.0f);
@@ -130,6 +107,29 @@ void MCEditor::EditorLayer::InitGamePanel()
     m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
     m_GameMultisampleFBOPtr =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
+}
+
+void MCEditor::EditorLayer::ShutdownCamera()
+{
+    delete m_TransformPtr;
+    delete m_CameraPtr;
+}
+
+void MCEditor::EditorLayer::Begin()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    ImGuiLayer::Begin();
+
+    BeginDockSpace();
+
+    RenderHierarchyPanel();
+    RenderInspectorPanel();
+    RenderScenePanel();
+    RenderGamePanel();
+    RenderFileBrowserPanel();
+
+    EndDockSpace();
 }
 
 void MCEditor::EditorLayer::BeginDockSpace() const
@@ -188,7 +188,7 @@ void MCEditor::EditorLayer::RenderHierarchyPanel()
     ImGui::Begin("Hierarchy");
 
     auto &&view = m_ScenePtr->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
-    for (auto entity : view)
+    for (auto &&entity : view)
     {
         auto &&rel = view.get<MCEngine::RelationshipComponent>(entity);
         if (rel.GetParent() == entt::null)
@@ -211,10 +211,8 @@ void MCEditor::EditorLayer::DrawEntityNode(entt::entity entity)
 
     if (opened)
     {
-        for (auto child : view.get<MCEngine::RelationshipComponent>(entity).GetChildren())
-        {
+        for (auto &&child : view.get<MCEngine::RelationshipComponent>(entity).GetChildren())
             DrawEntityNode(child);
-        }
         ImGui::TreePop();
     }
 }
@@ -226,7 +224,7 @@ void MCEditor::EditorLayer::RenderInspectorPanel()
 
     if (m_SelectedEntity != entt::null)
     {
-        auto &registry = m_ScenePtr->GetRegistry();
+        auto &&registry = m_ScenePtr->GetRegistry();
 
         // TagComponent
         if (auto &&tag = registry.try_get<MCEngine::TagComponent>(m_SelectedEntity))
@@ -347,7 +345,7 @@ void MCEditor::EditorLayer::RenderFileBrowserPanel()
 
 void MCEditor::EditorLayer::RenderFileBrowser(const std::filesystem::path &directory)
 {
-    for (auto &entry : std::filesystem::directory_iterator(directory))
+    for (auto &&entry : std::filesystem::directory_iterator(directory))
     {
         if (entry.is_directory())
         {

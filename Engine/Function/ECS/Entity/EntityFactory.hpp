@@ -19,40 +19,39 @@ public:
     static entt::entity CreateEmptyEntity(entt::registry &registry, const std::string &name,
                                           const TransformComponent &transform);
 
-    static entt::entity CreateSquare(entt::registry &registry, const std::string &name,
-                                     const TransformComponent &transform = TransformComponent(),
-                                     const SpriteRendererComponent &spriteRenderer = SpriteRendererComponent(
-                                         MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), glm::vec4(1.0f),
-                                         MCEngine::TextureLibrary::GetInstance().GetTexture2D("White")));
-    static entt::entity CreateCube(entt::registry &registry, const std::string &name,
-                                   const TransformComponent &transform = TransformComponent(),
-                                   const MeshRendererComponent &meshRenderer = MeshRendererComponent(
-                                       MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                       MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                                       Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f)));
+    static entt::entity CreateSquare(
+        entt::registry &registry, const std::string &name, const TransformComponent &transform = TransformComponent(),
+        const glm::vec4 &color = glm::vec4(1.0f),
+        const std::shared_ptr<Texture2D> &texturePtr = TextureLibrary::GetInstance().GetTexture2D("White"));
+    static entt::entity CreateCube(
+        entt::registry &registry, const std::string &name, const TransformComponent &transform = TransformComponent(),
+        const std::shared_ptr<Shader> &shaderPtr = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
+        const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
 
     static entt::entity CreateOrthoCamera(entt::registry &registry, const std::string &name,
                                           const TransformComponent &transform = TransformComponent(),
                                           const glm::vec3 &size = glm::vec3(16.0f, 9.0f, 10.0f));
-    static entt::entity CreatePerspectiveCamera(
-        entt::registry &registry, const std::string &name,
-        const TransformComponent &transform = TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f),
-                                                                 glm::vec3(-30.0f, 0.0f, 0.0f), glm::vec3(1.0f)),
-        float fov = 45.0f, float aspectRatio = 16.0f / 9.0f, float nearClip = 0.1f, float farClip = 100.0f);
+    static entt::entity CreatePerspectiveCamera(entt::registry &registry, const std::string &name,
+                                                const TransformComponent &transform = TransformComponent(
+                                                    glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f)),
+                                                float fov = 45.0f, float aspectRatio = 16.0f / 9.0f,
+                                                float nearClip = 0.1f, float farClip = 100.0f);
 
     static entt::entity CreateDirectionalLight(
         entt::registry &registry, const std::string &name,
         const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f, 3.0f)),
-        const LightComponent &light = LightComponent(glm::vec3(1.0f, 0.0f, 0.0f), 1.0f));
-    static entt::entity CreatePointLight(
-        entt::registry &registry, const std::string &name,
-        const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f, 0.0f)),
-        const LightComponent &light = LightComponent(glm::vec3(1.0f), 1.0f, 1.0f, 0.09f, 0.032f));
-    static entt::entity CreateSpotLight(
-        entt::registry &registry, const std::string &name,
-        const TransformComponent &transform = TransformComponent(glm::vec3(0.0f, 3.0f, 3.0f),
-                                                                 glm::vec3(-45.0f, 0.0f, 0.0f)),
-        const LightComponent &light = LightComponent(glm::vec3(1.0f), 1.0f, 1.0f, 0.09f, 0.032f, 12.5f, 22.5f));
+        const glm::vec3 &color = glm::vec3(1.0f, 0.0f, 0.0f), float intensity = 1.0f);
+    static entt::entity CreatePointLight(entt::registry &registry, const std::string &name,
+                                         const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f,
+                                                                                                            0.0f)),
+                                         const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f,
+                                         float constant = 1.0f, float linear = 0.09f, float quadratic = 0.032f);
+    static entt::entity CreateSpotLight(entt::registry &registry, const std::string &name,
+                                        const TransformComponent &transform = TransformComponent(glm::vec3(0.0f, 3.0f,
+                                                                                                           3.0f)),
+                                        const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f,
+                                        float constant = 1.0f, float linear = 0.09f, float quadratic = 0.032f,
+                                        float cutOff = 12.5f, float outerCutOff = 15.0f);
 
     // clang-format off
     template <typename... Components>
@@ -61,7 +60,7 @@ public:
     {
         if (!registry.valid(entity) || !registry.try_get<TagComponent>(entity))
         {
-            LOG_ENGINE_ERROR("Entity is not valid. Cannot add components");
+            LOG_ENGINE_WARN("Entity is not valid, cannot add components");
             return entt::null;
         }
         (registry.emplace<std::decay_t<Components>>(entity, std::forward<Components>(components)), ...);

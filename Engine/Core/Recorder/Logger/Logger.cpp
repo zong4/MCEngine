@@ -40,8 +40,8 @@ void MCEngine::Logger::LogEditorError(const std::string &message)
 std::shared_ptr<spdlog::logger> MCEngine::Logger::CreateLoggerPtr(const std::string &dirPath, const std::string &name)
 {
     // Create console sink and file sink
-    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(dirPath + "/" + name + ".log", true);
+    auto &&console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    auto &&file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(dirPath + "/" + name + ".log", true);
     std::vector<spdlog::sink_ptr> sinks{console_sink, file_sink};
     std::shared_ptr<spdlog::logger> loggerPtr = std::make_shared<spdlog::logger>(name, sinks.begin(), sinks.end());
 

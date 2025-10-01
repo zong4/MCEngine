@@ -11,7 +11,7 @@ class EditorLayer : public MCEngine::ImGuiLayer
 {
 
 public:
-    EditorLayer(std::shared_ptr<MCEngine::Window> windowPtr);
+    EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr);
     virtual ~EditorLayer() override;
 
 public:
@@ -41,11 +41,16 @@ private:
     std::unique_ptr<MCEngine::FrameBuffer> m_GameMultisampleFBOPtr;
 
 protected:
-    void Begin() override;
-
-    void InitCamera(std::shared_ptr<MCEngine::Window> windowPtr);
+    // Init
+    void InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr);
     void InitScenePanel();
     void InitGamePanel();
+
+    // Shutdown
+    void ShutdownCamera();
+
+    // Render
+    void Begin() override;
 
 private:
     void BeginDockSpace() const;

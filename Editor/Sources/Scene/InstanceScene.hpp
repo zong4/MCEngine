@@ -11,6 +11,7 @@ public:
     InstanceScene();
     virtual ~InstanceScene() override = default;
 
+public:
     void Render(MCEngine::CameraComponent &camera) const override;
 
 private:

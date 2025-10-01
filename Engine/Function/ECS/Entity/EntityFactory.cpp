@@ -26,26 +26,24 @@ entt::entity MCEngine::EntityFactory::CreateEmptyEntity(entt::registry &registry
 }
 
 entt::entity MCEngine::EntityFactory::CreateSquare(entt::registry &registry, const std::string &name,
-                                                   const TransformComponent &transform,
-                                                   const SpriteRendererComponent &spriteRenderer)
+                                                   const TransformComponent &transform, const glm::vec4 &color,
+                                                   const std::shared_ptr<Texture2D> &texturePtr)
 {
-    ENGINE_PROFILE_FUNCTION();
-
     entt::entity entity = CreateEmptyEntity(registry, name, transform);
-    AddComponents(registry, entity, spriteRenderer);
-    LOG_ENGINE_TRACE("Basic Square Entity created with ID: " + std::to_string((uint32_t)entity));
+    AddComponents(registry, entity,
+                  SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), color, texturePtr));
+    LOG_ENGINE_TRACE("Square Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreateCube(entt::registry &registry, const std::string &name,
                                                  const TransformComponent &transform,
-                                                 const MeshRendererComponent &meshRenderer)
+                                                 const std::shared_ptr<Shader> &shaderPtr, const Material &material)
 {
-    ENGINE_PROFILE_FUNCTION();
-
     entt::entity entity = CreateEmptyEntity(registry, name, transform);
-    AddComponents(registry, entity, meshRenderer);
-    LOG_ENGINE_TRACE("Basic Cube Entity created with ID: " + std::to_string((uint32_t)entity));
+    AddComponents(registry, entity,
+                  MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"), shaderPtr, material));
+    LOG_ENGINE_TRACE("Cube Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
@@ -54,7 +52,7 @@ entt::entity MCEngine::EntityFactory::CreateOrthoCamera(entt::registry &registry
 {
     entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity, CameraComponent(&registry.get<TransformComponent>(entity), size));
-    LOG_ENGINE_TRACE("Basic Orthographic Camera Entity created with ID: " + std::to_string((uint32_t)entity));
+    LOG_ENGINE_TRACE("Orthographic Camera Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
@@ -65,37 +63,37 @@ entt::entity MCEngine::EntityFactory::CreatePerspectiveCamera(entt::registry &re
     entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity,
                   CameraComponent(&registry.get<TransformComponent>(entity), fov, aspectRatio, nearClip, farClip));
-    LOG_ENGINE_TRACE("Basic Perspective Camera Entity created with ID: " + std::to_string((uint32_t)entity));
+    LOG_ENGINE_TRACE("Perspective Camera Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreateDirectionalLight(entt::registry &registry, const std::string &name,
-                                                             const glm::vec3 &position, const glm::vec3 &color,
-                                                             float intensity)
+                                                             const TransformComponent &transform,
+                                                             const glm::vec3 &color, float intensity)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position);
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity, LightComponent(color, intensity));
-    LOG_ENGINE_TRACE("Basic Directional Light Entity created with ID: " + std::to_string((uint32_t)entity));
+    LOG_ENGINE_TRACE("Directional Light Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreatePointLight(entt::registry &registry, const std::string &name,
-                                                       const glm::vec3 &position, const glm::vec3 &color,
+                                                       const TransformComponent &transform, const glm::vec3 &color,
                                                        float intensity, float constant, float linear, float quadratic)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position);
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity, LightComponent(color, intensity, constant, linear, quadratic));
-    LOG_ENGINE_TRACE("Basic Point Light Entity created with ID: " + std::to_string((uint32_t)entity));
+    LOG_ENGINE_TRACE("Point Light Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }
 
 entt::entity MCEngine::EntityFactory::CreateSpotLight(entt::registry &registry, const std::string &name,
-                                                      const glm::vec3 &position, const glm::vec3 &color,
+                                                      const TransformComponent &transform, const glm::vec3 &color,
                                                       float intensity, float constant, float linear, float quadratic,
                                                       float cutOff, float outerCutOff)
 {
-    entt::entity entity = CreateEmptyEntity(registry, name, position);
+    entt::entity entity = CreateEmptyEntity(registry, name, transform);
     AddComponents(registry, entity, LightComponent(color, intensity, constant, linear, quadratic, cutOff, outerCutOff));
-    LOG_ENGINE_TRACE("Basic Spot Light Entity created with ID: " + std::to_string((uint32_t)entity));
+    LOG_ENGINE_TRACE("Spot Light Entity created with ID: " + std::to_string((uint32_t)entity));
     return entity;
 }

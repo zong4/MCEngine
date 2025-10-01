@@ -31,14 +31,20 @@ void MCEngine::Scene::Update(float deltaTime)
         }
     }
 
-    m_Registry.get<CameraComponent>(m_MainCamera).Update(deltaTime);
-
-    // Update all components
+    // Update all cameras
+    auto &&view = m_Registry.view<CameraComponent>();
+    for (auto &&entity : view)
     {
-        auto view = m_Registry.view<TransformComponent>();
-        for (auto entity : view)
+        auto &&camera = view.get<CameraComponent>(entity);
+        camera.Update(deltaTime);
+    }
+
+    // Update all transforms
+    {
+        auto &&view = m_Registry.view<TransformComponent>();
+        for (auto &&entity : view)
         {
-            auto &transform = view.get<TransformComponent>(entity);
+            auto &&transform = view.get<TransformComponent>(entity);
             transform.Update(deltaTime);
         }
     }

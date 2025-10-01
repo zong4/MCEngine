@@ -29,7 +29,7 @@ void MCEditor::InstanceScene::Render(MCEngine::CameraComponent &camera) const
     shader->Bind();
 
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-    for (auto entity : meshView)
+    for (auto &&entity : meshView)
     {
         auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
 

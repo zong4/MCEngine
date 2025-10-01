@@ -11,9 +11,7 @@ public:
     GeometryScene();
     virtual ~GeometryScene() override = default;
 
-    float &GetMagnitude() { return m_Magnitude; }
-    const float &GetMagnitude() const { return m_Magnitude; }
-
+public:
     void Render(MCEngine::CameraComponent &camera) const override;
 
 private:

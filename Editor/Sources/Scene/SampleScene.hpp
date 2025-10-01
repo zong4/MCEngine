@@ -11,6 +11,7 @@ public:
     SampleScene();
     virtual ~SampleScene() override = default;
 
+public:
     void Render(MCEngine::CameraComponent &camera) const override;
 };
 

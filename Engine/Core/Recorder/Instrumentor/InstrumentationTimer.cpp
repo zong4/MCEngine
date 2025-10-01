@@ -11,7 +11,7 @@ MCEngine::InstrumentationTimer::InstrumentationTimer(const std::string &name)
 
 MCEngine::InstrumentationTimer::~InstrumentationTimer()
 {
-    auto endTimepoint = std::chrono::high_resolution_clock::now();
+    auto &&endTimepoint = std::chrono::high_resolution_clock::now();
 
     long long startTime =
         std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTime).time_since_epoch().count();

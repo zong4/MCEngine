@@ -160,7 +160,7 @@ MCEngine::VAOLibrary::VAOLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto vertexArray = std::make_shared<VertexArray>(
+    auto &&vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},
                                      {1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)(3 * sizeof(float))}},

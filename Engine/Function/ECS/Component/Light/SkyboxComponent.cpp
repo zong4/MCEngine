@@ -1,9 +1,9 @@
 #include "SkyboxComponent.hpp"
 
-MCEngine::SkyboxComponent::SkyboxComponent(const std::string &name)
+MCEngine::SkyboxComponent::SkyboxComponent(const std::shared_ptr<TextureCube> &textureCube)
+    : m_TextureCubePtr(textureCube)
 {
-    m_TextureCubePtr = TextureLibrary::GetInstance().GetTextureCube(name);
-    LOG_ENGINE_INFO("Skybox Component created with name: " + name);
+    LOG_ENGINE_INFO("Skybox Component created");
 }
 
 MCEngine::SkyboxComponent::~SkyboxComponent() {}
