@@ -61,7 +61,6 @@ private:
     void UpdateTransformMatrix();
 };
 
-// todo
 class RelationshipComponent : public Component
 {
 public:

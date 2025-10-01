@@ -6,11 +6,16 @@ layout(location = 1) in vec2 aTexCoord;
 
 // Uniforms
 uniform mat4 u_Model;
-layout(std140) uniform MainCamera
+layout(std140) uniform UniformBuffer0
 {
-    vec3 u_Position;
+    // Position
     mat4 u_View;
     mat4 u_Projection;
+
+    // Light
+    vec3 u_CameraPosition;
+    vec3 u_DirectionalLightDirection;
+    vec3 u_DirectionalLightColor;
 };
 
 // Outputs

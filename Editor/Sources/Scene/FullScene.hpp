@@ -5,11 +5,11 @@
 namespace MCEditor
 {
 
-class SampleScene : public MCEngine::Scene
+class FullScene : public MCEngine::Scene
 {
 public:
-    SampleScene();
-    virtual ~SampleScene() override = default;
+    FullScene();
+    virtual ~FullScene() override = default;
 
 public:
     void Render(MCEngine::CameraComponent &camera) const override;

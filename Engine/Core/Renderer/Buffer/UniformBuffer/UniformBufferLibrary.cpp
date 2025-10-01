@@ -62,8 +62,7 @@ MCEngine::UniformBufferLibrary::UniformBufferLibrary()
     ENGINE_PROFILE_FUNCTION();
 
     // todo: check size
-    AddUniformBuffer("MainCamera", sizeof(glm::vec4) + sizeof(glm::mat4) * 10, 0);
-    AddUniformBuffer("DirectionalLight", sizeof(glm::vec4) * 2, 1);
+    AddUniformBuffer("UniformBuffer0", sizeof(glm::mat4) * 10, 0);
 }
 
 bool MCEngine::UniformBufferLibrary::Exists(const std::string &name) const

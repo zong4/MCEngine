@@ -6,11 +6,16 @@ layout(location = 1) in vec3 aNormal;
 
 // Uniforms
 uniform mat4 u_Models[25];
-layout(std140) uniform MainCamera
+layout(std140) uniform UniformBuffer0
 {
-    vec3 u_Position;
+    // Position
     mat4 u_View;
     mat4 u_Projection;
+
+    // Light
+    vec3 u_CameraPosition;
+    vec3 u_DirectionalLightDirection;
+    vec3 u_DirectionalLightColor;
 };
 
 // Outputs
@@ -27,7 +32,7 @@ void main()
     // Outputs
     vs_out.GlobalPosition = vec3(u_Models[gl_InstanceID] * vec4(aPosition, 1.0));
     vs_out.Normal = normalize(mat3(transpose(inverse(u_Models[gl_InstanceID]))) * aNormal);
-    vs_out.CameraPosition = u_Position;
+    vs_out.CameraPosition = u_CameraPosition;
     // vs_out.DirectionalLightDirection = u_DirectionalLightDirection;
     // vs_out.DirectionalLightColor = u_DirectionalLightColor;
 

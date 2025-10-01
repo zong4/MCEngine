@@ -13,6 +13,7 @@ public:
 
 public:
     void Render(MCEngine::CameraComponent &camera) const override;
+    void RenderShadowMap() const override {}
 
 private:
     std::vector<glm::mat4> m_Offsets;

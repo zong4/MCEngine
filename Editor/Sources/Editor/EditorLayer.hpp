@@ -3,6 +3,7 @@
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
 #include "Scene/SampleScene.hpp"
+#include "Scene/FullScene.hpp"
 
 namespace MCEditor
 {
@@ -27,8 +28,8 @@ private:
     float m_CameraRotateSpeed = 15.0f;
 
     // Scene
-    std::unique_ptr<MCEngine::Scene> m_ScenePtr;
     entt::entity m_SelectedEntity = entt::null;
+    std::unique_ptr<MCEngine::Scene> m_ScenePtr;
 
     // Scene Panel
     bool m_SceneFocused = false;
