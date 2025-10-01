@@ -10,9 +10,20 @@ void MCEngine::RendererCommand::Init()
     EnableBlend();
     EnableFaceCulling();
     EnableMultisampling();
+
+    // Gramma correction
     glEnable(GL_FRAMEBUFFER_SRGB);
 
     LOG_ENGINE_INFO("RendererCommand initialized");
+}
+
+void MCEngine::RendererCommand::GetError(const std::string &functionName)
+{
+    GLint error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + functionName);
+    }
 }
 
 void MCEngine::RendererCommand::SetClearColor(const glm::vec4 &color)
@@ -50,7 +61,6 @@ void MCEngine::RendererCommand::EnableBlend()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    LOG_ENGINE_TRACE("Blend enabled");
 }
 
 void MCEngine::RendererCommand::DisableBlend()
@@ -78,10 +88,6 @@ void MCEngine::RendererCommand::EnableMultisampling()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    int samples = 0;
-    glGetIntegerv(GL_SAMPLES, &samples);
-    LOG_ENGINE_INFO("MSAA samples = " + std::to_string(samples));
-
     glEnable(GL_MULTISAMPLE);
 }
 
@@ -90,5 +96,4 @@ void MCEngine::RendererCommand::DisableMultisampling()
     ENGINE_PROFILE_FUNCTION();
 
     glDisable(GL_MULTISAMPLE);
-    LOG_ENGINE_TRACE("Multi-sampling disabled");
 }

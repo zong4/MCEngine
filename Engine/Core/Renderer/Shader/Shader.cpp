@@ -2,15 +2,6 @@
 
 #include <glad/glad.h>
 
-#define GL_ERROR()                                                                                                     \
-    {                                                                                                                  \
-        GLint error = glGetError();                                                                                    \
-        if (error != GL_NO_ERROR)                                                                                      \
-        {                                                                                                              \
-            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
-        }                                                                                                              \
-    }
-
 MCEngine::Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource,
                          const std::string &geometrySource)
 {
@@ -54,7 +45,7 @@ void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform1i(location, value);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
@@ -63,7 +54,7 @@ void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform1f(location, value);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3)
@@ -72,7 +63,7 @@ void MCEngine::Shader::SetUniformVec3(const std::string &name, glm::vec3 vector3
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform3fv(location, 1, &vector3[0]);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4)
@@ -81,7 +72,7 @@ void MCEngine::Shader::SetUniformVec4(const std::string &name, glm::vec4 vector4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform4fv(location, 1, &vector4[0]);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4)
@@ -90,18 +81,7 @@ void MCEngine::Shader::SetUniformMat4(const std::string &name, glm::mat4 matrix4
 
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, &matrix4[0][0]);
-    GL_ERROR();
-}
-
-void MCEngine::Shader::SetUniformMaterial(const std::string &name, const Material &material)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    SetUniformVec4(name + ".ObjectColor", material.GetObjectColor());
-    SetUniformFloat(name + ".AmbientStrength", material.GetAmbientStrength());
-    SetUniformFloat(name + ".DiffuseStrength", material.GetDiffuseStrength());
-    SetUniformFloat(name + ".SpecularStrength", material.GetSpecularStrength());
-    SetUniformFloat(name + ".Shininess", material.GetShininess());
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Shader::Bind() const { glUseProgram(m_RendererID); }

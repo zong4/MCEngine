@@ -28,7 +28,6 @@ void MCEngine::ShaderLibrary::AddShader(const std::string &name, const std::shar
         return;
     }
     m_ShaderMap[name] = shader;
-
     LOG_ENGINE_INFO("Shader added: " + name);
 }
 
@@ -45,7 +44,7 @@ std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::LoadShader(const std:
         return m_ShaderMap[name];
     }
 
-    auto shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource, geometrySource);
+    auto &&shader = std::make_shared<MCEngine::Shader>(vertexSource, fragmentSource, geometrySource);
     AddShader(name, shader);
     return shader;
 }
@@ -55,11 +54,12 @@ MCEngine::ShaderLibrary::ShaderLibrary()
     ENGINE_PROFILE_FUNCTION();
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
-    for (const auto &entry : std::filesystem::recursive_directory_iterator(path))
+    for (auto &&entry : std::filesystem::recursive_directory_iterator(path))
     {
         if (entry.path().extension() == ".vs")
         {
             std::string vertexPath = entry.path().string();
+
             auto fragPath = entry.path();
             std::string fragmentPath = fragPath.replace_extension(".fs").string();
             if (std::filesystem::exists(fragmentPath))

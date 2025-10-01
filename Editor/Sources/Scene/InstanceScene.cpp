@@ -7,7 +7,7 @@ MCEditor::InstanceScene::InstanceScene() : MCEngine::Scene()
     entt::entity cubes = MCEngine::EntityFactory::CreateCube(m_Registry, "Cubes");
 
     m_Offsets.resize(25);
-    m_Registry.get<MCEngine::MeshRendererComponent>(cubes).GetVAOPtr()->SetCount(m_Offsets.size());
+    m_Registry.get<MCEngine::MeshRendererComponent>(cubes).GetVAOPtr()->SetInstanceCount(m_Offsets.size());
 
     // Instance offsets
     for (int i = 0; i < 5; i++)
@@ -37,7 +37,7 @@ void MCEditor::InstanceScene::Render(MCEngine::CameraComponent &camera) const
         {
             shader->SetUniformMat4("u_Models[" + std::to_string(instanceCount) + "]",
                                    m_Offsets[instanceCount] * transform.GetTransformMatrix());
-            shader->SetUniformMaterial("u_Material", mesh.GetMaterial());
+            mesh.GetMaterial().Bind(shader, "u_Material");
         }
 
         mesh.GetVAOPtr()->Render();

@@ -2,15 +2,6 @@
 
 #include <glad/glad.h>
 
-#define GL_ERROR()                                                                                                     \
-    {                                                                                                                  \
-        GLint error = glGetError();                                                                                    \
-        if (error != GL_NO_ERROR)                                                                                      \
-        {                                                                                                              \
-            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
-        }                                                                                                              \
-    }
-
 MCEngine::UniformBuffer::UniformBuffer(size_t size, unsigned int binding) : m_Binding(binding)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -39,7 +30,7 @@ void MCEngine::UniformBuffer::SetData(const std::initializer_list<UniformBufferD
     for (const auto &data : dataList)
     {
         glBufferSubData(GL_UNIFORM_BUFFER, data.GetOffset(), data.GetSize(), data.GetData());
-        GL_ERROR();
+        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
     }
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

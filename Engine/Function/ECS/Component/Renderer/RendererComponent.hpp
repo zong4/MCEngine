@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECS/Component/Component.hpp"
+#include "Renderer/Material/Material.hpp"
 
 namespace MCEngine
 {

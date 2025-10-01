@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/Material/Material.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 namespace MCEngine
 {
@@ -11,14 +11,15 @@ public:
     Shader(const std::string &vertexSource, const std::string &fragmentSource, const std::string &geometrySource = "");
     ~Shader();
 
+    // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
 
+    // Setters
     void SetUniformInt(const std::string &name, int value);
     void SetUniformFloat(const std::string &name, float value);
     void SetUniformVec3(const std::string &name, glm::vec3 vector3);
     void SetUniformVec4(const std::string &name, glm::vec4 vector4);
     void SetUniformMat4(const std::string &name, glm::mat4 matrix4);
-    void SetUniformMaterial(const std::string &name, const Material &material);
 
 public:
     void Bind() const;

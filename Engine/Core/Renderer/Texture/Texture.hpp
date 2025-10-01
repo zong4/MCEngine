@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 namespace MCEngine
 {
@@ -13,6 +13,7 @@ public:
     Texture2D(const std::string &path);
     ~Texture2D();
 
+    // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
 
 public:
@@ -33,6 +34,7 @@ public:
     TextureCube(const std::string &directory);
     ~TextureCube();
 
+    // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
 
 public:

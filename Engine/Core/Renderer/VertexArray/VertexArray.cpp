@@ -2,18 +2,9 @@
 
 #include <glad/glad.h>
 
-#define GL_ERROR()                                                                                                     \
-    {                                                                                                                  \
-        GLint error = glGetError();                                                                                    \
-        if (error != GL_NO_ERROR)                                                                                      \
-        {                                                                                                              \
-            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
-        }                                                                                                              \
-    }
-
 MCEngine::VertexArray::VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
-                                   IndexBuffer &&indexBuffer, int count)
-    : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer)), m_Count(count)
+                                   IndexBuffer &&indexBuffer, int instanceCount)
+    : m_VertexBuffer(std::move(vertexBuffer)), m_IndexBuffer(std::move(indexBuffer)), m_InstanceCount(instanceCount)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -21,37 +12,52 @@ MCEngine::VertexArray::VertexArray(VertexBuffer &&vertexBuffer, const std::vecto
     SetVertexAttributes(attributes);
     LOG_ENGINE_INFO("VertexArray created with ID: " + std::to_string(m_RendererID) +
                     ", VertexBuffer ID: " + std::to_string(m_VertexBuffer.GetRendererID()) +
-                    ", IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
+                    ", IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()) +
+                    ", Instance Count: " + std::to_string(m_InstanceCount));
 }
 
-MCEngine::VertexArray::~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
+MCEngine::VertexArray::~VertexArray()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glDeleteVertexArrays(1, &m_RendererID);
+}
 
 MCEngine::VertexArray::VertexArray(VertexArray &&other)
-    : m_RendererID(other.m_RendererID), m_IndexBuffer(std::move(other.m_IndexBuffer)),
-      m_VertexBuffer(std::move(other.m_VertexBuffer)), m_Count(other.m_Count)
+    : m_RendererID(other.m_RendererID), m_AttributeCount(other.m_AttributeCount),
+      m_IndexBuffer(std::move(other.m_IndexBuffer)), m_VertexBuffer(std::move(other.m_VertexBuffer)),
+      m_InstanceCount(other.m_InstanceCount)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     LOG_ENGINE_INFO("VertexArray moved with ID: " + std::to_string(m_RendererID));
 
     // Invalidate the moved-from object
     other.m_RendererID = 0;
-    other.m_Count = 1;
+    other.m_AttributeCount = 0;
+    other.m_InstanceCount = 1;
 }
 
 MCEngine::VertexArray &MCEngine::VertexArray::operator=(VertexArray &&other)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     if (this != &other)
     {
         glDeleteVertexArrays(1, &m_RendererID);
 
+        // Move data
         m_RendererID = other.m_RendererID;
+        m_AttributeCount = other.m_AttributeCount;
         m_IndexBuffer = std::move(other.m_IndexBuffer);
         m_VertexBuffer = std::move(other.m_VertexBuffer);
-        m_Count = other.m_Count;
+        m_InstanceCount = other.m_InstanceCount;
         LOG_ENGINE_INFO("VertexArray move-assigned with ID: " + std::to_string(m_RendererID));
 
         // Invalidate the moved-from object
         other.m_RendererID = 0;
-        other.m_Count = 1;
+        other.m_AttributeCount = 0;
+        other.m_InstanceCount = 1;
     }
     return *this;
 }
@@ -81,45 +87,57 @@ void MCEngine::VertexArray::Render(RendererType renderType) const
 
     Bind();
     m_VertexBuffer.Bind();
-
     if (m_IndexBuffer.GetRendererID() == 0)
     {
-        m_Count == 1 ? glDrawArrays(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount)
-                     : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0,
-                                             m_VertexBuffer.GetCount() / m_AttributeCount, m_Count);
-        GL_ERROR();
+        m_InstanceCount == 1
+            ? glDrawArrays(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount)
+            : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount,
+                                    m_InstanceCount);
+        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
     }
     else
     {
         m_IndexBuffer.Bind();
-        m_Count == 1 ? glDrawElements(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
-                     : glDrawElementsInstanced(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(),
-                                               GL_UNSIGNED_INT, 0, m_Count);
-        GL_ERROR();
+        m_InstanceCount == 1
+            ? glDrawElements(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
+            : glDrawElementsInstanced(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0,
+                                      m_InstanceCount);
+        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
         m_IndexBuffer.Unbind();
     }
-
     m_VertexBuffer.Unbind();
     Unbind();
 }
 
-void MCEngine::VertexArray::Bind() const { glBindVertexArray(m_RendererID); }
+void MCEngine::VertexArray::Bind() const
+{
+    ENGINE_PROFILE_FUNCTION();
 
-void MCEngine::VertexArray::Unbind() const { glBindVertexArray(0); }
+    glBindVertexArray(m_RendererID);
+}
+
+void MCEngine::VertexArray::Unbind() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glBindVertexArray(0);
+}
 
 void MCEngine::VertexArray::SetVertexAttributes(const std::vector<VertexAttribute> &attributes)
 {
     ENGINE_PROFILE_FUNCTION();
 
     Bind();
+    m_VertexBuffer.Bind();
+    m_AttributeCount = static_cast<int>(attributes.size());
     for (const auto &attribute : attributes)
     {
         glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
                               static_cast<GLsizei>(attribute.stride), attribute.offset);
         glEnableVertexAttribArray(attribute.location);
-        GL_ERROR();
+        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
     }
-    m_AttributeCount = static_cast<int>(attributes.size());
+    m_VertexBuffer.Unbind();
     Unbind();
 
     LOG_ENGINE_INFO("VertexArray ID: " + std::to_string(m_RendererID) + " vertex attributes(" +

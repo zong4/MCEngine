@@ -153,11 +153,8 @@ void MCEngine::VAOLibrary::AddVAO(const std::string &name, const std::shared_ptr
         return;
     }
     m_VAOMap[name] = vao;
-
     LOG_ENGINE_INFO("VAO added: " + name);
 }
-
-bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOMap.find(name) != m_VAOMap.end(); }
 
 MCEngine::VAOLibrary::VAOLibrary()
 {
@@ -183,3 +180,5 @@ MCEngine::VAOLibrary::VAOLibrary()
 
     LOG_ENGINE_INFO("VAO Library initialized");
 }
+
+bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOMap.find(name) != m_VAOMap.end(); }

@@ -10,6 +10,9 @@ class RendererCommand
 public:
     static void Init();
 
+    static void GetError(const std::string &functionName);
+
+public:
     static void SetClearColor(const glm::vec4 &color);
     static void Clear();
 

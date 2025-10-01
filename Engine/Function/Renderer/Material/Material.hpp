@@ -8,10 +8,11 @@ namespace MCEngine
 class Material
 {
 public:
-    Material(const glm::vec4 &objectColor, float ambient, float diffuse, float specular, float shininess);
+    Material(const glm::vec4 &color, float ambient, float diffuse, float specular, float shininess);
 
-    glm::vec4 &GetObjectColor() { return m_ObjectColor; }
-    const glm::vec4 &GetObjectColor() const { return m_ObjectColor; }
+    // Getters
+    glm::vec4 &GetColor() { return m_Color; }
+    const glm::vec4 &GetColor() const { return m_Color; }
     float &GetAmbientStrength() { return m_AmbientStrength; }
     const float &GetAmbientStrength() const { return m_AmbientStrength; }
     float &GetDiffuseStrength() { return m_DiffuseStrength; }
@@ -21,17 +22,20 @@ public:
     float &GetShininess() { return m_Shininess; }
     float GetShininess() const { return m_Shininess; }
 
-    void SetObjectColor(const glm::vec4 &objectColor) { m_ObjectColor = objectColor; }
+    // Setters
+    void SetColor(const glm::vec4 &color) { m_Color = color; }
     void SetAmbientStrength(float ambient) { m_AmbientStrength = ambient; }
     void SetDiffuseStrength(float diffuse) { m_DiffuseStrength = diffuse; }
     void SetSpecularStrength(float specular) { m_SpecularStrength = specular; }
     void SetShininess(float shininess) { m_Shininess = shininess; }
 
 public:
+    void Bind(const std::shared_ptr<Shader> &shader, const std::string &name) const;
+
     std::string ToString() const;
 
 private:
-    glm::vec4 m_ObjectColor;
+    glm::vec4 m_Color;
     float m_AmbientStrength;
     float m_DiffuseStrength;
     float m_SpecularStrength;

@@ -2,6 +2,7 @@
 
 #include "Renderer/Buffer/BasicBuffer/IndexBuffer.hpp"
 #include "Renderer/Buffer/BasicBuffer/VertexBuffer.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 namespace MCEngine
 {
@@ -27,7 +28,7 @@ class VertexArray
 {
 public:
     VertexArray(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes,
-                IndexBuffer &&indexBuffer = IndexBuffer(nullptr, 0), int count = 1);
+                IndexBuffer &&indexBuffer = IndexBuffer(nullptr, 0), int instanceCount = 1);
     ~VertexArray();
 
     VertexArray(const VertexArray &) = delete;
@@ -35,21 +36,25 @@ public:
     VertexArray(VertexArray &&);
     VertexArray &operator=(VertexArray &&);
 
+    // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
 
+    // Setters
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);
     void SetIndexBuffer(IndexBuffer &&indexBuffer);
-    void SetCount(int count) { m_Count = count; }
+    void SetInstanceCount(int instanceCount) { m_InstanceCount = instanceCount; }
 
 public:
     void Render(RendererType renderType = RendererType::Triangles) const;
 
 private:
     unsigned int m_RendererID = 0;
-    VertexBuffer m_VertexBuffer;
     int m_AttributeCount = 0;
+    VertexBuffer m_VertexBuffer;
     IndexBuffer m_IndexBuffer;
-    int m_Count = 1;
+
+    // Instance rendering
+    int m_InstanceCount;
 
 protected:
     void Bind() const;

@@ -2,15 +2,6 @@
 
 #include <glad/glad.h>
 
-#define GL_ERROR()                                                                                                     \
-    {                                                                                                                  \
-        GLint error = glGetError();                                                                                    \
-        if (error != GL_NO_ERROR)                                                                                      \
-        {                                                                                                              \
-            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
-        }                                                                                                              \
-    }
-
 MCEngine::RenderBuffer::RenderBuffer(int width, int height, unsigned int internalFormat, int samples)
     : m_InternalFormat(internalFormat), m_Samples(samples)
 {
@@ -47,7 +38,7 @@ void MCEngine::RenderBuffer::Bind(int width, int height) const
     glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID);
     m_Samples == 0 ? glRenderbufferStorage(GL_RENDERBUFFER, m_InternalFormat, width, height)
                    : glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_Samples, m_InternalFormat, width, height);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::RenderBuffer::Unbind() const
@@ -55,5 +46,5 @@ void MCEngine::RenderBuffer::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }

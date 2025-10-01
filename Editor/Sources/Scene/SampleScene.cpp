@@ -133,7 +133,7 @@ void MCEditor::SampleScene::Render(MCEngine::CameraComponent &camera) const
                 meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
 
             shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-            shader->SetUniformMaterial("u_Material", mesh.GetMaterial());
+            mesh.GetMaterial().Bind(shader, "u_Material");
 
             mesh.GetVAOPtr()->Render();
         }

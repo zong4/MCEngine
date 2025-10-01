@@ -269,7 +269,7 @@ void MCEditor::EditorLayer::RenderInspectorPanel()
             std::string header = "Mesh Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
             if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetObjectColor()));
+                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetColor()));
                 ImGui::DragFloat("Ambient", &meshRenderer->GetMaterial().GetAmbientStrength(), 0.1f, 0.0f, 1.0f);
                 ImGui::DragFloat("Diffuse", &meshRenderer->GetMaterial().GetDiffuseStrength(), 0.1f, 0.0f, 1.0f);
                 ImGui::DragFloat("Specular", &meshRenderer->GetMaterial().GetSpecularStrength(), 0.1f, 0.0f, 1.0f);

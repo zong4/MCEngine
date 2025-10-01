@@ -94,6 +94,11 @@ void MCEngine::Window::Init()
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     LOG_ENGINE_INFO("OpenGL version: " + std::string((const char *)glGetString(GL_VERSION)));
 
+    // MSAA samples
+    int samples = 0;
+    glGetIntegerv(GL_SAMPLES, &samples);
+    LOG_ENGINE_INFO("MSAA samples = " + std::to_string(samples));
+
     // Initialize Renderer
     RendererCommand::Init();
 }

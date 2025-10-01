@@ -17,13 +17,13 @@ public:
     IndexBuffer &operator=(IndexBuffer &&other);
 
 public:
-    virtual void Bind() const override;
-    virtual void Unbind() const override;
+    void Bind() const override;
+    void Unbind() const override;
 
-    virtual void SetData(const void *data, size_t size) override;
+    void SetData(const void *data, size_t size, size_t offset) override;
 
 protected:
-    virtual void CreateBuffer(const void *data, size_t size) override;
+    void CreateBuffer(const void *data, size_t size) override;
 };
 
 } // namespace MCEngine

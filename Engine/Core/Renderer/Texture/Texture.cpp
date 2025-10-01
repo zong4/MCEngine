@@ -4,15 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#define GL_ERROR()                                                                                                     \
-    {                                                                                                                  \
-        GLint error = glGetError();                                                                                    \
-        if (error != GL_NO_ERROR)                                                                                      \
-        {                                                                                                              \
-            LOG_ENGINE_ERROR("OpenGL Error: " + std::to_string(error) + " in " + std::string(__FUNCTION__));           \
-        }                                                                                                              \
-    }
-
 MCEngine::Texture2D::Texture2D(int width, int height, void *data) : m_Format(GL_RGBA), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -21,7 +12,7 @@ MCEngine::Texture2D::Texture2D(int width, int height, void *data) : m_Format(GL_
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
     glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, data);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
     // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -38,7 +29,7 @@ MCEngine::Texture2D::Texture2D(int width, int height, int samples) : m_Format(GL
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
 
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, m_Format, width, height, GL_TRUE);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 }
@@ -59,7 +50,7 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : m_Samples(0)
         m_Format = (channels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, imageData);
         glGenerateMipmap(GL_TEXTURE_2D);
-        GL_ERROR();
+        RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
         stbi_image_free(imageData);
     }
@@ -73,7 +64,7 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : m_Samples(0)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -91,7 +82,7 @@ void MCEngine::Texture2D::Bind(unsigned int slot) const
 
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Texture2D::Unbind() const
@@ -99,7 +90,7 @@ void MCEngine::Texture2D::Unbind() const
     ENGINE_PROFILE_FUNCTION();
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::Texture2D::Resize(int width, int height)
@@ -118,7 +109,7 @@ void MCEngine::Texture2D::Resize(int width, int height)
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_Format, width, height, GL_TRUE);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     }
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 MCEngine::TextureCube::TextureCube(const std::string &directory) : m_RendererID(0)
@@ -134,13 +125,13 @@ void MCEngine::TextureCube::Bind(unsigned int slot) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::TextureCube::Unbind() const
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 }
 
 void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
@@ -156,7 +147,7 @@ void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    GL_ERROR();
+    RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
     int width, height, channels;
     stbi_set_flip_vertically_on_load(false);
@@ -174,7 +165,7 @@ void MCEngine::TextureCube::LoadCubemap(const std::array<std::string, 6> &faces)
                 format = GL_RGBA;
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
                          data);
-            GL_ERROR();
+            RendererCommand::GetError(std::string(__PRETTY_FUNCTION__));
 
             stbi_image_free(data);
         }

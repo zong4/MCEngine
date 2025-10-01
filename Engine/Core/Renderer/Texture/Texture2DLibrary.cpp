@@ -28,13 +28,7 @@ void MCEngine::Texture2DLibrary::AddTexture(const std::string &name, const std::
         return;
     }
     m_TextureMap[name] = texturePtr;
-
     LOG_ENGINE_INFO("Texture2D added: " + name);
-}
-
-bool MCEngine::Texture2DLibrary::Exists(const std::string &name) const
-{
-    return m_TextureMap.find(name) != m_TextureMap.end();
 }
 
 MCEngine::Texture2DLibrary::Texture2DLibrary()
@@ -44,7 +38,7 @@ MCEngine::Texture2DLibrary::Texture2DLibrary()
     AddTexture("White", std::make_shared<Texture2D>(1, 1, new unsigned char[4]{255, 255, 255, 255}));
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/");
-    for (const auto &entry : std::filesystem::directory_iterator(path))
+    for (auto &&entry : std::filesystem::recursive_directory_iterator(path))
     {
         if (entry.path().extension() == ".png" || entry.path().extension() == ".jpg")
         {
@@ -54,4 +48,11 @@ MCEngine::Texture2DLibrary::Texture2DLibrary()
     }
 
     LOG_ENGINE_INFO("Texture2DLibrary initialized");
+}
+
+bool MCEngine::Texture2DLibrary::Exists(const std::string &name) const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    return m_TextureMap.find(name) != m_TextureMap.end();
 }

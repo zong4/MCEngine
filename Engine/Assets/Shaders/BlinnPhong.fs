@@ -30,7 +30,7 @@ out vec4 FragColor;
 // Uniforms
 struct Material
 {
-    vec4 ObjectColor;
+    vec4 Color;
     float AmbientStrength;
     float DiffuseStrength;
     float SpecularStrength;
@@ -83,7 +83,7 @@ void main()
     // Gamma correction
     // result = pow(result, vec3(1.0 / 2.2));
 
-    FragColor = vec4(result, u_Material.ObjectColor.a);
+    FragColor = vec4(result, u_Material.Color.a);
 }
 
 vec3 CalcDirectionalLight(vec3 viewDir)
@@ -92,8 +92,8 @@ vec3 CalcDirectionalLight(vec3 viewDir)
     float diff = CalDiffuseFactor(lightDir, fs_in.Normal);
     float spec = CalSpecularFactor(lightDir, viewDir, fs_in.Normal, u_Material.Shininess);
 
-    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
-            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+    return (u_Material.AmbientStrength * u_Material.Color.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.Color.rgb + u_Material.SpecularStrength * spec) *
            fs_in.DirectionalLightColor;
 }
 
@@ -108,8 +108,8 @@ vec3 CalcPointLight(PointLight light, vec3 viewDir)
     float distance = length(light.Position - fs_in.GlobalPosition);
     float attenuation = 1.0 / (light.Constant + light.Linear * distance + light.Quadratic * (distance * distance));
 
-    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
-            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+    return (u_Material.AmbientStrength * u_Material.Color.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.Color.rgb + u_Material.SpecularStrength * spec) *
            light.Color * attenuation;
 }
 
@@ -129,8 +129,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
     float epsilon = light.CutOff - light.OuterCutOff;
     float intensity = clamp((theta - light.OuterCutOff) / epsilon, 0.0, 1.0);
 
-    return (u_Material.AmbientStrength * u_Material.ObjectColor.rgb +
-            u_Material.DiffuseStrength * diff * u_Material.ObjectColor.rgb + u_Material.SpecularStrength * spec) *
+    return (u_Material.AmbientStrength * u_Material.Color.rgb +
+            u_Material.DiffuseStrength * diff * u_Material.Color.rgb + u_Material.SpecularStrength * spec) *
            light.Color * attenuation * intensity;
 }
 
