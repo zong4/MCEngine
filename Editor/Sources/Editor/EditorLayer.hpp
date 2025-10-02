@@ -4,6 +4,7 @@
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
 #include "Script/CameraController.hpp"
+#include "UI/ViewportPanel.hpp"
 
 namespace MCEditor
 {
@@ -27,23 +28,15 @@ private:
 
     // Scene
     entt::entity m_SelectedEntity = entt::null;
-    std::unique_ptr<MCEngine::Scene> m_ScenePtr;
+    std::shared_ptr<MCEngine::Scene> m_ScenePtr;
 
-    // Scene Panel
-    bool m_SceneFocused = false;
-    std::unique_ptr<MCEngine::FrameBuffer> m_SceneFBOPtr;
-    std::unique_ptr<MCEngine::FrameBuffer> m_SceneMultisampleFBOPtr;
-
-    // Game Panel
-    bool m_GameFocused = false;
-    std::unique_ptr<MCEngine::FrameBuffer> m_GameFBOPtr;
-    std::unique_ptr<MCEngine::FrameBuffer> m_GameMultisampleFBOPtr;
+    // Panels
+    std::unique_ptr<ViewportPanel> m_ScenePanel;
+    std::unique_ptr<ViewportPanel> m_GamePanel;
 
 protected:
     // Init
     void InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr);
-    void InitScenePanel();
-    void InitGamePanel();
 
     // Render
     void Begin() override;
@@ -55,8 +48,6 @@ private:
     void RenderHierarchyPanel();
     void DrawEntityNode(entt::entity entity);
     void RenderInspectorPanel();
-    void RenderScenePanel();
-    void RenderGamePanel();
     void RenderFileBrowserPanel();
     void RenderFileBrowser(const std::filesystem::path &directory);
 };

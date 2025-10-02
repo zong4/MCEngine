@@ -10,8 +10,9 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
     m_ScenePtr = std::make_unique<MCEditor::FullScene>();
 
     InitCamera(windowPtr);
-    InitScenePanel();
-    InitGamePanel();
+
+    m_ScenePanel = std::make_unique<ViewportPanel>(m_CameraPtr->GetEntity());
+    m_GamePanel = std::make_unique<ViewportPanel>(m_ScenePtr->GetMainCamera());
 }
 
 MCEditor::EditorLayer::~EditorLayer() {}
@@ -38,7 +39,7 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (m_SceneFocused)
+    if (m_ScenePanel->IsFocused())
     {
         m_CameraPtr->GetComponent<MCEngine::TransformComponent>().UpdateTransformMatrix();
         m_CameraPtr->GetComponent<MCEngine::TransformComponent>().UpdateViewMatrix();
@@ -53,18 +54,8 @@ void MCEditor::EditorLayer::OnRender()
     ENGINE_PROFILE_FUNCTION();
 
     m_ScenePtr->RenderShadowMap();
-
-    m_SceneMultisampleFBOPtr->Bind();
-    MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_CameraPtr->GetEntity());
-    m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
-    m_SceneMultisampleFBOPtr->Unbind();
-
-    m_GameMultisampleFBOPtr->Bind();
-    MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_ScenePtr->GetMainCamera());
-    m_GameMultisampleFBOPtr->Blit(m_GameFBOPtr->GetRendererID());
-    m_GameMultisampleFBOPtr->Unbind();
+    m_ScenePanel->Render(m_ScenePtr);
+    m_GamePanel->Render(m_ScenePtr);
 }
 
 void MCEditor::EditorLayer::InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr)
@@ -86,24 +77,6 @@ void MCEditor::EditorLayer::InitCamera(const std::shared_ptr<MCEngine::Window> &
     m_CameraPtr = std::dynamic_pointer_cast<CameraController>(nsc.Instance);
 }
 
-void MCEditor::EditorLayer::InitScenePanel()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_SceneFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
-    m_SceneMultisampleFBOPtr =
-        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
-}
-
-void MCEditor::EditorLayer::InitGamePanel()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
-    m_GameMultisampleFBOPtr =
-        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
-}
-
 void MCEditor::EditorLayer::Begin()
 {
     ENGINE_PROFILE_FUNCTION();
@@ -114,8 +87,15 @@ void MCEditor::EditorLayer::Begin()
 
     RenderHierarchyPanel();
     RenderInspectorPanel();
-    RenderScenePanel();
-    RenderGamePanel();
+
+    ImGui::Begin("Scene");
+    m_ScenePanel->OnImGuiRender();
+    ImGui::End();
+
+    ImGui::Begin("Game");
+    m_GamePanel->OnImGuiRender();
+    ImGui::End();
+
     RenderFileBrowserPanel();
 
     EndDockSpace();
@@ -277,48 +257,6 @@ void MCEditor::EditorLayer::RenderInspectorPanel()
             }
         }
     }
-
-    ImGui::End();
-}
-
-void MCEditor::EditorLayer::RenderScenePanel()
-{
-    ImGui::Begin("Scene");
-
-    m_SceneFocused = ImGui::IsWindowFocused();
-    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_SceneFBOPtr->GetWidth() || (int)viewportSize.y != m_SceneFBOPtr->GetHeight())
-    {
-        m_CameraPtr->GetComponent<MCEngine::CameraComponent>().Resize(viewportSize.x, viewportSize.y);
-
-        m_SceneFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_SceneMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        LOG_EDITOR_INFO("Resize Scene Framebuffer to width: " + std::to_string((int)viewportSize.x) +
-                        " height: " + std::to_string((int)viewportSize.y));
-    }
-    ImGui::Image((ImTextureID)(intptr_t)m_SceneFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
-                 ImVec2(1, 0));
-
-    ImGui::End();
-}
-
-void MCEditor::EditorLayer::RenderGamePanel()
-{
-    ImGui::Begin("Game");
-
-    m_GameFocused = ImGui::IsWindowFocused();
-    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_GameFBOPtr->GetWidth() || (int)viewportSize.y != m_GameFBOPtr->GetHeight())
-    {
-        m_ScenePtr->Resize(viewportSize.x, viewportSize.y);
-
-        m_GameFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_GameMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        LOG_EDITOR_INFO("Resize Game Framebuffer to width: " + std::to_string((int)viewportSize.x) +
-                        " height: " + std::to_string((int)viewportSize.y));
-    }
-    ImGui::Image((ImTextureID)(intptr_t)m_GameFBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
-                 ImVec2(1, 0));
 
     ImGui::End();
 }

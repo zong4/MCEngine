@@ -10,7 +10,7 @@ MCEngine::FrameBuffer::FrameBuffer(FrameBufferType type, int width, int height, 
     glGenFramebuffers(1, &m_RendererID);
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-    if (type != FrameBufferType::MultiSample)
+    if (type != FrameBufferType::Multisample)
         BindBasicTexture(width, height);
     else
         BindMultiSampleTexture(width, height, samples);
@@ -27,7 +27,7 @@ MCEngine::FrameBuffer::FrameBuffer(FrameBufferType type, int width, int height, 
     LOG_ENGINE_INFO("FrameBuffer created with ID: " + std::to_string(m_RendererID) +
                     ", Type: " + std::to_string(static_cast<int>(m_Type)) + ", Width: " + std::to_string(width) +
                     ", Height: " + std::to_string(height) +
-                    (type == FrameBufferType::MultiSample ? ", Samples: " + std::to_string(samples) : ""));
+                    (type == FrameBufferType::Multisample ? ", Samples: " + std::to_string(samples) : ""));
 }
 
 MCEngine::FrameBuffer::~FrameBuffer()
