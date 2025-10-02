@@ -14,15 +14,12 @@ enum class CameraType
 class CameraComponent : public Component
 {
 public:
-    CameraComponent(TransformComponent *transformComponent, const glm::vec3 &size);
-    CameraComponent(TransformComponent *transformComponent, float fov, float aspectRatio, float nearClip,
-                    float farClip);
+    CameraComponent(const glm::vec3 &size);
+    CameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
     virtual ~CameraComponent() override;
 
     // Getters
     CameraType GetType() const { return m_Type; }
-    const TransformComponent *GetTransformComponent() const { return m_TransformComponent; }
-    const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
     const glm::mat4 &GetProjectionMatrix() const { return m_ProjectionMatrix; }
     const glm::vec3 &GetSize() const { return m_Size; }
     float GetFOV() const { return m_FOV; }
@@ -41,13 +38,7 @@ public:
 
 private:
     CameraType m_Type;
-
-    // Common
-    const TransformComponent *m_TransformComponent = nullptr;
-    glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
-
-    // Specific
     glm::vec3 m_Size;
     float m_FOV, m_AspectRatio, m_NearClip, m_FarClip;
 

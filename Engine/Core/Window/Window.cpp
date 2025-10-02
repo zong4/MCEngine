@@ -136,7 +136,6 @@ void MCEngine::Window::SetCallbacks()
                                        window->OnEvent(event);
                                    });
 
-    // todo: add mods
     glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                        [](GLFWwindow *nativeWindow, int key, int scancode, int action, int mods) {
                            Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
@@ -144,7 +143,6 @@ void MCEngine::Window::SetCallbacks()
                            window->OnEvent(event);
                        });
 
-    // todo: add mods
     glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
                                [](GLFWwindow *nativeWindow, int button, int action, int mods) {
                                    Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));

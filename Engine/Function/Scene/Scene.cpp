@@ -68,12 +68,13 @@ void MCEngine::Scene::Render(CameraComponent &camera) const
 
     // todo: uniform buffer automatic calulation
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
-        "UniformBuffer0", {
-                              {glm::value_ptr(camera.GetViewMatrix()), sizeof(glm::mat4), 0},
-                              {glm::value_ptr(camera.GetProjectionMatrix()), sizeof(glm::mat4), sizeof(glm::mat4)},
-                              {glm::value_ptr(camera.GetTransformComponent()->GetPosition()), sizeof(glm::vec3),
-                               sizeof(glm::mat4) + sizeof(glm::mat4)},
-                          });
+        "UniformBuffer0",
+        {
+            {glm::value_ptr(m_Registry.get<TransformComponent>(m_MainCamera).GetViewMatrix()), sizeof(glm::mat4), 0},
+            {glm::value_ptr(camera.GetProjectionMatrix()), sizeof(glm::mat4), sizeof(glm::mat4)},
+            {glm::value_ptr(m_Registry.get<TransformComponent>(m_MainCamera).GetPosition()), sizeof(glm::vec3),
+             sizeof(glm::mat4) + sizeof(glm::mat4)},
+        });
 
     // 2D
     {

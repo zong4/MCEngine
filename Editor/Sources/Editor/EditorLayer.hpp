@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Scene/FullScene.hpp"
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
 #include "Scene/SampleScene.hpp"
-#include "Scene/FullScene.hpp"
 
 namespace MCEditor
 {

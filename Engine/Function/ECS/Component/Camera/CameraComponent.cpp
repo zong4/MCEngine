@@ -1,36 +1,23 @@
 #include "CameraComponent.hpp"
 
-MCEngine::CameraComponent::CameraComponent(TransformComponent *transformComponent, const glm::vec3 &size)
-    : m_Type(CameraType::Ortho), m_TransformComponent(transformComponent), m_Size(size)
+MCEngine::CameraComponent::CameraComponent(const glm::vec3 &size) : m_Type(CameraType::Ortho), m_Size(size)
 {
-    UpdateViewMatrix();
     UpdateProjectionMatrix();
     LOG_ENGINE_INFO("Ortho Camera Created with Size: " + ToString(size));
 }
 
-MCEngine::CameraComponent::CameraComponent(TransformComponent *transformComponent, float fov, float aspectRatio,
-                                           float nearClip, float farClip)
-    : m_Type(CameraType::Perspective), m_TransformComponent(transformComponent), m_FOV(fov), m_AspectRatio(aspectRatio),
-      m_NearClip(nearClip), m_FarClip(farClip)
+MCEngine::CameraComponent::CameraComponent(float fov, float aspectRatio, float nearClip, float farClip)
+    : m_Type(CameraType::Perspective), m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
 {
-    UpdateViewMatrix();
     UpdateProjectionMatrix();
     LOG_ENGINE_INFO("Perspective Camera Created with FOV: " + std::to_string(fov) +
                     ", Aspect Ratio: " + std::to_string(aspectRatio) + ", Near Clip: " + std::to_string(nearClip) +
                     ", Far Clip: " + std::to_string(farClip));
 }
 
-MCEngine::CameraComponent::~CameraComponent() { m_TransformComponent = nullptr; }
+MCEngine::CameraComponent::~CameraComponent() {}
 
-void MCEngine::CameraComponent::Update(float deltaTime)
-{
-    // ENGINE_PROFILE_FUNCTION();
-
-    if (m_TransformComponent->IsDirty())
-    {
-        UpdateViewMatrix();
-    }
-}
+void MCEngine::CameraComponent::Update(float deltaTime) {}
 
 void MCEngine::CameraComponent::Resize(float width, float height)
 {
@@ -76,24 +63,6 @@ void MCEngine::CameraComponent::SetFarClip(float farClip)
     }
     m_FarClip = farClip;
     UpdateProjectionMatrix();
-}
-
-void MCEngine::CameraComponent::UpdateViewMatrix()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glm::vec3 position = m_TransformComponent->GetPosition();
-    glm::vec3 rotation = m_TransformComponent->GetRotation();
-
-    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 rotationXYZ = rotationZ * rotationY * rotationX;
-
-    glm::vec3 front = glm::normalize(glm::vec3(rotationXYZ * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-    glm::vec3 up = glm::normalize(glm::vec3(rotationXYZ * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
-
-    m_ViewMatrix = glm::lookAt(position, position + front, up);
 }
 
 void MCEngine::CameraComponent::UpdateProjectionMatrix()

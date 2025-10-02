@@ -8,6 +8,7 @@ add_requires("imgui v1.92.1-docking", {configs = {glfw_opengl3 = true}})
 -- ECS
 add_requires("entt")
 
+-- Core Target
 target("Core")
     set_kind("static")
     
@@ -23,6 +24,7 @@ target("Core")
     add_packages("glfw", "glad", "stb");
     add_packages("imgui", {public = true});
 
+-- Function Target
 target("Function")
     set_kind("static")
 
@@ -35,9 +37,8 @@ target("Function")
     -- ECS
     add_packages("entt", {public = true})
 
-
+-- Engine Target
 --set_runtimes("MTd")
-
 target("Engine")
     set_kind("static")
 

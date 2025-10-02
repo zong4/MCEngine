@@ -51,11 +51,10 @@ void MCEngine::TransformComponent::SetScale(const glm::vec3 &scale)
 
 void MCEngine::TransformComponent::Update(float deltaTime)
 {
-    // ENGINE_PROFILE_FUNCTION();
-
     if (m_Dirty)
     {
         UpdateTransformMatrix();
+        UpdateViewMatrix();
         m_Dirty = false;
     }
 }
@@ -95,6 +94,13 @@ void MCEngine::TransformComponent::UpdateTransformMatrix()
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), m_Scale);
 
     m_TransformMatrix = translationMatrix * m_RotationMatrix * scaleMatrix;
+}
+
+void MCEngine::TransformComponent::UpdateViewMatrix()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_ViewMatrix = glm::lookAt(m_Position, m_Position + GetForward(), GetUp());
 }
 
 void MCEngine::RelationshipComponent::RemoveChild(entt::entity child)
