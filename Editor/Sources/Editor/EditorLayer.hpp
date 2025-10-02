@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Scene/FullScene.hpp"
-#include "Scene/GeometryScene.hpp"
-#include "Scene/InstanceScene.hpp"
-#include "Script/CameraController.hpp"
+#include "UI/FileBrowserPanel.hpp"
+#include "UI/HierarchyPanel.hpp"
+#include "UI/InspectorPanel.hpp"
 #include "UI/ViewportPanel.hpp"
 
 namespace MCEditor
@@ -23,33 +22,23 @@ public:
 
 private:
     // Camera
+    MCEngine::Entity m_Camera;
     entt::registry m_Registry = {};
-    std::shared_ptr<CameraController> m_CameraPtr;
-
-    // Scene
-    entt::entity m_SelectedEntity = entt::null;
     std::shared_ptr<MCEngine::Scene> m_ScenePtr;
 
-    // Panels
+    // UI
+    HierarchyPanel m_HierarchyPanel;
+    InspectorPanel m_InspectorPanel;
+    FileBrowserPanel m_FileBrowserPanel;
     std::unique_ptr<ViewportPanel> m_ScenePanel;
     std::unique_ptr<ViewportPanel> m_GamePanel;
 
 protected:
-    // Init
-    void InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr);
-
-    // Render
-    void Begin() override;
+    void RenderImGui() override;
 
 private:
-    void BeginDockSpace() const;
-    void EndDockSpace() const;
+    void RenderDockSpace() const;
     void RenderMenuBar() const;
-    void RenderHierarchyPanel();
-    void DrawEntityNode(entt::entity entity);
-    void RenderInspectorPanel();
-    void RenderFileBrowserPanel();
-    void RenderFileBrowser(const std::filesystem::path &directory);
 };
 
 } // namespace MCEditor

@@ -26,8 +26,9 @@ protected:
     std::string m_ImGuiFilePath;
 
 protected:
-    virtual void Begin();
-    void End();
+    void BeginRenderImGui();
+    virtual void RenderImGui() = 0;
+    void EndRenderImGui();
 };
 
 } // namespace MCEngine

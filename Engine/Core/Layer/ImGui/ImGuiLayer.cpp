@@ -42,11 +42,12 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
 void MCEngine::ImGuiLayer::OnImGuiRender()
 {
-    Begin();
-    End();
+    BeginRenderImGui();
+    RenderImGui();
+    EndRenderImGui();
 }
 
-void MCEngine::ImGuiLayer::Begin()
+void MCEngine::ImGuiLayer::BeginRenderImGui()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -55,7 +56,7 @@ void MCEngine::ImGuiLayer::Begin()
     ImGui::NewFrame();
 }
 
-void MCEngine::ImGuiLayer::End()
+void MCEngine::ImGuiLayer::EndRenderImGui()
 {
     ENGINE_PROFILE_FUNCTION();
 
