@@ -6,41 +6,39 @@ MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Camera2D = EntityFactory::CreateOrthoCamera(m_Registry, "MainCamera2D");
-    m_Camera3D = EntityFactory::CreatePerspectiveCamera(m_Registry, "MainCamera3D");
-    m_MainCamera = m_Camera3D;
+    m_MainCamera = AddPerspectiveCamera("MainCamera");
 }
 
-MCEngine::Scene::~Scene() {}
+MCEngine::Scene::~Scene()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_Registry.view<MCEngine::NativeScriptComponent>().each(
+        [&](auto &&entity, auto &&nsc) { nsc.Instance->OnDestroy(); });
+}
 
 void MCEngine::Scene::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // Switch camera
+    auto &&view = m_Registry.view<TransformComponent>();
+    for (auto &&entity : view)
     {
-        if (ImGui::IsKeyDown(ImGuiKey_1))
-        {
-            m_MainCamera = m_Camera2D;
-            LOG_ENGINE_TRACE("Switched to 2D Camera");
-        }
-        if (ImGui::IsKeyDown(ImGuiKey_2))
-        {
-            m_MainCamera = m_Camera3D;
-            LOG_ENGINE_TRACE("Switched to 3D Camera");
-        }
+        auto &&transform = view.get<TransformComponent>(entity);
+        transform.UpdateTransformMatrix();
+        transform.UpdateViewMatrix();
     }
 
-    // Update all transforms
-    {
-        auto &&view = m_Registry.view<TransformComponent>();
-        for (auto &&entity : view)
+    m_Registry.view<MCEngine::NativeScriptComponent>().each([&](auto &&entity, auto &&nsc) {
+        if (!nsc.Instance)
         {
-            auto &&transform = view.get<TransformComponent>(entity);
-            transform.UpdateTransformMatrix();
-            transform.UpdateViewMatrix();
+            nsc.Instance = nsc.InstantiateScript();
+            nsc.Instance->SetEntity(MCEngine::Entity{entity, &m_Registry});
+            nsc.Instance->OnCreate();
+            nsc.Instance->OnStart();
         }
-    }
+        nsc.Instance->OnUpdate(deltaTime);
+    });
 }
 
 void MCEngine::Scene::RenderShadowMap() const
@@ -55,17 +53,18 @@ void MCEngine::Scene::RenderShadowMap() const
     m_ShadowMapPtr->Unbind();
 }
 
-void MCEngine::Scene::Render(const TransformComponent &transform, const CameraComponent &camera) const
+void MCEngine::Scene::Render(const Entity &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // todo: uniform buffer automatic calulation
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
         "UniformBuffer0",
         {
-            {glm::value_ptr(transform.GetViewMatrix()), sizeof(glm::mat4), 0},
-            {glm::value_ptr(camera.GetProjectionMatrix()), sizeof(glm::mat4), sizeof(glm::mat4)},
-            {glm::value_ptr(transform.GetPosition()), sizeof(glm::vec3), sizeof(glm::mat4) + sizeof(glm::mat4)},
+            {glm::value_ptr(camera.GetComponent<TransformComponent>().GetViewMatrix()), sizeof(glm::mat4), 0},
+            {glm::value_ptr(camera.GetComponent<CameraComponent>().GetProjectionMatrix()), sizeof(glm::mat4),
+             sizeof(glm::mat4)},
+            {glm::value_ptr(camera.GetComponent<TransformComponent>().GetPosition()), sizeof(glm::vec3),
+             sizeof(glm::mat4) + sizeof(glm::mat4)},
         });
 
     // 2D
@@ -103,4 +102,74 @@ void MCEngine::Scene::Resize(float width, float height)
         auto &&camera = view.get<CameraComponent>(entity);
         camera.Resize(width, height);
     }
+}
+
+MCEngine::Entity MCEngine::Scene::AddEmptyEntity(const std::string &name, const TransformComponent &transform)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    Entity entity{m_Registry.create(), &m_Registry};
+    entity.AddComponent<TagComponent>(name);
+    entity.AddComponent<TransformComponent>(transform);
+    entity.AddComponent<RelationshipComponent>();
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddSquare(const std::string &name, const TransformComponent &transform,
+                                            const glm::vec4 &color, const std::shared_ptr<Texture2D> &texturePtr)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<SpriteRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), color,
+                                                 texturePtr);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddCube(const std::string &name, const TransformComponent &transform,
+                                          const std::shared_ptr<Shader> &shaderPtr, const Material &material)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<MeshRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"), shaderPtr, material);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddOrthoCamera(const std::string &name, const TransformComponent &transform,
+                                                 const glm::vec3 &size)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<CameraComponent>(size);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddPerspectiveCamera(const std::string &name, const TransformComponent &transform,
+                                                       float fov, float aspectRatio, float nearClip, float farClip)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<CameraComponent>(fov, aspectRatio, nearClip, farClip);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddDirectionalLight(const std::string &name, const TransformComponent &transform,
+                                                      const glm::vec3 &color, float intensity)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<LightComponent>(color, intensity);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddPointLight(const std::string &name, const TransformComponent &transform,
+                                                const glm::vec3 &color, float intensity, float constant, float linear,
+                                                float quadratic)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<LightComponent>(color, intensity, constant, linear, quadratic);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddSpotLight(const std::string &name, const TransformComponent &transform,
+                                               const glm::vec3 &color, float intensity, float constant, float linear,
+                                               float quadratic, float cutOff, float outerCutOff)
+{
+    Entity entity = AddEmptyEntity(name, transform);
+    entity.AddComponent<LightComponent>(color, intensity, constant, linear, quadratic, cutOff, outerCutOff);
+    return entity;
 }

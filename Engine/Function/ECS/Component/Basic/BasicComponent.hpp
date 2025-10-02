@@ -58,38 +58,44 @@ private:
 class RelationshipComponent
 {
 public:
-    RelationshipComponent(entt::entity parent = entt::null) : m_Parent(parent) {}
+    RelationshipComponent(Entity parent = Entity()) : m_Parent(parent) {}
 
     // Getters
-    entt::entity GetParent() const { return m_Parent; }
-    const std::vector<entt::entity> &GetChildren() const { return m_Children; }
+    Entity GetParent() const { return m_Parent; }
+    const std::vector<Entity> &GetChildren() const { return m_Children; }
 
     // Setters
-    void SetParent(entt::entity parent) { m_Parent = parent; }
-    void AddChild(entt::entity child) { m_Children.push_back(child); }
-    void RemoveChild(entt::entity child);
+    void SetParent(Entity parent) { m_Parent = parent; }
+    void AddChild(Entity child) { m_Children.push_back(child); }
+    void RemoveChild(Entity child);
 
 private:
-    entt::entity m_Parent;
-    std::vector<entt::entity> m_Children;
+    Entity m_Parent;
+    std::vector<Entity> m_Children;
 };
 
-struct NativeScriptComponent
+class NativeScriptComponent
 {
-    ScriptableEntity *(*InstantiateScript)();
-    void (*DestroyScript)(NativeScriptComponent *);
+public:
+    NativeScriptComponent() = default;
+    std::function<std::shared_ptr<ScriptableEntity>()> InstantiateScript;
+    std::function<void()> DestroyScript;
 
-    template <typename T> void Bind()
+public:
+    // clang-format off
+    template <typename T>
+    // clang-format on
+    void Bind()
     {
-        InstantiateScript = []() { return static_cast<ScriptableEntity *>(new T()); };
-        DestroyScript = [](NativeScriptComponent *nsc) {
-            delete nsc->Instance;
-            nsc->Instance = nullptr;
+        InstantiateScript = [&]() {
+            Instance = std::make_shared<T>();
+            return Instance;
         };
+        DestroyScript = [&]() { Instance->OnDestroy(); };
     }
 
-private:
-    ScriptableEntity *Instance = nullptr;
+public:
+    std::shared_ptr<ScriptableEntity> Instance;
 };
 
 } // namespace MCEngine

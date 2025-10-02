@@ -38,11 +38,13 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    // Move Camera
     if (m_SceneFocused)
     {
+        m_CameraPtr->GetComponent<MCEngine::TransformComponent>().UpdateTransformMatrix();
+        m_CameraPtr->GetComponent<MCEngine::TransformComponent>().UpdateViewMatrix();
         m_CameraPtr->OnUpdate(deltaTime);
     }
+
     m_ScenePtr->Update(deltaTime);
 }
 
@@ -54,15 +56,13 @@ void MCEditor::EditorLayer::OnRender()
 
     m_SceneMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_CameraPtr->GetComponent<MCEngine::TransformComponent>(),
-                       m_CameraPtr->GetComponent<MCEngine::CameraComponent>());
+    m_ScenePtr->Render(m_CameraPtr->GetEntity());
     m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
     m_SceneMultisampleFBOPtr->Unbind();
 
     m_GameMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_ScenePtr->GetRegistry().get<MCEngine::TransformComponent>(m_ScenePtr->GetMainCamera()),
-                       m_ScenePtr->GetRegistry().get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera()));
+    m_ScenePtr->Render(m_ScenePtr->GetMainCamera());
     m_GameMultisampleFBOPtr->Blit(m_GameFBOPtr->GetRendererID());
     m_GameMultisampleFBOPtr->Unbind();
 }
@@ -71,66 +71,19 @@ void MCEditor::EditorLayer::InitCamera(const std::shared_ptr<MCEngine::Window> &
 {
     ENGINE_PROFILE_FUNCTION();
 
-    class CameraController : public MCEngine::ScriptableEntity
-    {
-    public:
-        CameraController(entt::entity handle, entt::registry *registry) : ScriptableEntity(handle, registry) {}
-        virtual ~CameraController() override = default;
+    MCEngine::Entity cameraEntity(m_Registry.create(), &m_Registry);
+    cameraEntity.AddComponent<MCEngine::TransformComponent>(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f),
+                                                            glm::vec3(1.0f));
+    cameraEntity.AddComponent<MCEngine::CameraComponent>(45.0f, 16.0 / 9.0, 0.1f, 100.0f);
+    cameraEntity.AddComponent<MCEngine::NativeScriptComponent>();
 
-        void OnCreate() override
-        {
-            auto &transform = AddComponent<MCEngine::TransformComponent>();
-            transform.SetPosition(glm::vec3(0.0f, 5.0f, 8.0f));
-            transform.SetRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
-            transform.UpdateTransformMatrix();
-            transform.UpdateViewMatrix();
-
-            AddComponent<MCEngine::CameraComponent>(45.0f, 1280 / 720, 0.1f, 100.0f);
-        }
-
-        void OnUpdate(float deltaTime) override
-        {
-            auto &transform = GetComponent<MCEngine::TransformComponent>();
-
-            if (ImGui::IsKeyDown(ImGuiKey_W))
-                transform.SetPosition(transform.GetPosition() +
-                                      glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-            if (ImGui::IsKeyDown(ImGuiKey_S))
-                transform.SetPosition(transform.GetPosition() -
-                                      glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-            if (ImGui::IsKeyDown(ImGuiKey_A))
-                transform.SetPosition(transform.GetPosition() -
-                                      glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-            if (ImGui::IsKeyDown(ImGuiKey_D))
-                transform.SetPosition(transform.GetPosition() +
-                                      glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-            if (ImGui::IsKeyDown(ImGuiKey_Q))
-                transform.SetPosition(transform.GetPosition() -
-                                      glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-            if (ImGui::IsKeyDown(ImGuiKey_E))
-                transform.SetPosition(transform.GetPosition() +
-                                      glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-
-            transform.UpdateTransformMatrix();
-            transform.UpdateViewMatrix();
-        }
-
-        void OnDestroy() override {}
-
-        void Resize(int width, int height) override
-        {
-            auto &camera = GetComponent<MCEngine::CameraComponent>();
-            camera.Resize(static_cast<float>(width), static_cast<float>(height));
-        }
-
-    private:
-        float m_CameraMoveSpeed = 5.0f;
-        float m_CameraRotateSpeed = 45.0f;
-    };
-
-    entt::entity cameraEntity = m_Registry.create();
-    m_CameraPtr = std::make_unique<CameraController>(cameraEntity, &m_Registry);
-    m_CameraPtr->OnCreate();
+    auto &&nsc = cameraEntity.GetComponent<MCEngine::NativeScriptComponent>();
+    nsc.Bind<CameraController>();
+    nsc.InstantiateScript();
+    nsc.Instance->SetEntity(cameraEntity);
+    nsc.Instance->OnCreate();
+    nsc.Instance->OnStart();
+    m_CameraPtr = std::dynamic_pointer_cast<CameraController>(nsc.Instance);
 }
 
 void MCEditor::EditorLayer::InitScenePanel()
@@ -227,7 +180,7 @@ void MCEditor::EditorLayer::RenderHierarchyPanel()
     for (auto &&entity : view)
     {
         auto &&rel = view.get<MCEngine::RelationshipComponent>(entity);
-        if (rel.GetParent() == entt::null)
+        if (!rel.GetParent())
             DrawEntityNode(entity);
     }
 
@@ -336,7 +289,7 @@ void MCEditor::EditorLayer::RenderScenePanel()
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if ((int)viewportSize.x != m_SceneFBOPtr->GetWidth() || (int)viewportSize.y != m_SceneFBOPtr->GetHeight())
     {
-        m_CameraPtr->Resize(viewportSize.x, viewportSize.y);
+        m_CameraPtr->GetComponent<MCEngine::CameraComponent>().Resize(viewportSize.x, viewportSize.y);
 
         m_SceneFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
         m_SceneMultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);

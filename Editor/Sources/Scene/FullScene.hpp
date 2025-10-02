@@ -12,7 +12,7 @@ public:
     virtual ~FullScene() override = default;
 
 private:
-    entt::entity m_Light;
+    MCEngine::Entity m_Light;
 
 protected:
     void RenderShadowMapReally() const override;

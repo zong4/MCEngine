@@ -8,31 +8,52 @@ namespace MCEngine
 class Entity
 {
 public:
+    Entity() = default;
     Entity(entt::entity handle, entt::registry *registry) : m_Entity(handle), m_Registry(registry) {}
-    virtual ~Entity()
-    {
-        m_Entity = entt::null;
-        m_Registry = nullptr;
-    }
+    virtual ~Entity() { m_Registry = nullptr; }
 
     // Operators
-    operator bool() const { return GetHandle() != entt::null; }
+    operator bool() const { return m_Entity != entt::null; }
+    operator entt::entity() const { return m_Entity; }
+    bool operator==(const Entity &other) const { return m_Entity == other.m_Entity; }
+    bool operator!=(const Entity &other) const { return !(*this == other); }
 
     // Getters
     entt::entity GetHandle() const { return m_Entity; }
 
-    // Templates
-    template <typename T> bool HasComponent() const { return m_Registry->all_of<T>(m_Entity); }
-    template <typename T> T &GetComponent() { return m_Registry->get<T>(m_Entity); }
-    template <typename T, typename... Args> T &AddComponent(Args &&...args)
+public:
+    // clang-format off
+    template <typename T>
+    // clang-format on
+    bool HasComponent() const
+    {
+        return m_Registry->all_of<T>(m_Entity);
+    }
+    // clang-format off
+    template <typename T>
+    // clang-format on
+    T &GetComponent() const
+    {
+        return m_Registry->get<T>(m_Entity);
+    }
+    // clang-format off
+    template <typename T, typename... Args>
+    // clang-format on
+    T &AddComponent(Args &&...args)
     {
         return m_Registry->emplace<T>(m_Entity, std::forward<Args>(args)...);
     }
-    template <typename T> void RemoveComponent() { m_Registry->remove<T>(m_Entity); }
+    // clang-format off
+    template <typename T>
+    // clang-format on
+    void RemoveComponent()
+    {
+        m_Registry->remove<T>(m_Entity);
+    }
 
-private:
+protected:
     entt::entity m_Entity = entt::null;
-    entt::registry *m_Registry;
+    entt::registry *m_Registry = nullptr;
 };
 
 } // namespace MCEngine

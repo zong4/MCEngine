@@ -3,6 +3,7 @@
 #include "Scene/FullScene.hpp"
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
+#include "Script/CameraController.hpp"
 
 namespace MCEditor
 {
@@ -22,7 +23,7 @@ public:
 private:
     // Camera
     entt::registry m_Registry = {};
-    std::unique_ptr<MCEngine::ScriptableEntity> m_CameraPtr;
+    std::shared_ptr<CameraController> m_CameraPtr;
 
     // Scene
     entt::entity m_SelectedEntity = entt::null;

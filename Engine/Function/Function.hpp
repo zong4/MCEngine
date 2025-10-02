@@ -1,6 +1,5 @@
 #pragma once
 
 #include "Application/Application.hpp"
-#include "ECS/Entity/Entity.hpp"
-#include "ECS/Entity/EntityFactory.hpp"
+#include "ECS/Entity/ScriptableEntity.hpp"
 #include "Scene/Scene.hpp"

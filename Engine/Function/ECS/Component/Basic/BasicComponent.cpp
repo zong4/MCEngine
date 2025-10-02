@@ -57,7 +57,7 @@ void MCEngine::TransformComponent::UpdateViewMatrix()
     m_ViewMatrix = glm::lookAt(m_Position, m_Position + GetForward(), GetUp());
 }
 
-void MCEngine::RelationshipComponent::RemoveChild(entt::entity child)
+void MCEngine::RelationshipComponent::RemoveChild(Entity child)
 {
     ENGINE_PROFILE_FUNCTION();
 
