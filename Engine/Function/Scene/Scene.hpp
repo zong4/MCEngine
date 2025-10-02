@@ -20,7 +20,7 @@ public:
     void OnEvent(Event &event) {}
     void Update(float deltaTime);
     void RenderShadowMap() const;
-    void Render(CameraComponent &camera) const;
+    void Render(const TransformComponent &transform, const CameraComponent &camera) const;
 
     void Resize(float width, float height);
 
@@ -38,7 +38,7 @@ protected:
 
 protected:
     virtual void RenderShadowMapReally() const = 0;
-    virtual void RenderReally(CameraComponent &camera) const = 0;
+    virtual void RenderReally() const = 0;
 };
 
 } // namespace MCEngine

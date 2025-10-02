@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/Component/Component.hpp"
+#include "pch.hpp"
 
 namespace MCEngine
 {
@@ -12,7 +12,7 @@ enum class LightType
     Spot
 };
 
-class LightComponent : public Component
+class LightComponent
 {
 public:
     LightComponent(const glm::vec3 &color, float intensity);
@@ -42,9 +42,6 @@ public:
     void SetIntensity(float intensity) { m_Intensity = intensity; }
     void SetAttenuation(float constant, float linear, float quadratic);
     void SetCutOff(float cutOff, float outerCutOff);
-
-public:
-    virtual void Update(float deltaTime) override {}
 
 private:
     LightType m_LightType;

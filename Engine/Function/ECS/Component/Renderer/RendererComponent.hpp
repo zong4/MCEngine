@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ECS/Component/Component.hpp"
+#include "pch.hpp"
+
 #include "Renderer/Material/Material.hpp"
 
 namespace MCEngine
 {
 
-class SpriteRendererComponent : public Component
+class SpriteRendererComponent
 {
 
 public:
@@ -24,8 +25,6 @@ public:
     void SetColor(const glm::vec4 &color) { m_Color = color; }
     void SetTexturePtr(const std::shared_ptr<Texture2D> &texturePtr) { m_TexturePtr = texturePtr; }
 
-    virtual void Update(float deltaTime) override {}
-
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;
 
@@ -34,7 +33,7 @@ private:
     std::shared_ptr<Texture2D> m_TexturePtr;
 };
 
-class MeshRendererComponent : public Component
+class MeshRendererComponent
 {
 public:
     MeshRendererComponent(const std::shared_ptr<VertexArray> &vaoPtr, const std::shared_ptr<Shader> &shaderPtr,
@@ -50,9 +49,6 @@ public:
     void SetVAOPtr(const std::shared_ptr<VertexArray> &vaoPtr) { m_VAOPtr = vaoPtr; }
     void SetShaderPtr(const std::shared_ptr<Shader> &shaderPtr) { m_ShaderPtr = shaderPtr; }
     void SetMaterial(const Material &material) { m_Material = material; }
-
-public:
-    virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<VertexArray> m_VAOPtr;

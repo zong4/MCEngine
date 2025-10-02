@@ -1,15 +1,14 @@
 #pragma once
 
-#include "ECS/Component/Component.hpp"
+#include "pch.hpp"
 
 namespace MCEngine
 {
 
-class SkyboxComponent : public Component
+class SkyboxComponent
 {
 public:
     SkyboxComponent(const std::shared_ptr<TextureCube> &textureCube);
-    ~SkyboxComponent();
 
     // Getters
     std::shared_ptr<TextureCube> &GetTextureCubePtr() { return m_TextureCubePtr; }
@@ -17,9 +16,6 @@ public:
 
     // Setters
     void SetTextureCube(const std::shared_ptr<TextureCube> &textureCube) { m_TextureCubePtr = textureCube; }
-
-public:
-    virtual void Update(float deltaTime) override {}
 
 private:
     std::shared_ptr<TextureCube> m_TextureCubePtr;

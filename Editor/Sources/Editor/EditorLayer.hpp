@@ -3,7 +3,6 @@
 #include "Scene/FullScene.hpp"
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
-#include "Scene/SampleScene.hpp"
 
 namespace MCEditor
 {
@@ -22,10 +21,8 @@ public:
 
 private:
     // Camera
-    MCEngine::TransformComponent *m_TransformPtr = nullptr;
-    MCEngine::CameraComponent *m_CameraPtr = nullptr;
-    float m_CameraMoveSpeed = 1.0f;
-    float m_CameraRotateSpeed = 15.0f;
+    entt::registry m_Registry = {};
+    std::unique_ptr<MCEngine::ScriptableEntity> m_CameraPtr;
 
     // Scene
     entt::entity m_SelectedEntity = entt::null;
@@ -46,9 +43,6 @@ protected:
     void InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr);
     void InitScenePanel();
     void InitGamePanel();
-
-    // Shutdown
-    void ShutdownCamera();
 
     // Render
     void Begin() override;

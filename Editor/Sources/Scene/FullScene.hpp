@@ -16,7 +16,7 @@ private:
 
 protected:
     void RenderShadowMapReally() const override;
-    void RenderReally(MCEngine::CameraComponent &camera) const override;
+    void RenderReally() const override;
 };
 
 } // namespace MCEditor

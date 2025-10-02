@@ -15,10 +15,6 @@ MCEngine::CameraComponent::CameraComponent(float fov, float aspectRatio, float n
                     ", Far Clip: " + std::to_string(farClip));
 }
 
-MCEngine::CameraComponent::~CameraComponent() {}
-
-void MCEngine::CameraComponent::Update(float deltaTime) {}
-
 void MCEngine::CameraComponent::Resize(float width, float height)
 {
     if (m_Type == CameraType::Ortho)

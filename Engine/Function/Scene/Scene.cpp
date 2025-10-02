@@ -31,21 +31,14 @@ void MCEngine::Scene::Update(float deltaTime)
         }
     }
 
-    // Update all cameras
-    auto &&view = m_Registry.view<CameraComponent>();
-    for (auto &&entity : view)
-    {
-        auto &&camera = view.get<CameraComponent>(entity);
-        camera.Update(deltaTime);
-    }
-
     // Update all transforms
     {
         auto &&view = m_Registry.view<TransformComponent>();
         for (auto &&entity : view)
         {
             auto &&transform = view.get<TransformComponent>(entity);
-            transform.Update(deltaTime);
+            transform.UpdateTransformMatrix();
+            transform.UpdateViewMatrix();
         }
     }
 }
@@ -62,7 +55,7 @@ void MCEngine::Scene::RenderShadowMap() const
     m_ShadowMapPtr->Unbind();
 }
 
-void MCEngine::Scene::Render(CameraComponent &camera) const
+void MCEngine::Scene::Render(const TransformComponent &transform, const CameraComponent &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -70,10 +63,9 @@ void MCEngine::Scene::Render(CameraComponent &camera) const
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
         "UniformBuffer0",
         {
-            {glm::value_ptr(m_Registry.get<TransformComponent>(m_MainCamera).GetViewMatrix()), sizeof(glm::mat4), 0},
+            {glm::value_ptr(transform.GetViewMatrix()), sizeof(glm::mat4), 0},
             {glm::value_ptr(camera.GetProjectionMatrix()), sizeof(glm::mat4), sizeof(glm::mat4)},
-            {glm::value_ptr(m_Registry.get<TransformComponent>(m_MainCamera).GetPosition()), sizeof(glm::vec3),
-             sizeof(glm::mat4) + sizeof(glm::mat4)},
+            {glm::value_ptr(transform.GetPosition()), sizeof(glm::vec3), sizeof(glm::mat4) + sizeof(glm::mat4)},
         });
 
     // 2D
@@ -98,7 +90,7 @@ void MCEngine::Scene::Render(CameraComponent &camera) const
         shader->Unbind();
     }
 
-    RenderReally(camera);
+    RenderReally();
 }
 
 void MCEngine::Scene::Resize(float width, float height)

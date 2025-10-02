@@ -19,7 +19,7 @@ MCEditor::InstanceScene::InstanceScene() : MCEngine::Scene()
     }
 }
 
-void MCEditor::InstanceScene::RenderReally(MCEngine::CameraComponent &camera) const
+void MCEditor::InstanceScene::RenderReally() const
 {
     ENGINE_PROFILE_FUNCTION();
 

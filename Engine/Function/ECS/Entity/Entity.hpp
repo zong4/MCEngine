@@ -2,34 +2,37 @@
 
 #include "pch.hpp"
 
+namespace MCEngine
+{
+
 class Entity
 {
 public:
     Entity(entt::entity handle, entt::registry *registry) : m_Entity(handle), m_Registry(registry) {}
+    virtual ~Entity()
+    {
+        m_Entity = entt::null;
+        m_Registry = nullptr;
+    }
 
-    entt::entity Handle() const { return m_Entity; }
+    // Operators
+    operator bool() const { return GetHandle() != entt::null; }
 
+    // Getters
+    entt::entity GetHandle() const { return m_Entity; }
+
+    // Templates
+    template <typename T> bool HasComponent() const { return m_Registry->all_of<T>(m_Entity); }
+    template <typename T> T &GetComponent() { return m_Registry->get<T>(m_Entity); }
     template <typename T, typename... Args> T &AddComponent(Args &&...args)
     {
-        T &component = m_Registry->emplace<T>(m_Entity, std::forward<Args>(args)...);
-        m_ComponentTypes.push_back(entt::resolve<T>().type_id());
-        return component;
+        return m_Registry->emplace<T>(m_Entity, std::forward<Args>(args)...);
     }
-
-    template <typename T> bool HasComponent() const { return m_Registry->all_of<T>(m_Entity); }
-
-    template <typename T> T &GetComponent() { return m_Registry->get<T>(m_Entity); }
-
-    template <typename T> void RemoveComponent()
-    {
-        m_Registry->remove<T>(m_Entity);
-        // 可选择从 m_ComponentTypes 移除
-    }
-
-    const std::vector<entt::id_type> &GetComponentTypes() const { return m_ComponentTypes; }
+    template <typename T> void RemoveComponent() { m_Registry->remove<T>(m_Entity); }
 
 private:
-    entt::entity m_Entity;
+    entt::entity m_Entity = entt::null;
     entt::registry *m_Registry;
-    std::vector<entt::id_type> m_ComponentTypes; // 用 meta type_id 记录组件
 };
+
+} // namespace MCEngine

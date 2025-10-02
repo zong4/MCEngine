@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/Component/Basic/BasicComponent.hpp"
+#include "pch.hpp"
 
 namespace MCEngine
 {
@@ -11,12 +11,11 @@ enum class CameraType
     Perspective
 };
 
-class CameraComponent : public Component
+class CameraComponent
 {
 public:
     CameraComponent(const glm::vec3 &size);
     CameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
-    virtual ~CameraComponent() override;
 
     // Getters
     CameraType GetType() const { return m_Type; }
@@ -33,7 +32,6 @@ public:
     void SetFarClip(float farClip);
 
 public:
-    virtual void Update(float deltaTime) override;
     void Resize(float width, float height);
 
 private:
@@ -43,7 +41,6 @@ private:
     float m_FOV, m_AspectRatio, m_NearClip, m_FarClip;
 
 private:
-    void UpdateViewMatrix();
     void UpdateProjectionMatrix();
 };
 

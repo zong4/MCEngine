@@ -92,7 +92,7 @@ void MCEditor::FullScene::RenderShadowMapReally() const
     shader->Unbind();
 }
 
-void MCEditor::FullScene::RenderReally(MCEngine::CameraComponent &camera) const
+void MCEditor::FullScene::RenderReally() const
 {
     ENGINE_PROFILE_FUNCTION();
 

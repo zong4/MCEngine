@@ -13,52 +13,6 @@ MCEngine::TransformComponent::TransformComponent(const glm::vec3 &position, cons
                     ", Rotation: " + ToString(m_Rotation) + ", Scale: " + ToString(m_Scale));
 }
 
-glm::vec3 &MCEngine::TransformComponent::GetPosition()
-{
-    SetDirty(true);
-    return m_Position;
-}
-
-glm::vec3 &MCEngine::TransformComponent::GetRotation()
-{
-    SetDirty(true);
-    return m_Rotation;
-}
-
-glm::vec3 &MCEngine::TransformComponent::GetScale()
-{
-    SetDirty(true);
-    return m_Scale;
-}
-
-void MCEngine::TransformComponent::SetPosition(const glm::vec3 &position)
-{
-    m_Position = position;
-    SetDirty(true);
-}
-
-void MCEngine::TransformComponent::SetRotation(const glm::vec3 &rotation)
-{
-    m_Rotation = rotation;
-    SetDirty(true);
-}
-
-void MCEngine::TransformComponent::SetScale(const glm::vec3 &scale)
-{
-    m_Scale = scale;
-    SetDirty(true);
-}
-
-void MCEngine::TransformComponent::Update(float deltaTime)
-{
-    if (m_Dirty)
-    {
-        UpdateTransformMatrix();
-        UpdateViewMatrix();
-        m_Dirty = false;
-    }
-}
-
 glm::vec3 MCEngine::TransformComponent::GetForward() const
 {
     ENGINE_PROFILE_FUNCTION();

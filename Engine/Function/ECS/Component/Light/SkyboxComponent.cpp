@@ -5,5 +5,3 @@ MCEngine::SkyboxComponent::SkyboxComponent(const std::shared_ptr<TextureCube> &t
 {
     LOG_ENGINE_INFO("Skybox Component created");
 }
-
-MCEngine::SkyboxComponent::~SkyboxComponent() {}

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ECS/Component/Component.hpp"
+#include "ECS/Entity/ScriptableEntity.hpp"
 
 namespace MCEngine
 {
 
-class TagComponent : public Component
+class TagComponent
 {
 public:
     TagComponent(const std::string &tag);
@@ -13,24 +13,20 @@ public:
     const std::string &GetTag() const { return m_Tag; }
     void SetTag(const std::string &tag) { m_Tag = tag; }
 
-public:
-    virtual void Update(float deltaTime) override {}
-
 private:
     std::string m_Tag;
 };
 
-class TransformComponent : public Component
+class TransformComponent
 {
 public:
     TransformComponent(const glm::vec3 &position = glm::vec3(0.0f), const glm::vec3 &rotation = glm::vec3(0.0f),
                        const glm::vec3 &scale = glm::vec3(1.0f));
 
     // Getters
-    bool IsDirty() const { return m_Dirty; }
-    glm::vec3 &GetPosition();
-    glm::vec3 &GetRotation();
-    glm::vec3 &GetScale();
+    glm::vec3 &GetPosition() { return m_Position; }
+    glm::vec3 &GetRotation() { return m_Rotation; }
+    glm::vec3 &GetScale() { return m_Scale; }
     const glm::vec3 &GetPosition() const { return m_Position; }
     const glm::vec3 &GetRotation() const { return m_Rotation; }
     const glm::vec3 &GetScale() const { return m_Scale; }
@@ -42,29 +38,24 @@ public:
     glm::vec3 GetUp() const;
 
     // Setters
-    void SetDirty(bool dirty) { m_Dirty = dirty; }
-    void SetPosition(const glm::vec3 &position);
-    void SetRotation(const glm::vec3 &rotation);
-    void SetScale(const glm::vec3 &scale);
+    void SetPosition(const glm::vec3 &position) { m_Position = position; }
+    void SetRotation(const glm::vec3 &rotation) { m_Rotation = rotation; }
+    void SetScale(const glm::vec3 &scale) { m_Scale = scale; }
 
 public:
-    virtual void Update(float deltaTime) override;
+    void UpdateTransformMatrix();
+    void UpdateViewMatrix();
 
 private:
-    bool m_Dirty = true;
     glm::vec3 m_Position;
     glm::vec3 m_Rotation;
     glm::vec3 m_Scale;
     glm::mat4 m_TransformMatrix = glm::mat4(1.0f);
     glm::mat4 m_RotationMatrix = glm::mat4(1.0f);
     glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
-
-private:
-    void UpdateTransformMatrix();
-    void UpdateViewMatrix();
 };
 
-class RelationshipComponent : public Component
+class RelationshipComponent
 {
 public:
     RelationshipComponent(entt::entity parent = entt::null) : m_Parent(parent) {}
@@ -78,12 +69,27 @@ public:
     void AddChild(entt::entity child) { m_Children.push_back(child); }
     void RemoveChild(entt::entity child);
 
-public:
-    virtual void Update(float deltaTime) override {}
-
 private:
     entt::entity m_Parent;
     std::vector<entt::entity> m_Children;
+};
+
+struct NativeScriptComponent
+{
+    ScriptableEntity *(*InstantiateScript)();
+    void (*DestroyScript)(NativeScriptComponent *);
+
+    template <typename T> void Bind()
+    {
+        InstantiateScript = []() { return static_cast<ScriptableEntity *>(new T()); };
+        DestroyScript = [](NativeScriptComponent *nsc) {
+            delete nsc->Instance;
+            nsc->Instance = nullptr;
+        };
+    }
+
+private:
+    ScriptableEntity *Instance = nullptr;
 };
 
 } // namespace MCEngine

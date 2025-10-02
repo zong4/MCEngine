@@ -14,7 +14,7 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
     InitGamePanel();
 }
 
-MCEditor::EditorLayer::~EditorLayer() { ShutdownCamera(); }
+MCEditor::EditorLayer::~EditorLayer() {}
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
@@ -41,28 +41,8 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
     // Move Camera
     if (m_SceneFocused)
     {
-        if (ImGui::IsKeyDown(ImGuiKey_W))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
-                                        glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (ImGui::IsKeyDown(ImGuiKey_S))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
-                                        glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (ImGui::IsKeyDown(ImGuiKey_A))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
-                                        glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (ImGui::IsKeyDown(ImGuiKey_D))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
-                                        glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
-        if (ImGui::IsKeyDown(ImGuiKey_Q))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() -
-                                        glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-        if (ImGui::IsKeyDown(ImGuiKey_E))
-            m_TransformPtr->SetPosition(m_TransformPtr->GetPosition() +
-                                        glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
-
-        m_CameraPtr->Update(deltaTime);
+        m_CameraPtr->OnUpdate(deltaTime);
     }
-
     m_ScenePtr->Update(deltaTime);
 }
 
@@ -74,22 +54,83 @@ void MCEditor::EditorLayer::OnRender()
 
     m_SceneMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(*m_CameraPtr);
+    m_ScenePtr->Render(m_CameraPtr->GetComponent<MCEngine::TransformComponent>(),
+                       m_CameraPtr->GetComponent<MCEngine::CameraComponent>());
     m_SceneMultisampleFBOPtr->Blit(m_SceneFBOPtr->GetRendererID());
     m_SceneMultisampleFBOPtr->Unbind();
 
     m_GameMultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    m_ScenePtr->Render(m_ScenePtr->GetRegistry().get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera()));
+    m_ScenePtr->Render(m_ScenePtr->GetRegistry().get<MCEngine::TransformComponent>(m_ScenePtr->GetMainCamera()),
+                       m_ScenePtr->GetRegistry().get<MCEngine::CameraComponent>(m_ScenePtr->GetMainCamera()));
     m_GameMultisampleFBOPtr->Blit(m_GameFBOPtr->GetRendererID());
     m_GameMultisampleFBOPtr->Unbind();
 }
 
 void MCEditor::EditorLayer::InitCamera(const std::shared_ptr<MCEngine::Window> &windowPtr)
 {
-    m_TransformPtr = new MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f));
-    m_CameraPtr = new MCEngine::CameraComponent(
-        45.0f, (float)windowPtr->GetProperty().GetWidth() / (float)windowPtr->GetProperty().GetHeight(), 0.1f, 100.0f);
+    ENGINE_PROFILE_FUNCTION();
+
+    class CameraController : public MCEngine::ScriptableEntity
+    {
+    public:
+        CameraController(entt::entity handle, entt::registry *registry) : ScriptableEntity(handle, registry) {}
+        virtual ~CameraController() override = default;
+
+        void OnCreate() override
+        {
+            auto &transform = AddComponent<MCEngine::TransformComponent>();
+            transform.SetPosition(glm::vec3(0.0f, 5.0f, 8.0f));
+            transform.SetRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
+            transform.UpdateTransformMatrix();
+            transform.UpdateViewMatrix();
+
+            AddComponent<MCEngine::CameraComponent>(45.0f, 1280 / 720, 0.1f, 100.0f);
+        }
+
+        void OnUpdate(float deltaTime) override
+        {
+            auto &transform = GetComponent<MCEngine::TransformComponent>();
+
+            if (ImGui::IsKeyDown(ImGuiKey_W))
+                transform.SetPosition(transform.GetPosition() +
+                                      glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+            if (ImGui::IsKeyDown(ImGuiKey_S))
+                transform.SetPosition(transform.GetPosition() -
+                                      glm::vec3(0.0f, 1.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+            if (ImGui::IsKeyDown(ImGuiKey_A))
+                transform.SetPosition(transform.GetPosition() -
+                                      glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+            if (ImGui::IsKeyDown(ImGuiKey_D))
+                transform.SetPosition(transform.GetPosition() +
+                                      glm::vec3(1.0f, 0.0f, 0.0f) * m_CameraMoveSpeed * deltaTime);
+            if (ImGui::IsKeyDown(ImGuiKey_Q))
+                transform.SetPosition(transform.GetPosition() -
+                                      glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
+            if (ImGui::IsKeyDown(ImGuiKey_E))
+                transform.SetPosition(transform.GetPosition() +
+                                      glm::vec3(0.0f, 0.0f, 1.0f) * m_CameraMoveSpeed * deltaTime);
+
+            transform.UpdateTransformMatrix();
+            transform.UpdateViewMatrix();
+        }
+
+        void OnDestroy() override {}
+
+        void Resize(int width, int height) override
+        {
+            auto &camera = GetComponent<MCEngine::CameraComponent>();
+            camera.Resize(static_cast<float>(width), static_cast<float>(height));
+        }
+
+    private:
+        float m_CameraMoveSpeed = 5.0f;
+        float m_CameraRotateSpeed = 45.0f;
+    };
+
+    entt::entity cameraEntity = m_Registry.create();
+    m_CameraPtr = std::make_unique<CameraController>(cameraEntity, &m_Registry);
+    m_CameraPtr->OnCreate();
 }
 
 void MCEditor::EditorLayer::InitScenePanel()
@@ -108,12 +149,6 @@ void MCEditor::EditorLayer::InitGamePanel()
     m_GameFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
     m_GameMultisampleFBOPtr =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::MultiSample, 1280, 720, 4);
-}
-
-void MCEditor::EditorLayer::ShutdownCamera()
-{
-    delete m_TransformPtr;
-    delete m_CameraPtr;
 }
 
 void MCEditor::EditorLayer::Begin()

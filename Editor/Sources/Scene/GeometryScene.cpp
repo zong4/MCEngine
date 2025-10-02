@@ -7,7 +7,7 @@ MCEditor::GeometryScene::GeometryScene()
                                             MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry"));
 }
 
-void MCEditor::GeometryScene::RenderReally(MCEngine::CameraComponent &camera) const
+void MCEditor::GeometryScene::RenderReally() const
 {
     ENGINE_PROFILE_FUNCTION();
 
