@@ -1,0 +1,10 @@
+#include "EditorScene.hpp"
+
+#include "Script/CameraController.hpp"
+
+MCEditor::EditorScene::EditorScene() : MCEngine::Scene()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_MainCamera.AddComponent<MCEngine::NativeScriptComponent>().Bind<CameraController>();
+}

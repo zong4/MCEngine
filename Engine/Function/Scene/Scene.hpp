@@ -23,7 +23,6 @@ public:
 
 public:
     // Main loop
-    void OnEvent(Event &event) {}
     void Update(float deltaTime);
     void RenderShadowMap() const;
     void Render(const Entity &camera) const;
