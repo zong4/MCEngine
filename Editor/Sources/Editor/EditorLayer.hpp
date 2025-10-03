@@ -22,22 +22,28 @@ public:
 
 private:
     // Scene
-    std::shared_ptr<MCEngine::Scene> m_EditorScenePtr;
-    std::shared_ptr<MCEngine::Scene> m_ActiveScenePtr;
+    std::shared_ptr<MCEngine::Scene> m_EditorScene;
+    std::shared_ptr<MCEngine::Scene> m_ActiveScene;
 
     // UI
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
-    std::unique_ptr<ViewportPanel> m_ScenePanel;
-    std::unique_ptr<ViewportPanel> m_GamePanel;
+    ViewportPanel m_ScenePanel;
+    ViewportPanel m_GamePanel;
 
 protected:
     void RenderImGui() override;
 
 private:
-    void RenderDockSpace() const;
-    void RenderMenuBar() const;
+    // Scene
+    void NewScene();
+    void OpenScene() const;
+    void SaveSceneAs() const;
+
+    // UI
+    void RenderDockSpace();
+    void RenderMenuBar();
 };
 
 } // namespace MCEditor

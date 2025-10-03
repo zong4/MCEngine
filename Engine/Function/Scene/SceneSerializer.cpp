@@ -1,64 +1,5 @@
 #include "SceneSerializer.hpp"
 
-#include <yaml-cpp/yaml.h>
-
-namespace YAML
-{
-
-// clang-format off
-template <>
-// clang-format on
-struct convert<glm::vec3>
-{
-    static Node encode(const glm::vec3 &rhs)
-    {
-        Node node;
-        node.push_back(rhs.x);
-        node.push_back(rhs.y);
-        node.push_back(rhs.z);
-        return node;
-    }
-    static bool decode(const Node &node, glm::vec3 &rhs)
-    {
-        if (!node.IsSequence() || node.size() != 3)
-            return false;
-
-        rhs.x = node[0].as<float>();
-        rhs.y = node[1].as<float>();
-        rhs.z = node[2].as<float>();
-        return true;
-    }
-};
-
-// clang-format off
-template <>
-// clang-format on
-struct convert<glm::vec4>
-{
-    static Node encode(const glm::vec4 &rhs)
-    {
-        Node node;
-        node.push_back(rhs.x);
-        node.push_back(rhs.y);
-        node.push_back(rhs.z);
-        node.push_back(rhs.w);
-        return node;
-    }
-    static bool decode(const Node &node, glm::vec4 &rhs)
-    {
-        if (!node.IsSequence() || node.size() != 4)
-            return false;
-
-        rhs.x = node[0].as<float>();
-        rhs.y = node[1].as<float>();
-        rhs.z = node[2].as<float>();
-        rhs.w = node[3].as<float>();
-        return true;
-    }
-};
-
-} // namespace YAML
-
 YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec3 &v)
 {
     out << YAML::Flow;
@@ -75,6 +16,10 @@ YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec4 &v)
 
 static void SerializeEntity(YAML::Emitter &out, MCEngine::Entity entity)
 {
+    ENGINE_PROFILE_FUNCTION();
+
+    out << YAML::BeginMap;
+
     out << YAML::Key << "Entity" << YAML::Value << static_cast<uint32_t>(entity.GetHandle());
 
     if (entity.HasComponent<MCEngine::TagComponent>())
@@ -138,22 +83,27 @@ static void SerializeEntity(YAML::Emitter &out, MCEngine::Entity entity)
         out << YAML::Key << "RelationshipComponent";
         out << YAML::BeginMap;
 
+        out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
         auto &relationshipComponent = entity.GetComponent<MCEngine::RelationshipComponent>();
         for (auto child : relationshipComponent.GetChildren())
             SerializeEntity(out, child);
+        out << YAML::EndSeq;
 
         out << YAML::EndMap;
     }
+
+    out << YAML::EndMap;
 }
 
 void MCEngine::SceneSerializer::Serialize(const std::string &filepath)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     YAML::Emitter out;
     out << YAML::BeginMap;
     out << YAML::Key << "Scene" << YAML::Value << "Untitled";
     out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-    out << YAML::BeginMap;
     auto &registry = m_Scene->GetRegistry();
     for (auto entityID : registry.view<entt::entity>())
     {
@@ -162,7 +112,6 @@ void MCEngine::SceneSerializer::Serialize(const std::string &filepath)
         MCEngine::Entity entity = MCEngine::Entity(entityID, &registry);
         SerializeEntity(out, entity);
     }
-    out << YAML::EndMap;
 
     out << YAML::EndSeq;
     out << YAML::EndMap;
@@ -171,8 +120,71 @@ void MCEngine::SceneSerializer::Serialize(const std::string &filepath)
     fout << out.c_str();
 }
 
+MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(YAML::Node &entity)
+{
+    uint32_t uuid = entity["Entity"].as<uint32_t>();
+
+    std::string name;
+    auto tagComponentData = entity["TagComponent"];
+    if (tagComponentData)
+    {
+        name = tagComponentData["Tag"].as<std::string>();
+    }
+    Entity deserializedEntity = m_Scene->AddEmptyEntity(name);
+    LOG_ENGINE_TRACE("Deserialized entity with ID = " + std::to_string(uuid) + ", name = " + name);
+
+    auto transformComponentData = entity["TransformComponent"];
+    if (transformComponentData)
+    {
+        auto &transformComponent = deserializedEntity.GetComponent<TransformComponent>();
+        transformComponent.SetPosition(transformComponentData["Position"].as<glm::vec3>());
+        transformComponent.SetRotation(transformComponentData["Rotation"].as<glm::vec3>());
+        transformComponent.SetScale(transformComponentData["Scale"].as<glm::vec3>());
+    }
+
+    auto cameraComponentData = entity["CameraComponent"];
+    if (cameraComponentData)
+    {
+        auto &cameraComponent =
+            deserializedEntity.AddComponent<CameraComponent>((CameraType)cameraComponentData["Type"].as<int>());
+        cameraComponent.Resize(cameraComponentData["Width"].as<float>(), cameraComponentData["Height"].as<float>());
+        cameraComponent.SetScale(cameraComponentData["Scale"].as<float>());
+        cameraComponent.SetFOV(cameraComponentData["FOV"].as<float>());
+        cameraComponent.SetNearClip(cameraComponentData["NearClip"].as<float>());
+        cameraComponent.SetFarClip(cameraComponentData["FarClip"].as<float>());
+    }
+
+    auto spriteRendererComponentData = entity["SpriteRendererComponent"];
+    if (spriteRendererComponentData)
+    {
+        auto &spriteRendererComponent = deserializedEntity.AddComponent<SpriteRendererComponent>(
+            MCEngine::VAOLibrary::GetInstance().GetVAO(spriteRendererComponentData["VAO"].as<std::string>()));
+        spriteRendererComponent.SetColor(spriteRendererComponentData["Color"].as<glm::vec4>());
+        spriteRendererComponent.SetTexturePtr(MCEngine::TextureLibrary::GetInstance().GetTexture2D(
+            spriteRendererComponentData["Texture"].as<std::string>()));
+    }
+
+    auto relationshipComponentData = entity["RelationshipComponent"];
+    if (relationshipComponentData)
+    {
+        for (auto child : relationshipComponentData["Children"])
+        {
+            Entity childEntity = DeserializeEntity(child);
+            if (childEntity)
+            {
+                deserializedEntity.GetComponent<RelationshipComponent>().AddChild(childEntity);
+                childEntity.GetComponent<RelationshipComponent>().SetParent(deserializedEntity);
+            }
+        }
+    }
+
+    return deserializedEntity;
+}
+
 bool MCEngine::SceneSerializer::Deserialize(const std::string &filepath)
 {
+    ENGINE_PROFILE_FUNCTION();
+
     std::ifstream stream(filepath);
     std::stringstream strStream;
     strStream << stream.rdbuf();
@@ -189,48 +201,7 @@ bool MCEngine::SceneSerializer::Deserialize(const std::string &filepath)
     {
         for (auto entity : entities)
         {
-            uint32_t uuid = entity["Entity"].as<uint32_t>();
-
-            std::string name;
-            auto tagComponentData = entity["TagComponent"];
-            if (tagComponentData)
-            {
-                name = tagComponentData["Tag"].as<std::string>();
-            }
-            Entity deserializedEntity = m_Scene->AddEmptyEntity(name);
-            LOG_ENGINE_TRACE("Deserialized entity with ID = " + std::to_string(uuid) + ", name = " + name);
-
-            auto transformComponentData = entity["TransformComponent"];
-            if (transformComponentData)
-            {
-                auto &transformComponent = deserializedEntity.GetComponent<TransformComponent>();
-                transformComponent.SetPosition(transformComponentData["Position"].as<glm::vec3>());
-                transformComponent.SetRotation(transformComponentData["Rotation"].as<glm::vec3>());
-                transformComponent.SetScale(transformComponentData["Scale"].as<glm::vec3>());
-            }
-
-            auto cameraComponentData = entity["CameraComponent"];
-            if (cameraComponentData)
-            {
-                auto &cameraComponent =
-                    deserializedEntity.AddComponent<CameraComponent>((CameraType)cameraComponentData["Type"].as<int>());
-                cameraComponent.Resize(cameraComponentData["Width"].as<float>(),
-                                       cameraComponentData["Height"].as<float>());
-                cameraComponent.SetScale(cameraComponentData["Scale"].as<float>());
-                cameraComponent.SetFOV(cameraComponentData["FOV"].as<float>());
-                cameraComponent.SetNearClip(cameraComponentData["NearClip"].as<float>());
-                cameraComponent.SetFarClip(cameraComponentData["FarClip"].as<float>());
-            }
-
-            auto spriteRendererComponentData = entity["SpriteRendererComponent"];
-            if (spriteRendererComponentData)
-            {
-                auto &spriteRendererComponent = deserializedEntity.AddComponent<SpriteRendererComponent>(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO(spriteRendererComponentData["VAO"].as<std::string>()));
-                spriteRendererComponent.SetColor(spriteRendererComponentData["Color"].as<glm::vec4>());
-                spriteRendererComponent.SetTexturePtr(MCEngine::TextureLibrary::GetInstance().GetTexture2D(
-                    spriteRendererComponentData["Texture"].as<std::string>()));
-            }
+            DeserializeEntity(entity);
         }
     }
 

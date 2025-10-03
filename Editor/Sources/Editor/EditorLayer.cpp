@@ -13,12 +13,8 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
     ENGINE_PROFILE_FUNCTION();
 
     // Scene
-    m_EditorScenePtr = std::make_shared<MCEditor::EditorScene>();
-    m_ActiveScenePtr = std::make_unique<MCEditor::FullScene>();
-
-    // UI
-    m_ScenePanel = std::make_unique<ViewportPanel>(m_EditorScenePtr->GetMainCamera());
-    m_GamePanel = std::make_unique<ViewportPanel>(m_ActiveScenePtr->GetMainCamera());
+    m_EditorScene = std::make_shared<MCEditor::EditorScene>();
+    m_ActiveScene = std::make_unique<MCEditor::FullScene>();
 }
 
 MCEditor::EditorLayer::~EditorLayer() {}
@@ -44,21 +40,21 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (m_ScenePanel->IsFocused())
+    if (m_ScenePanel.IsFocused())
     {
-        m_EditorScenePtr->Update(deltaTime);
+        m_EditorScene->Update(deltaTime);
     }
 
-    m_ActiveScenePtr->Update(deltaTime);
+    m_ActiveScene->Update(deltaTime);
 }
 
 void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_ActiveScenePtr->RenderShadowMap();
-    m_ScenePanel->Render(m_ActiveScenePtr);
-    m_GamePanel->Render(m_ActiveScenePtr);
+    m_ActiveScene->RenderShadowMap();
+    m_ScenePanel.Render(m_EditorScene->GetMainCamera(), m_ActiveScene);
+    m_GamePanel.Render(m_ActiveScene->GetMainCamera(), m_ActiveScene);
 }
 
 void MCEditor::EditorLayer::RenderImGui()
@@ -69,11 +65,11 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Hierarchy");
-    m_HierarchyPanel.OnImGuiRender(m_ActiveScenePtr->GetRegistry());
+    m_HierarchyPanel.OnImGuiRender(m_ActiveScene->GetRegistry());
     ImGui::End();
 
     ImGui::Begin("Inspector");
-    m_InspectorPanel.OnImGuiRender({m_HierarchyPanel.GetSelectedEntity(), &m_ActiveScenePtr->GetRegistry()});
+    m_InspectorPanel.OnImGuiRender({m_HierarchyPanel.GetSelectedEntity(), &m_ActiveScene->GetRegistry()});
     ImGui::End();
 
     ImGui::Begin("File Browser");
@@ -81,15 +77,48 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Scene");
-    m_ScenePanel->OnImGuiRender();
+    m_ScenePanel.OnImGuiRender();
     ImGui::End();
 
     ImGui::Begin("Game");
-    m_GamePanel->OnImGuiRender();
+    m_GamePanel.OnImGuiRender();
     ImGui::End();
 }
 
-void MCEditor::EditorLayer::RenderDockSpace() const
+void MCEditor::EditorLayer::NewScene() { m_ActiveScene = std::make_shared<MCEngine::Scene>(); }
+
+void MCEditor::EditorLayer::OpenScene() const
+{
+    const char *filters[] = {"*.mcs"};
+    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/";
+    const char *file = tinyfd_openFileDialog("Open Scene", defaultPath.c_str(), 1, filters, nullptr, 0);
+    if (file)
+    {
+        MCEngine::SceneSerializer serializer(m_ActiveScene);
+        serializer.Deserialize(file);
+    }
+}
+
+void MCEditor::EditorLayer::SaveSceneAs() const
+{
+    const char *filters[] = {"*.mcs"};
+    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/Untitled";
+    const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
+
+    if (file)
+    {
+        // Trim whitespace and ensure the file has the correct extension
+        std::string filepath = file ? std::string(file) : "";
+        filepath.erase(filepath.find_last_not_of(" \n\r\t") + 1);
+        if (!filepath.empty() && filepath.substr(filepath.size() - 4) != ".mcs")
+            filepath += ".mcs";
+
+        MCEngine::SceneSerializer serializer(m_ActiveScene);
+        serializer.Serialize(filepath);
+    }
+}
+
+void MCEditor::EditorLayer::RenderDockSpace()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -147,7 +176,7 @@ void MCEditor::EditorLayer::RenderDockSpace() const
     RenderMenuBar();
 }
 
-void MCEditor::EditorLayer::RenderMenuBar() const
+void MCEditor::EditorLayer::RenderMenuBar()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -155,16 +184,14 @@ void MCEditor::EditorLayer::RenderMenuBar() const
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Serialize"))
-            {
-                MCEngine::SceneSerializer serializer(m_ActiveScenePtr);
-                serializer.Serialize(std::string(PROJECT_ROOT) + "Editor/Assets/Scenes/Example.mcs");
-            }
-            if (ImGui::MenuItem("Deserialize"))
-            {
-                MCEngine::SceneSerializer serializer(m_ActiveScenePtr);
-                serializer.Deserialize(std::string(PROJECT_ROOT) + "Editor/Assets/Scenes/Example.mcs");
-            }
+            if (ImGui::MenuItem("New", "Ctrl+N"))
+                NewScene();
+
+            if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                OpenScene();
+
+            if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                SaveSceneAs();
 
             if (ImGui::MenuItem("Exit"))
             {

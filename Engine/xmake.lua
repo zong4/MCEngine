@@ -11,8 +11,10 @@ add_requires("entt", "yaml-cpp")
 -- Core Target
 target("Core")
     set_kind("static")
-    
+
+    add_headerfiles("Core/**/*.h")    
     add_headerfiles("Core/**/*.hpp")
+    add_files("Core/**/*.c")
     add_files("Core/**/*.cpp")
     add_includedirs("Core", {public = true})
 

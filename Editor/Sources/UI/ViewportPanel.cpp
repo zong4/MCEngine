@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 
-MCEditor::ViewportPanel::ViewportPanel(MCEngine::Entity camera) : m_Camera(camera)
+MCEditor::ViewportPanel::ViewportPanel()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -10,15 +10,15 @@ MCEditor::ViewportPanel::ViewportPanel(MCEngine::Entity camera) : m_Camera(camer
     m_MultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
 }
 
-void MCEditor::ViewportPanel::Render(std::shared_ptr<MCEngine::Scene> scene)
+void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene)
 {
     ENGINE_PROFILE_FUNCTION();
 
     if (m_ViewportDirty)
     {
-        if (m_Camera.HasComponent<MCEngine::CameraComponent>())
+        if (camera.HasComponent<MCEngine::CameraComponent>())
         {
-            m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
+            camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
         m_FBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
@@ -27,7 +27,7 @@ void MCEditor::ViewportPanel::Render(std::shared_ptr<MCEngine::Scene> scene)
 
     m_MultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
-    scene->Render(m_Camera);
+    scene->Render(camera);
     m_MultisampleFBOPtr->Blit(m_FBOPtr->GetRendererID());
     m_MultisampleFBOPtr->Unbind();
 }

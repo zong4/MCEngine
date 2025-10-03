@@ -47,8 +47,8 @@ protected:
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
 
 protected:
-    virtual void RenderShadowMapReally() const = 0;
-    virtual void RenderReally() const = 0;
+    virtual void RenderShadowMapReally() const {}
+    virtual void RenderReally() const {}
 };
 
 } // namespace MCEngine
