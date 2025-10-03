@@ -11,14 +11,14 @@ public:
     SkyboxComponent(const std::shared_ptr<TextureCube> &textureCube);
 
     // Getters
-    std::shared_ptr<TextureCube> &GetTextureCubePtr() { return m_TextureCubePtr; }
-    const std::shared_ptr<TextureCube> &GetTextureCubePtr() const { return m_TextureCubePtr; }
+    std::shared_ptr<TextureCube> &GetTextureCube() { return m_TextureCube; }
+    const std::shared_ptr<TextureCube> &GetTextureCube() const { return m_TextureCube; }
 
     // Setters
-    void SetTextureCube(const std::shared_ptr<TextureCube> &textureCube) { m_TextureCubePtr = textureCube; }
+    void SetTextureCube(const std::shared_ptr<TextureCube> &textureCube) { m_TextureCube = textureCube; }
 
 private:
-    std::shared_ptr<TextureCube> m_TextureCubePtr;
+    std::shared_ptr<TextureCube> m_TextureCube;
 };
 
 } // namespace MCEngine

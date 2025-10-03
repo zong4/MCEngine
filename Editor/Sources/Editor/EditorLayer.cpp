@@ -1,7 +1,7 @@
 #include "EditorLayer.hpp"
 
 #include "Scene/EditorScene.hpp"
-#include "Scene/FullScene.hpp"
+#include "Scene/EmptyScene.hpp"
 #include "Scene/GeometryScene.hpp"
 #include "Scene/InstanceScene.hpp"
 #include "Script/CameraController.hpp"
@@ -14,7 +14,7 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
 
     // Scene
     m_EditorScene = std::make_shared<MCEditor::EditorScene>();
-    m_ActiveScene = std::make_unique<MCEditor::FullScene>();
+    m_ActiveScene = std::make_unique<MCEditor::EmptyScene>();
 }
 
 MCEditor::EditorLayer::~EditorLayer() {}
@@ -85,24 +85,24 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 }
 
-void MCEditor::EditorLayer::NewScene() { m_ActiveScene = std::make_shared<MCEngine::Scene>(); }
+void MCEditor::EditorLayer::NewScene() { m_ActiveScene = std::make_shared<EmptyScene>(); }
 
-void MCEditor::EditorLayer::OpenScene() const
+void MCEditor::EditorLayer::OpenScene()
 {
     const char *filters[] = {"*.mcs"};
     std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/";
     const char *file = tinyfd_openFileDialog("Open Scene", defaultPath.c_str(), 1, filters, nullptr, 0);
     if (file)
     {
-        MCEngine::SceneSerializer serializer(m_ActiveScene);
-        serializer.Deserialize(file);
+        m_ActiveScene = std::make_shared<MCEngine::Scene>();
+        MCEngine::SceneSerializer::Deserialize(m_ActiveScene, file);
     }
 }
 
 void MCEditor::EditorLayer::SaveSceneAs() const
 {
     const char *filters[] = {"*.mcs"};
-    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/Untitled";
+    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/" + m_ActiveScene->GetName() + ".mcs";
     const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
 
     if (file)
@@ -113,8 +113,7 @@ void MCEditor::EditorLayer::SaveSceneAs() const
         if (!filepath.empty() && filepath.substr(filepath.size() - 4) != ".mcs")
             filepath += ".mcs";
 
-        MCEngine::SceneSerializer serializer(m_ActiveScene);
-        serializer.Serialize(filepath);
+        MCEngine::SceneSerializer::Serialize(m_ActiveScene, filepath);
     }
 }
 

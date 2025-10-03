@@ -65,17 +65,15 @@ namespace MCEngine
 class SceneSerializer
 {
 public:
-    SceneSerializer(std::shared_ptr<Scene> scene) : m_Scene(scene) {}
+    SceneSerializer() = default;
     ~SceneSerializer() = default;
 
-    void Serialize(const std::string &filePath);
-    bool Deserialize(const std::string &filePath);
+    static void Serialize(const std::shared_ptr<Scene> &scene, const std::string &filePath);
+    static bool Deserialize(const std::shared_ptr<Scene> scene, const std::string &filePath);
 
 private:
-    std::shared_ptr<Scene> m_Scene;
-
-private:
-    Entity DeserializeEntity(YAML::Node &entity);
+    static void SerializeEntity(YAML::Emitter &out, MCEngine::Entity entity);
+    static Entity DeserializeEntity(std::shared_ptr<Scene> scene, YAML::Node &entity);
 };
 
 } // namespace MCEngine

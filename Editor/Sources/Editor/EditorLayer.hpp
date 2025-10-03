@@ -38,7 +38,7 @@ protected:
 private:
     // Scene
     void NewScene();
-    void OpenScene() const;
+    void OpenScene();
     void SaveSceneAs() const;
 
     // UI

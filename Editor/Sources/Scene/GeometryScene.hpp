@@ -16,7 +16,6 @@ private:
     float m_Magnitude = 0.1f;
 
 protected:
-    void RenderShadowMapReally() const override {}
     void RenderReally() const override;
 };
 

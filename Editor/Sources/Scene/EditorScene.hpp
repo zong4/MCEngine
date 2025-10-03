@@ -12,7 +12,6 @@ public:
     virtual ~EditorScene() override = default;
 
 protected:
-    void RenderShadowMapReally() const override {}
     void RenderReally() const override {}
 };
 

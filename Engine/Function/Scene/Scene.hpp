@@ -14,12 +14,18 @@ namespace MCEngine
 class Scene
 {
 public:
-    Scene();
+    Scene(const std::string &name = "Untitled") : m_Name(name) {}
     virtual ~Scene();
 
     // Getters
+    const std::string &GetName() const { return m_Name; }
     entt::registry &GetRegistry() { return m_Registry; }
     Entity GetMainCamera() const { return m_MainCamera; }
+
+    // Setters
+    void SetName(const std::string &name) { m_Name = name; }
+    void SetMainCamera(const Entity &camera) { m_MainCamera = camera; }
+    void SetMainLight(const Entity &light) { m_MainLight = light; }
 
 public:
     // Main loop
@@ -41,13 +47,14 @@ public:
     Entity AddLight(const std::string &name, const TransformComponent &transform, const LightComponent &lightComponent);
 
 protected:
-    Entity m_MainCamera;
+    std::string m_Name;
     entt::registry m_Registry = {};
+    Entity m_MainCamera;
+    Entity m_MainLight;
     std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMapPtr =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
 
 protected:
-    virtual void RenderShadowMapReally() const {}
     virtual void RenderReally() const {}
 };
 

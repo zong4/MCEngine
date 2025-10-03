@@ -345,6 +345,16 @@ void MCEditor::InspectorPanel::DrawAddComponentButton(MCEngine::Entity entity)
             }
         }
 
+        if (!entity.HasComponent<MCEngine::SkyboxComponent>())
+        {
+            if (ImGui::MenuItem("Skybox Component"))
+            {
+                entity.AddComponent<MCEngine::SkyboxComponent>(
+                    MCEngine::TextureLibrary::GetInstance().GetTextureCube("Skybox"));
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
         ImGui::EndPopup();
     }
 }

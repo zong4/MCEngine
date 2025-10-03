@@ -15,7 +15,6 @@ private:
     std::vector<glm::mat4> m_Offsets;
 
 protected:
-    void RenderShadowMapReally() const override {}
     void RenderReally() const override;
 };
 

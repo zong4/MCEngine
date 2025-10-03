@@ -37,7 +37,7 @@ public:
     float GetOuterAngle() const { return m_OuterAngle; }
 
     // Setters
-    void SetColor(const glm::vec4 &color) { m_Color = color; }
+    void SetColor(const glm::vec3 &color) { m_Color = color; }
     void SetIntensity(float intensity) { m_Intensity = intensity; }
     void SetAttenuation(float constant, float linear, float quadratic);
     void SetAngles(float innerAngle, float outerAngle);
