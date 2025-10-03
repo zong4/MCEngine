@@ -14,6 +14,13 @@ void MCEditor::ViewportPanel::Render(std::shared_ptr<MCEngine::Scene> scene)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    if (m_ViewportDirty)
+    {
+        m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
+        m_FBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        m_MultisampleFBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+    }
+
     m_MultisampleFBOPtr->Bind();
     MCEngine::RendererCommand::Clear();
     scene->Render(m_Camera);
@@ -26,14 +33,17 @@ void MCEditor::ViewportPanel::OnImGuiRender()
     ENGINE_PROFILE_FUNCTION();
 
     m_Focused = ImGui::IsWindowFocused();
-    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-    if ((int)viewportSize.x != m_FBOPtr->GetWidth() || (int)viewportSize.y != m_FBOPtr->GetHeight())
-    {
-        m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(viewportSize.x, viewportSize.y);
 
-        m_FBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
-        m_MultisampleFBOPtr->Resize((int)viewportSize.x, (int)viewportSize.y);
+    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+    if (viewportSize.x > 0 && viewportSize.y > 0)
+    {
+        if (viewportSize.x != m_ViewportSize.x || viewportSize.y != m_ViewportSize.y)
+        {
+            m_ViewportDirty = true;
+            m_ViewportSize = {viewportSize.x, viewportSize.y};
+        }
     }
+
     ImGui::Image((ImTextureID)(intptr_t)m_FBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
                  ImVec2(1, 0));
 }

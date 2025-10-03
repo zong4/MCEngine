@@ -21,6 +21,8 @@ public:
 
 private:
     bool m_Focused = false;
+    bool m_ViewportDirty = false;
+    glm::vec2 m_ViewportSize = {0.0f, 0.0f};
     MCEngine::Entity m_Camera;
     std::unique_ptr<MCEngine::FrameBuffer> m_FBOPtr;
     std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBOPtr;
