@@ -11,8 +11,9 @@ class SpriteRendererComponent
 {
 
 public:
-    SpriteRendererComponent(const std::shared_ptr<VertexArray> &vaoPtr, const glm::vec4 &color,
-                            const std::shared_ptr<Texture2D> &texturePtr);
+    SpriteRendererComponent(
+        const std::shared_ptr<VertexArray> &vaoPtr, const glm::vec4 &color = glm::vec4(1.0f),
+        const std::shared_ptr<Texture2D> &texturePtr = TextureLibrary::GetInstance().GetTexture2D("White"));
 
     // Getters
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }
@@ -36,8 +37,10 @@ private:
 class MeshRendererComponent
 {
 public:
-    MeshRendererComponent(const std::shared_ptr<VertexArray> &vaoPtr, const std::shared_ptr<Shader> &shaderPtr,
-                          const Material &material);
+    MeshRendererComponent(
+        const std::shared_ptr<VertexArray> &vaoPtr,
+        const std::shared_ptr<Shader> &shaderPtr = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
+        const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
 
     // Getters
     std::shared_ptr<VertexArray> GetVAOPtr() const { return m_VAOPtr; }

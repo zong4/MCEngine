@@ -6,8 +6,11 @@ MCEditor::FullScene::FullScene() : MCEngine::Scene()
 
     // 2D
     {
-        AddSquare("Square", MCEngine::TransformComponent(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(5.0f)),
-                  glm::vec4(1.0f), MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG"));
+        Add2DObject("02BG",
+                    MCEngine::TransformComponent(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(4.0f)),
+                    MCEngine::SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"),
+                                                      glm::vec4(0.2f, 0.8f, 0.3f, 1.0f),
+                                                      MCEngine::TextureLibrary::GetInstance().GetTexture2D("02BG")));
     }
 
     // 3D
@@ -18,37 +21,32 @@ MCEditor::FullScene::FullScene() : MCEngine::Scene()
             for (int j = 0; j < 5; j++)
             {
                 MCEngine::Entity cubeEntity =
-                    AddCube("Cube", MCEngine::TransformComponent(glm::vec3(i * 1.0f, 0.0f, j * 1.0f)));
+                    Add3DObject("Cube", MCEngine::TransformComponent(glm::vec3(i * 1.0f, 0.0f, j * 1.0f)));
 
                 cubeEntity.GetComponent<MCEngine::RelationshipComponent>().SetParent(cubes);
                 cubes.GetComponent<MCEngine::RelationshipComponent>().AddChild(cubeEntity);
             }
         }
 
-        AddCube("Cube", MCEngine::TransformComponent(glm::vec3(2.0f, 2.0f, 2.0f)));
+        Add3DObject("Cube", MCEngine::TransformComponent(glm::vec3(2.0f, 2.0f, 2.0f)));
 
         // Default light
         {
-            m_Light = AddDirectionalLight(
-                "DirectionalLight", MCEngine::TransformComponent(glm::vec3(3.0f), glm::vec3(0.0f), glm::vec3(0.5f)));
-            m_Light.AddComponent<MCEngine::MeshRendererComponent>(
-                MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
+            m_Light =
+                AddLight("DirectionalLight",
+                         MCEngine::TransformComponent(glm::vec3(3.0f), glm::vec3(-50.0f, 0.0f, 0.0f), glm::vec3(0.5f)),
+                         MCEngine::LightComponent(MCEngine::LightType::Directional, glm::vec3(1.0f, 0.0f, 0.0f)));
+            m_Light.AddComponent<MCEngine::MeshRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"));
         }
         {
-            MCEngine::Entity light = AddPointLight("PointLight");
-            light.AddComponent<MCEngine::MeshRendererComponent>(
-                MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
+            MCEngine::Entity light = AddLight("PointLight", MCEngine::TransformComponent(glm::vec3(0.0f, 0.8f, 0.0f)),
+                                              MCEngine::LightComponent(MCEngine::LightType::Point));
+            light.AddComponent<MCEngine::MeshRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"));
         }
         {
-            MCEngine::Entity light = AddSpotLight("SpotLight");
-            light.AddComponent<MCEngine::MeshRendererComponent>(
-                MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                MCEngine::Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
+            MCEngine::Entity light = AddLight("SpotLight", MCEngine::TransformComponent(glm::vec3(0.0f, 3.0f, 3.0f)),
+                                              MCEngine::LightComponent(MCEngine::LightType::Spot));
+            light.AddComponent<MCEngine::MeshRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"));
         }
 
         // Skybox

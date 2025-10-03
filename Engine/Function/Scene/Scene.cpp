@@ -6,7 +6,9 @@ MCEngine::Scene::Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_MainCamera = AddPerspectiveCamera("MainCamera");
+    m_MainCamera = AddCamera("MainCamera",
+                             MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f)),
+                             MCEngine::CameraComponent(MCEngine::CameraType::Perspective));
 }
 
 MCEngine::Scene::~Scene()
@@ -59,6 +61,9 @@ void MCEngine::Scene::RenderShadowMap() const
 void MCEngine::Scene::Render(const Entity &camera) const
 {
     ENGINE_PROFILE_FUNCTION();
+
+    if (!camera || !camera.HasComponent<CameraComponent>() || !camera.HasComponent<TransformComponent>())
+        return;
 
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
         "UniformBuffer0",
@@ -118,59 +123,34 @@ MCEngine::Entity MCEngine::Scene::AddEmptyEntity(const std::string &name, const 
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddSquare(const std::string &name, const TransformComponent &transform,
-                                            const glm::vec4 &color, const std::shared_ptr<Texture2D> &texturePtr)
+MCEngine::Entity MCEngine::Scene::Add2DObject(const std::string &name, const TransformComponent &transform,
+                                              const SpriteRendererComponent &spriteRenderer)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<SpriteRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Square"), color,
-                                                 texturePtr);
+    entity.AddComponent<SpriteRendererComponent>(spriteRenderer);
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddCube(const std::string &name, const TransformComponent &transform,
-                                          const std::shared_ptr<Shader> &shaderPtr, const Material &material)
+MCEngine::Entity MCEngine::Scene::Add3DObject(const std::string &name, const TransformComponent &transform,
+                                              const MeshRendererComponent &meshRenderer)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<MeshRendererComponent>(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"), shaderPtr, material);
+    entity.AddComponent<MeshRendererComponent>(meshRenderer);
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddOrthoCamera(const std::string &name, const TransformComponent &transform)
+MCEngine::Entity MCEngine::Scene::AddCamera(const std::string &name, const TransformComponent &transform,
+                                            const CameraComponent &cameraComponent)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<CameraComponent>(CameraType::Orthographic);
+    entity.AddComponent<CameraComponent>(cameraComponent);
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddPerspectiveCamera(const std::string &name, const TransformComponent &transform)
+MCEngine::Entity MCEngine::Scene::AddLight(const std::string &name, const TransformComponent &transform,
+                                           const LightComponent &lightComponent)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<CameraComponent>(CameraType::Perspective);
-    return entity;
-}
-
-MCEngine::Entity MCEngine::Scene::AddDirectionalLight(const std::string &name, const TransformComponent &transform,
-                                                      const glm::vec3 &color, float intensity)
-{
-    Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<LightComponent>(color, intensity);
-    return entity;
-}
-
-MCEngine::Entity MCEngine::Scene::AddPointLight(const std::string &name, const TransformComponent &transform,
-                                                const glm::vec3 &color, float intensity, float constant, float linear,
-                                                float quadratic)
-{
-    Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<LightComponent>(color, intensity, constant, linear, quadratic);
-    return entity;
-}
-
-MCEngine::Entity MCEngine::Scene::AddSpotLight(const std::string &name, const TransformComponent &transform,
-                                               const glm::vec3 &color, float intensity, float constant, float linear,
-                                               float quadratic, float cutOff, float outerCutOff)
-{
-    Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<LightComponent>(color, intensity, constant, linear, quadratic, cutOff, outerCutOff);
+    entity.AddComponent<LightComponent>(lightComponent);
     return entity;
 }

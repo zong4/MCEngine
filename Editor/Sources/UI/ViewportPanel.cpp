@@ -16,7 +16,11 @@ void MCEditor::ViewportPanel::Render(std::shared_ptr<MCEngine::Scene> scene)
 
     if (m_ViewportDirty)
     {
-        m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
+        if (m_Camera.HasComponent<MCEngine::CameraComponent>())
+        {
+            m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         m_FBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         m_MultisampleFBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
     }

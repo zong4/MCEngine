@@ -39,11 +39,60 @@ void MCEditor::InspectorPanel::OnImGuiRender(entt::registry &registry, entt::ent
             }
         }
 
+        // SpriteRendererComponent
+        if (auto &&spriteRenderer = registry.try_get<MCEngine::SpriteRendererComponent>(m_SelectedEntity))
+        {
+            std::string header =
+                "Sprite Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+
+            bool open = true;
+            if (ImGui::CollapsingHeader(header.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::PushID(header.c_str());
+
+                ImGui::ColorEdit4("Color", glm::value_ptr(spriteRenderer->GetColor()));
+
+                ImGui::PopID();
+            }
+
+            if (!open)
+            {
+                registry.remove<MCEngine::SpriteRendererComponent>(m_SelectedEntity);
+            }
+        }
+
+        // MeshRendererComponent
+        if (auto &&meshRenderer = registry.try_get<MCEngine::MeshRendererComponent>(m_SelectedEntity))
+        {
+            std::string header = "Mesh Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
+
+            bool open = true;
+            if (ImGui::CollapsingHeader(header.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::PushID(header.c_str());
+
+                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetColor()));
+                ImGui::DragFloat("Ambient", &meshRenderer->GetMaterial().GetAmbientStrength(), 0.1f, 0.0f, 1.0f);
+                ImGui::DragFloat("Diffuse", &meshRenderer->GetMaterial().GetDiffuseStrength(), 0.1f, 0.0f, 1.0f);
+                ImGui::DragFloat("Specular", &meshRenderer->GetMaterial().GetSpecularStrength(), 0.1f, 0.0f, 1.0f);
+                ImGui::DragFloat("Shininess", &meshRenderer->GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
+
+                ImGui::PopID();
+            }
+
+            if (!open)
+            {
+                registry.remove<MCEngine::MeshRendererComponent>(m_SelectedEntity);
+            }
+        }
+
         // CameraComponent
         if (auto &&camera = registry.try_get<MCEngine::CameraComponent>(m_SelectedEntity))
         {
             std::string header = "Camera Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
-            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+
+            bool open = true;
+            if (ImGui::CollapsingHeader(header.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::PushID(header.c_str());
 
@@ -84,39 +133,10 @@ void MCEditor::InspectorPanel::OnImGuiRender(entt::registry &registry, entt::ent
 
                 ImGui::PopID();
             }
-        }
 
-        // SpriteRendererComponent
-        if (auto &&spriteRenderer = registry.try_get<MCEngine::SpriteRendererComponent>(m_SelectedEntity))
-        {
-            std::string header =
-                "Sprite Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
-
-            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            if (!open)
             {
-                ImGui::PushID(header.c_str());
-
-                ImGui::ColorEdit4("Color", glm::value_ptr(spriteRenderer->GetColor()));
-
-                ImGui::PopID();
-            }
-        }
-
-        // MeshRendererComponent
-        if (auto &&meshRenderer = registry.try_get<MCEngine::MeshRendererComponent>(m_SelectedEntity))
-        {
-            std::string header = "Mesh Renderer Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
-            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-            {
-                ImGui::PushID(header.c_str());
-
-                ImGui::ColorEdit4("Color", glm::value_ptr(meshRenderer->GetMaterial().GetColor()));
-                ImGui::DragFloat("Ambient", &meshRenderer->GetMaterial().GetAmbientStrength(), 0.1f, 0.0f, 1.0f);
-                ImGui::DragFloat("Diffuse", &meshRenderer->GetMaterial().GetDiffuseStrength(), 0.1f, 0.0f, 1.0f);
-                ImGui::DragFloat("Specular", &meshRenderer->GetMaterial().GetSpecularStrength(), 0.1f, 0.0f, 1.0f);
-                ImGui::DragFloat("Shininess", &meshRenderer->GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
-
-                ImGui::PopID();
+                registry.remove<MCEngine::CameraComponent>(m_SelectedEntity);
             }
         }
 
@@ -124,7 +144,9 @@ void MCEditor::InspectorPanel::OnImGuiRender(entt::registry &registry, entt::ent
         if (auto &&light = registry.try_get<MCEngine::LightComponent>(m_SelectedEntity))
         {
             std::string header = "Light Component##" + std::to_string(static_cast<uint32_t>(m_SelectedEntity));
-            if (ImGui::CollapsingHeader(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+
+            bool open = true;
+            if (ImGui::CollapsingHeader(header.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::PushID(header.c_str());
 
@@ -146,7 +168,14 @@ void MCEditor::InspectorPanel::OnImGuiRender(entt::registry &registry, entt::ent
 
                 ImGui::PopID();
             }
+
+            if (!open)
+            {
+                registry.remove<MCEngine::LightComponent>(m_SelectedEntity);
+            }
         }
+
+        DrawAddComponentButton(registry, m_SelectedEntity);
     }
 }
 
@@ -219,4 +248,84 @@ void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::ve
     ImGui::PopStyleVar();
     ImGui::Columns(1);
     ImGui::PopID();
+}
+
+void MCEditor::InspectorPanel::DrawAddComponentButton(entt::registry &registry, entt::entity m_SelectedEntity) const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    ImGui::Separator();
+
+    if (ImGui::Button("Add Component"))
+        ImGui::OpenPopup("AddComponent");
+
+    if (ImGui::BeginPopup("AddComponent"))
+    {
+        if (!registry.any_of<MCEngine::SpriteRendererComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Sprite Renderer Component"))
+            {
+                registry.emplace<MCEngine::SpriteRendererComponent>(
+                    m_SelectedEntity, MCEngine::VAOLibrary::GetInstance().GetVAO("Square"));
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::MeshRendererComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Mesh Renderer Component"))
+            {
+                registry.emplace<MCEngine::MeshRendererComponent>(m_SelectedEntity,
+                                                                  MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"));
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::CameraComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Orthographic Camera Component"))
+            {
+                registry.emplace<MCEngine::CameraComponent>(m_SelectedEntity, MCEngine::CameraType::Orthographic);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::CameraComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Perspective Camera Component"))
+            {
+                registry.emplace<MCEngine::CameraComponent>(m_SelectedEntity, MCEngine::CameraType::Perspective);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::LightComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Directional Light Component"))
+            {
+                registry.emplace<MCEngine::LightComponent>(m_SelectedEntity, MCEngine::LightType::Directional);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::LightComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Point Light Component"))
+            {
+                registry.emplace<MCEngine::LightComponent>(m_SelectedEntity, MCEngine::LightType::Point);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (!registry.any_of<MCEngine::LightComponent>(m_SelectedEntity))
+        {
+            if (ImGui::MenuItem("Spot Light Component"))
+            {
+                registry.emplace<MCEngine::LightComponent>(m_SelectedEntity, MCEngine::LightType::Spot);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        ImGui::EndPopup();
+    }
 }

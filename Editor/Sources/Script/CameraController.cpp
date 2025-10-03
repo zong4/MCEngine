@@ -2,14 +2,7 @@
 
 #include <imgui.h>
 
-void MCEditor::CameraController::OnStart()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    auto &&transform = GetComponent<MCEngine::TransformComponent>();
-    transform.SetPosition(glm::vec3(0.0f, 5.0f, 8.0f));
-    transform.SetRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
-}
+void MCEditor::CameraController::OnStart() { ENGINE_PROFILE_FUNCTION(); }
 
 void MCEditor::CameraController::OnUpdate(float deltaTime)
 {

@@ -5,7 +5,7 @@ MCEditor::InstanceScene::InstanceScene() : MCEngine::Scene()
     ENGINE_PROFILE_FUNCTION();
 
     m_Offsets.resize(25);
-    MCEngine::Entity cubes = AddCube("Cubes");
+    MCEngine::Entity cubes = Add3DObject("Cubes", MCEngine::TransformComponent());
     cubes.GetComponent<MCEngine::MeshRendererComponent>().GetVAOPtr()->SetInstanceCount(m_Offsets.size());
 
     // Instance offsets

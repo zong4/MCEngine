@@ -1,28 +1,11 @@
 #include "LightComponent.hpp"
 
-MCEngine::LightComponent::LightComponent(const glm::vec3 &color, float intensity)
-    : m_LightType(LightType::Directional), m_Color(color), m_Intensity(intensity)
-{
-    LOG_ENGINE_INFO("Directional Light Component created with Color: " + ToString(m_Color) +
-                    ", Intensity: " + std::to_string(m_Intensity));
-}
-
-MCEngine::LightComponent::LightComponent(const glm::vec3 &color, float intensity, float constant, float linear,
-                                         float quadratic)
-    : m_LightType(LightType::Point), m_Color(color), m_Intensity(intensity), m_Constant(constant), m_Linear(linear),
-      m_Quadratic(quadratic)
-{
-    LOG_ENGINE_INFO("Point Light Component created with Color: " + ToString(m_Color) +
-                    ", Intensity: " + std::to_string(m_Intensity) + ", Constant: " + std::to_string(m_Constant) +
-                    ", Linear: " + std::to_string(m_Linear) + ", Quadratic: " + std::to_string(m_Quadratic));
-}
-
-MCEngine::LightComponent::LightComponent(const glm::vec3 &color, float intensity, float constant, float linear,
-                                         float quadratic, float cutOff, float outerCutOff)
-    : m_LightType(LightType::Spot), m_Color(color), m_Intensity(intensity), m_Constant(constant), m_Linear(linear),
+MCEngine::LightComponent::LightComponent(LightType type, const glm::vec3 &color, float intensity, float constant,
+                                         float linear, float quadratic, float cutOff, float outerCutOff)
+    : m_Type(type), m_Color(color), m_Intensity(intensity), m_Constant(constant), m_Linear(linear),
       m_Quadratic(quadratic), m_CutOff(cutOff), m_OuterCutOff(outerCutOff)
 {
-    LOG_ENGINE_INFO("Spot Light Component created with Color: " + ToString(m_Color) +
+    LOG_ENGINE_INFO("Light Component created with Color: " + ToString(m_Color) +
                     ", Intensity: " + std::to_string(m_Intensity) + ", Constant: " + std::to_string(m_Constant) +
                     ", Linear: " + std::to_string(m_Linear) + ", Quadratic: " + std::to_string(m_Quadratic) +
                     ", CutOff: " + std::to_string(m_CutOff) + ", OuterCutOff: " + std::to_string(m_OuterCutOff));
@@ -30,7 +13,7 @@ MCEngine::LightComponent::LightComponent(const glm::vec3 &color, float intensity
 
 void MCEngine::LightComponent::SetAttenuation(float constant, float linear, float quadratic)
 {
-    if (m_LightType == LightType::Directional)
+    if (m_Type == LightType::Directional)
     {
         LOG_ENGINE_WARN("Trying to set attenuation on a directional light");
         return;
@@ -42,7 +25,7 @@ void MCEngine::LightComponent::SetAttenuation(float constant, float linear, floa
 
 void MCEngine::LightComponent::SetCutOff(float cutOff, float outerCutOff)
 {
-    if (m_LightType != LightType::Spot)
+    if (m_Type != LightType::Spot)
     {
         LOG_ENGINE_WARN("Trying to set cutOff on a non-spot light");
         return;

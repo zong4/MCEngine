@@ -2,7 +2,9 @@
 
 MCEditor::GeometryScene::GeometryScene()
 {
-    AddCube("Cubes", MCEngine::TransformComponent(), MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry"));
+    MCEngine::Entity cubes = Add3DObject("Cubes", MCEngine::TransformComponent());
+    cubes.GetComponent<MCEngine::MeshRendererComponent>().SetShaderPtr(
+        MCEngine::ShaderLibrary::GetInstance().GetShader("Geometry"));
 }
 
 void MCEditor::GeometryScene::RenderReally() const

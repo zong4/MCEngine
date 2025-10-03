@@ -30,29 +30,15 @@ public:
     void Resize(float width, float height);
 
     Entity AddEmptyEntity(const std::string &name, const TransformComponent &transform = TransformComponent());
-    Entity AddSquare(
-        const std::string &name, const TransformComponent &transform = TransformComponent(),
-        const glm::vec4 &color = glm::vec4(1.0f),
-        const std::shared_ptr<Texture2D> &texturePtr = TextureLibrary::GetInstance().GetTexture2D("White"));
-    Entity AddCube(const std::string &name, const TransformComponent &transform = TransformComponent(),
-                   const std::shared_ptr<Shader> &shaderPtr = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                   const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
-    Entity AddOrthoCamera(const std::string &name, const TransformComponent &transform = TransformComponent());
-    Entity AddPerspectiveCamera(const std::string &name,
-                                const TransformComponent &transform =
-                                    TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f)));
-    Entity AddDirectionalLight(const std::string &name,
-                               const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f, 3.0f)),
-                               const glm::vec3 &color = glm::vec3(1.0f, 0.0f, 0.0f), float intensity = 1.0f);
-    Entity AddPointLight(const std::string &name,
-                         const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f, 0.0f)),
-                         const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f, float constant = 1.0f,
-                         float linear = 0.09f, float quadratic = 0.032f);
-    Entity AddSpotLight(const std::string &name,
-                        const TransformComponent &transform = TransformComponent(glm::vec3(0.0f, 3.0f, 3.0f)),
-                        const glm::vec3 &color = glm::vec3(1.0f), float intensity = 1.0f, float constant = 1.0f,
-                        float linear = 0.09f, float quadratic = 0.032f, float cutOff = 12.5f,
-                        float outerCutOff = 15.0f);
+    Entity Add2DObject(const std::string &name, const TransformComponent &transform,
+                       const SpriteRendererComponent &spriteRenderer =
+                           SpriteRendererComponent(VAOLibrary::GetInstance().GetVAO("Square")));
+    Entity Add3DObject(
+        const std::string &name, const TransformComponent &transform,
+        const MeshRendererComponent &meshRenderer = MeshRendererComponent(VAOLibrary::GetInstance().GetVAO("Cube")));
+    Entity AddCamera(const std::string &name, const TransformComponent &transform,
+                     const CameraComponent &cameraComponent);
+    Entity AddLight(const std::string &name, const TransformComponent &transform, const LightComponent &lightComponent);
 
 protected:
     Entity m_MainCamera;
