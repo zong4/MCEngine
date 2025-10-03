@@ -10,9 +10,7 @@ void MCEngine::RendererCommand::Init()
     EnableBlend();
     EnableFaceCulling();
     EnableMultisampling();
-
-    // Gamma correction
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    EnableGammaCorrection();
 
     LOG_ENGINE_INFO("RendererCommand initialized");
 }
@@ -110,4 +108,18 @@ void MCEngine::RendererCommand::DisableMultisampling()
     ENGINE_PROFILE_FUNCTION();
 
     glDisable(GL_MULTISAMPLE);
+}
+
+void MCEngine::RendererCommand::EnableGammaCorrection()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glEnable(GL_FRAMEBUFFER_SRGB);
+}
+
+void MCEngine::RendererCommand::DisableGammaCorrection()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glDisable(GL_FRAMEBUFFER_SRGB);
 }

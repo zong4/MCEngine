@@ -30,11 +30,12 @@ void MCEditor::HierarchyPanel::DrawEntityNode(entt::registry &registry, entt::en
     else
         node_flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 
+    bool opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, node_flags,
+                                    view.get<MCEngine::TagComponent>(entity).GetTag().c_str(), (uint32_t)entity);
+
     if (ImGui::IsItemClicked())
         m_SelectedEntity = entity;
 
-    bool opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, node_flags,
-                                    view.get<MCEngine::TagComponent>(entity).GetTag().c_str(), (uint32_t)entity);
     if (opened)
     {
         for (auto &&child : children)

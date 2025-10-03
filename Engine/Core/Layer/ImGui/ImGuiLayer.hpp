@@ -29,6 +29,8 @@ protected:
     void BeginRenderImGui();
     virtual void RenderImGui() = 0;
     void EndRenderImGui();
+
+    void SetDarkThemeColors();
 };
 
 } // namespace MCEngine

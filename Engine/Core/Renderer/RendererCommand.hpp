@@ -29,6 +29,9 @@ public:
 
     static void EnableMultisampling();
     static void DisableMultisampling();
+
+    static void EnableGammaCorrection();
+    static void DisableGammaCorrection();
 };
 
 } // namespace MCEngine

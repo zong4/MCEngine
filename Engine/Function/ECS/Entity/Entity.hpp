@@ -27,6 +27,8 @@ public:
     // clang-format on
     bool HasComponent() const
     {
+        if (!m_Registry)
+            return false;
         return m_Registry->all_of<T>(m_Entity);
     }
     // clang-format off
