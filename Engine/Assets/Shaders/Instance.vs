@@ -5,7 +5,7 @@ layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec3 aNormal;
 
 // Uniforms
-uniform mat4 u_Models[25];
+uniform mat4 u_Models[100];
 layout(std140) uniform UniformBuffer0
 {
     // Position
