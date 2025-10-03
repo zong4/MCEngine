@@ -195,10 +195,10 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
                     if (light.GetType() == MCEngine::LightType::Spot)
                     {
                         DrawTable2<MCEngine::LightComponent>("CutOff", [&light]() {
-                            ImGui::DragFloat("##CutOff", &light.GetCutOff(), 1.0f, 0.0f, 90.0f);
+                            ImGui::DragFloat("##CutOff", &light.GetInnerAngle(), 1.0f, 0.0f, 90.0f);
                         });
                         DrawTable2<MCEngine::LightComponent>("Outer CutOff", [&light]() {
-                            ImGui::DragFloat("##Outer CutOff", &light.GetOuterCutOff(), 1.0f, 0.0f, 90.0f);
+                            ImGui::DragFloat("##Outer CutOff", &light.GetOuterAngle(), 1.0f, 0.0f, 90.0f);
                         });
                     }
                 }

@@ -1,7 +1,5 @@
 #include "LayerStack.hpp"
 
-#include "Renderer/RendererCommand.hpp"
-
 MCEngine::LayerStack::~LayerStack()
 {
     ENGINE_PROFILE_FUNCTION();
@@ -68,9 +66,6 @@ void MCEngine::LayerStack::Render()
     for (auto &&layer : m_Layers)
     {
         layer->OnRender();
-
-        RendererCommand::DisableGammaCorrection();
         layer->OnImGuiRender();
-        RendererCommand::EnableGammaCorrection();
     }
 }

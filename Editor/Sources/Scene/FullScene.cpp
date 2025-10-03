@@ -128,8 +128,8 @@ void MCEditor::FullScene::RenderReally() const
                 shader->SetUniformFloat("u_SpotLight.Constant", light.GetConstant());
                 shader->SetUniformFloat("u_SpotLight.Linear", light.GetLinear());
                 shader->SetUniformFloat("u_SpotLight.Quadratic", light.GetQuadratic());
-                shader->SetUniformFloat("u_SpotLight.CutOff", glm::cos(glm::radians(light.GetCutOff())));
-                shader->SetUniformFloat("u_SpotLight.OuterCutOff", glm::cos(glm::radians(light.GetOuterCutOff())));
+                shader->SetUniformFloat("u_SpotLight.CutOff", glm::cos(glm::radians(light.GetInnerAngle())));
+                shader->SetUniformFloat("u_SpotLight.OuterCutOff", glm::cos(glm::radians(light.GetOuterAngle())));
             }
         }
 

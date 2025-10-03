@@ -6,7 +6,7 @@ add_requires("glfw", "glad", "stb")
 add_requires("imgui v1.92.1-docking", {configs = {glfw_opengl3 = true}})
 
 -- ECS
-add_requires("entt")
+add_requires("entt", "yaml-cpp")
 
 -- Core Target
 target("Core")
@@ -35,7 +35,7 @@ target("Function")
     add_includedirs("Function", {public = true})
 
     -- ECS
-    add_packages("entt", {public = true})
+    add_packages("entt", "yaml-cpp", {public = true})
 
 -- Engine Target
 --set_runtimes("MTd")

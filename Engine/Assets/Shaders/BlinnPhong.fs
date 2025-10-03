@@ -104,10 +104,8 @@ void main()
     vec3 result = resultLight + resultSkybox;
 
     // HDR tonemapping
-    result = vec3(1.0) - exp(-result * 1.0);
-
-    // Gamma correction
-    // result = pow(result, vec3(1.0 / 2.2));
+    float exposure = 1.0;
+    result = vec3(1.0) - exp(-result * exposure);
 
     FragColor = vec4(result, u_Material.Color.a);
 }
