@@ -26,7 +26,7 @@ void MCEngine::Scene::Update(float deltaTime)
     auto &&view = m_Registry.view<TransformComponent, RelationshipComponent>();
     for (auto &&entity : view)
     {
-        auto [transform, relationship] = view.get<TransformComponent, RelationshipComponent>(entity);
+        auto &&[transform, relationship] = view.get<TransformComponent, RelationshipComponent>(entity);
         if (!relationship.GetParent())
         {
             transform.UpdateTransformMatrix(glm::mat4(1.0f), relationship);

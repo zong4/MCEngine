@@ -94,6 +94,27 @@ void MCEngine::ImGuiLayer::OnAttach()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
 
+    // Fonts
+    io.Fonts->Clear();
+    ImFont *fontChild = io.Fonts->AddFontFromFileTTF(
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf").c_str(),
+        18.0f);
+    ImFont *fontCute = io.Fonts->AddFontFromFileTTF(
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Delius/Delius-Regular.ttf").c_str(), 18.0f);
+    ImFont *fontActive = io.Fonts->AddFontFromFileTTF(
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Regular.ttf").c_str(), 18.0f);
+    ImFont *fontActiveBold = io.Fonts->AddFontFromFileTTF(
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Bold.ttf").c_str(), 18.0f);
+
+    // Set default font
+    ImFont *customFont = fontCute;
+    if (!customFont)
+    {
+        LOG_EDITOR_INFO("Failed to load custom font! Using default font instead.");
+        customFont = io.FontDefault;
+    }
+    io.FontDefault = customFont;
+
     // Setup Dear ImGui style
     // ImGui::StyleColorsDark();
     ImGui::StyleColorsClassic();
