@@ -11,6 +11,7 @@ class TextureLibrary
 public:
     static TextureLibrary &GetInstance();
 
+    std::string GetName(const std::shared_ptr<Texture> &texture) const;
     std::shared_ptr<Texture2D> GetTexture2D(const std::string &name);
     std::shared_ptr<TextureCube> GetTextureCube(const std::string &name);
     void AddTexture(const std::string &name, const std::shared_ptr<Texture> &texturePtr);

@@ -96,33 +96,6 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
                                                         DrawVec3Control("Scale", transform.GetScale(), 1.0f);
                                                     });
 
-        // SpriteRendererComponent
-        DrawComponent<MCEngine::SpriteRendererComponent>(
-            "Sprite Renderer Component", m_SelectedEntity, [](MCEngine::SpriteRendererComponent &sprite) {
-                DrawTable2<MCEngine::SpriteRendererComponent>(
-                    "Color", [&sprite]() { ImGui::ColorEdit4("##Color", glm::value_ptr(sprite.GetColor())); });
-            });
-
-        // MeshRendererComponent
-        DrawComponent<MCEngine::MeshRendererComponent>(
-            "Mesh Renderer Component", m_SelectedEntity, [](MCEngine::MeshRendererComponent &meshRenderer) {
-                DrawTable2<MCEngine::MeshRendererComponent>("Color", [&meshRenderer]() {
-                    ImGui::ColorEdit4("##Color", glm::value_ptr(meshRenderer.GetMaterial().GetColor()));
-                });
-                DrawTable2<MCEngine::MeshRendererComponent>("Ambient", [&meshRenderer]() {
-                    ImGui::DragFloat("##Ambient", &meshRenderer.GetMaterial().GetAmbientStrength(), 0.1f, 0.0f, 1.0f);
-                });
-                DrawTable2<MCEngine::MeshRendererComponent>("Diffuse", [&meshRenderer]() {
-                    ImGui::DragFloat("##Diffuse", &meshRenderer.GetMaterial().GetDiffuseStrength(), 0.1f, 0.0f, 1.0f);
-                });
-                DrawTable2<MCEngine::MeshRendererComponent>("Specular", [&meshRenderer]() {
-                    ImGui::DragFloat("##Specular", &meshRenderer.GetMaterial().GetSpecularStrength(), 0.1f, 0.0f, 1.0f);
-                });
-                DrawTable2<MCEngine::MeshRendererComponent>("Shininess", [&meshRenderer]() {
-                    ImGui::DragFloat("##Shininess", &meshRenderer.GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
-                });
-            });
-
         // CameraComponent
         DrawComponent<MCEngine::CameraComponent>(
             "Camera Component", m_SelectedEntity, [](MCEngine::CameraComponent &camera) {
@@ -170,6 +143,33 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
                         }
                     });
                 }
+            });
+
+        // SpriteRendererComponent
+        DrawComponent<MCEngine::SpriteRendererComponent>(
+            "Sprite Renderer Component", m_SelectedEntity, [](MCEngine::SpriteRendererComponent &sprite) {
+                DrawTable2<MCEngine::SpriteRendererComponent>(
+                    "Color", [&sprite]() { ImGui::ColorEdit4("##Color", glm::value_ptr(sprite.GetColor())); });
+            });
+
+        // MeshRendererComponent
+        DrawComponent<MCEngine::MeshRendererComponent>(
+            "Mesh Renderer Component", m_SelectedEntity, [](MCEngine::MeshRendererComponent &meshRenderer) {
+                DrawTable2<MCEngine::MeshRendererComponent>("Color", [&meshRenderer]() {
+                    ImGui::ColorEdit4("##Color", glm::value_ptr(meshRenderer.GetMaterial().GetColor()));
+                });
+                DrawTable2<MCEngine::MeshRendererComponent>("Ambient", [&meshRenderer]() {
+                    ImGui::DragFloat("##Ambient", &meshRenderer.GetMaterial().GetAmbientStrength(), 0.1f, 0.0f, 1.0f);
+                });
+                DrawTable2<MCEngine::MeshRendererComponent>("Diffuse", [&meshRenderer]() {
+                    ImGui::DragFloat("##Diffuse", &meshRenderer.GetMaterial().GetDiffuseStrength(), 0.1f, 0.0f, 1.0f);
+                });
+                DrawTable2<MCEngine::MeshRendererComponent>("Specular", [&meshRenderer]() {
+                    ImGui::DragFloat("##Specular", &meshRenderer.GetMaterial().GetSpecularStrength(), 0.1f, 0.0f, 1.0f);
+                });
+                DrawTable2<MCEngine::MeshRendererComponent>("Shininess", [&meshRenderer]() {
+                    ImGui::DragFloat("##Shininess", &meshRenderer.GetMaterial().GetShininess(), 1.0f, 1.0f, 256.0f);
+                });
             });
 
         // LightComponent

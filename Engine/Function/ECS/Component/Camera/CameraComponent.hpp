@@ -19,6 +19,8 @@ public:
 
     // Getters
     CameraType GetType() const { return m_Type; }
+    float GetWidth() const { return m_Width; }
+    float GetHeight() const { return m_Height; }
     float GetScale() const { return m_Scale; }
     float GetFOV() const { return m_FOV; }
     float GetNearClip() const { return m_NearClip; }

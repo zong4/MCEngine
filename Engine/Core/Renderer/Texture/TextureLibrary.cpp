@@ -6,6 +6,17 @@ MCEngine::TextureLibrary &MCEngine::TextureLibrary::GetInstance()
     return instance;
 }
 
+std::string MCEngine::TextureLibrary::GetName(const std::shared_ptr<Texture> &texture) const
+{
+    for (const auto &[name, ptr] : m_TextureMap)
+    {
+        if (ptr == texture)
+            return name;
+    }
+    LOG_ENGINE_WARN("Texture not found in library");
+    return "";
+}
+
 std::shared_ptr<MCEngine::Texture2D> MCEngine::TextureLibrary::GetTexture2D(const std::string &name)
 {
     ENGINE_PROFILE_FUNCTION();

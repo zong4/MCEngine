@@ -155,6 +155,17 @@ void MCEditor::EditorLayer::RenderMenuBar() const
     {
         if (ImGui::BeginMenu("File"))
         {
+            if (ImGui::MenuItem("Serialize"))
+            {
+                MCEngine::SceneSerializer serializer(m_ActiveScenePtr);
+                serializer.Serialize(std::string(PROJECT_ROOT) + "Editor/Assets/Scenes/Example.mcs");
+            }
+            if (ImGui::MenuItem("Deserialize"))
+            {
+                MCEngine::SceneSerializer serializer(m_ActiveScenePtr);
+                serializer.Deserialize(std::string(PROJECT_ROOT) + "Editor/Assets/Scenes/Example.mcs");
+            }
+
             if (ImGui::MenuItem("Exit"))
             {
                 m_WindowPtr->SetRunning(false);

@@ -1,0 +1,535 @@
+Scene: Untitled
+Entities:
+  - Entity: 32
+    TagComponent:
+      Tag: Skybox
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 31
+    TagComponent:
+      Tag: SpotLight
+    TransformComponent:
+      Position: [0, 3, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 30
+    TagComponent:
+      Tag: PointLight
+    TransformComponent:
+      Position: [0, 0.800000012, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 29
+    TagComponent:
+      Tag: DirectionalLight
+    TransformComponent:
+      Position: [3, 3, 3]
+      Rotation: [-50, 0, 0]
+      Scale: [0.5, 0.5, 0.5]
+    RelationshipComponent:
+      {}
+    Entity: 28
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 2, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 27
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [4, 0, 4]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 26
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [4, 0, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 25
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [4, 0, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 24
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [4, 0, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 23
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [4, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 22
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [3, 0, 4]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 21
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [3, 0, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 20
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [3, 0, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 19
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [3, 0, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 18
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [3, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 17
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 0, 4]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 16
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 0, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 15
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 0, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 14
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 0, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 13
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [2, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 12
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [1, 0, 4]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 11
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [1, 0, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 10
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [1, 0, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 9
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [1, 0, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 8
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [1, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 7
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 4]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 6
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 3]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 5
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 4
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 3
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      {}
+    Entity: 2
+    TagComponent:
+      Tag: Cubes
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      Entity: 3
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 4
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 1]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 5
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 2]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 6
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 3]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 7
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [0, 0, 4]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 8
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [1, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 9
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [1, 0, 1]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 10
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [1, 0, 2]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 11
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [1, 0, 3]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 12
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [1, 0, 4]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 13
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [2, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 14
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [2, 0, 1]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 15
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [2, 0, 2]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 16
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [2, 0, 3]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 17
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [2, 0, 4]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 18
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [3, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 19
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [3, 0, 1]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 20
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [3, 0, 2]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 21
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [3, 0, 3]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 22
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [3, 0, 4]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 23
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [4, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 24
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [4, 0, 1]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 25
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [4, 0, 2]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 26
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [4, 0, 3]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+      Entity: 27
+      TagComponent:
+        Tag: Cube
+      TransformComponent:
+        Position: [4, 0, 4]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RelationshipComponent:
+        {}
+    Entity: 1
+    TagComponent:
+      Tag: 02BG
+    TransformComponent:
+      Position: [-3, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [4, 4, 4]
+    SpriteRendererComponent:
+      VAO: Square
+      Color: [0.200000003, 0.800000012, 0.300000012, 1]
+      Texture: 02BG
+    RelationshipComponent:
+      {}
+    Entity: 0
+    TagComponent:
+      Tag: MainCamera
+    TransformComponent:
+      Position: [0, 5, 8]
+      Rotation: [-30, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Type: 1
+      Width: 5.55999994
+      Height: 4.01999998
+      Scale: 1
+      FOV: 45
+      NearClip: 0.100000001
+      FarClip: 100
+    RelationshipComponent:
+      {}

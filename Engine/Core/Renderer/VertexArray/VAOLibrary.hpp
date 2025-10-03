@@ -10,6 +10,7 @@ class VAOLibrary
 public:
     static VAOLibrary &GetInstance();
 
+    std::string GetName(const std::shared_ptr<VertexArray> &vao) const;
     std::shared_ptr<VertexArray> GetVAO(const std::string &name);
     void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao);
 

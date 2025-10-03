@@ -131,6 +131,17 @@ MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstance()
     return instance;
 }
 
+std::string MCEngine::VAOLibrary::GetName(const std::shared_ptr<VertexArray> &vao) const
+{
+    for (const auto &[name, ptr] : m_VAOMap)
+    {
+        if (ptr == vao)
+            return name;
+    }
+    LOG_ENGINE_WARN("VAO not found in library");
+    return "";
+}
+
 std::shared_ptr<MCEngine::VertexArray> MCEngine::VAOLibrary::GetVAO(const std::string &name)
 {
     ENGINE_PROFILE_FUNCTION();

@@ -6,6 +6,17 @@ MCEngine::ShaderLibrary &MCEngine::ShaderLibrary::GetInstance()
     return instance;
 }
 
+std::string MCEngine::ShaderLibrary::GetName(const std::shared_ptr<Shader> &shader) const
+{
+    for (const auto &[name, ptr] : m_ShaderMap)
+    {
+        if (ptr == shader)
+            return name;
+    }
+    LOG_ENGINE_WARN("Shader not found in library");
+    return "";
+}
+
 std::shared_ptr<MCEngine::Shader> MCEngine::ShaderLibrary::GetShader(const std::string &name)
 {
     ENGINE_PROFILE_FUNCTION();
