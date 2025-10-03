@@ -21,10 +21,9 @@ public:
     void OnRender() override;
 
 private:
-    // Camera
-    MCEngine::Entity m_Camera;
-    entt::registry m_Registry = {};
-    std::shared_ptr<MCEngine::Scene> m_ScenePtr;
+    // Scene
+    std::shared_ptr<MCEngine::Scene> m_EditorScenePtr;
+    std::shared_ptr<MCEngine::Scene> m_ActiveScenePtr;
 
     // UI
     HierarchyPanel m_HierarchyPanel;

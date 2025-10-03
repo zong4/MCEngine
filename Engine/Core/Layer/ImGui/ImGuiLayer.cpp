@@ -19,25 +19,28 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    EventDispatcher dispatcher(event);
+    if (!event.IsHandled())
+    {
+        EventDispatcher dispatcher(event);
 
-    dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.AddMouseButtonEvent(event.GetButton(), event.GetAction() == 1 || event.GetAction() == 2);
-        return io.WantCaptureMouse;
-    });
+        dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
+            ImGuiIO &io = ImGui::GetIO();
+            io.AddMouseButtonEvent(event.GetButton(), event.GetAction() == 1 || event.GetAction() == 2);
+            return io.WantCaptureMouse;
+        });
 
-    dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
-        return io.WantCaptureMouse;
-    });
+        dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
+            ImGuiIO &io = ImGui::GetIO();
+            io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
+            return io.WantCaptureMouse;
+        });
 
-    dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), event.GetAction() == 1 || event.GetAction() == 2);
-        return io.WantCaptureKeyboard;
-    });
+        dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
+            ImGuiIO &io = ImGui::GetIO();
+            io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), event.GetAction() == 1 || event.GetAction() == 2);
+            return io.WantCaptureKeyboard;
+        });
+    }
 }
 
 void MCEngine::ImGuiLayer::OnImGuiRender()

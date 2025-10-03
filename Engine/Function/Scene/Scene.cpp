@@ -21,12 +21,15 @@ void MCEngine::Scene::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&view = m_Registry.view<TransformComponent>();
+    auto &&view = m_Registry.view<TransformComponent, RelationshipComponent>();
     for (auto &&entity : view)
     {
-        auto &&transform = view.get<TransformComponent>(entity);
-        transform.UpdateTransformMatrix();
-        transform.UpdateViewMatrix();
+        auto [transform, relationship] = view.get<TransformComponent, RelationshipComponent>(entity);
+        if (!relationship.GetParent())
+        {
+            transform.UpdateTransformMatrix(glm::mat4(1.0f), relationship);
+            transform.UpdateViewMatrix();
+        }
     }
 
     m_Registry.view<MCEngine::NativeScriptComponent>().each([&](auto &&entity, auto &&nsc) {
