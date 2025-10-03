@@ -38,13 +38,10 @@ public:
     Entity AddCube(const std::string &name, const TransformComponent &transform = TransformComponent(),
                    const std::shared_ptr<Shader> &shaderPtr = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
                    const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
-    Entity AddOrthoCamera(const std::string &name, const TransformComponent &transform = TransformComponent(),
-                          const glm::vec3 &size = glm::vec3(16.0f, 9.0f, 10.0f));
+    Entity AddOrthoCamera(const std::string &name, const TransformComponent &transform = TransformComponent());
     Entity AddPerspectiveCamera(const std::string &name,
-                                const TransformComponent &transform = TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f),
-                                                                                         glm::vec3(-30.0f, 0.0f, 0.0f)),
-                                float fov = 45.0f, float aspectRatio = 16.0f / 9.0f, float nearClip = 0.1f,
-                                float farClip = 100.0f);
+                                const TransformComponent &transform =
+                                    TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f)));
     Entity AddDirectionalLight(const std::string &name,
                                const TransformComponent &transform = TransformComponent(glm::vec3(3.0f, 3.0f, 3.0f)),
                                const glm::vec3 &color = glm::vec3(1.0f, 0.0f, 0.0f), float intensity = 1.0f);

@@ -11,7 +11,7 @@ void MCEngine::RendererCommand::Init()
     EnableFaceCulling();
     EnableMultisampling();
 
-    // Gramma correction
+    // Gamma correction
     glEnable(GL_FRAMEBUFFER_SRGB);
 
     LOG_ENGINE_INFO("RendererCommand initialized");

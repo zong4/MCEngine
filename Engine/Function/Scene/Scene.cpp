@@ -132,19 +132,17 @@ MCEngine::Entity MCEngine::Scene::AddCube(const std::string &name, const Transfo
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddOrthoCamera(const std::string &name, const TransformComponent &transform,
-                                                 const glm::vec3 &size)
+MCEngine::Entity MCEngine::Scene::AddOrthoCamera(const std::string &name, const TransformComponent &transform)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<CameraComponent>(size);
+    entity.AddComponent<CameraComponent>(CameraType::Orthographic);
     return entity;
 }
 
-MCEngine::Entity MCEngine::Scene::AddPerspectiveCamera(const std::string &name, const TransformComponent &transform,
-                                                       float fov, float aspectRatio, float nearClip, float farClip)
+MCEngine::Entity MCEngine::Scene::AddPerspectiveCamera(const std::string &name, const TransformComponent &transform)
 {
     Entity entity = AddEmptyEntity(name, transform);
-    entity.AddComponent<CameraComponent>(fov, aspectRatio, nearClip, farClip);
+    entity.AddComponent<CameraComponent>(CameraType::Perspective);
     return entity;
 }
 

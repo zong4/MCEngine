@@ -1,30 +1,38 @@
 #include "CameraComponent.hpp"
 
-MCEngine::CameraComponent::CameraComponent(const glm::vec3 &size) : m_Type(CameraType::Ortho), m_Size(size)
+MCEngine::CameraComponent::CameraComponent(CameraType type, float width, float height, float fov, float nearClip,
+                                           float farClip)
+    : m_Type(type), m_Width(width), m_Height(height), m_FOV(fov), m_NearClip(nearClip), m_FarClip(farClip)
 {
+    Resize(width, height);
     UpdateProjectionMatrix();
-    LOG_ENGINE_INFO("Ortho Camera Created with Size: " + ToString(size));
-}
-
-MCEngine::CameraComponent::CameraComponent(float fov, float aspectRatio, float nearClip, float farClip)
-    : m_Type(CameraType::Perspective), m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
-{
-    UpdateProjectionMatrix();
-    LOG_ENGINE_INFO("Perspective Camera Created with FOV: " + std::to_string(fov) +
-                    ", Aspect Ratio: " + std::to_string(aspectRatio) + ", Near Clip: " + std::to_string(nearClip) +
-                    ", Far Clip: " + std::to_string(farClip));
+    LOG_ENGINE_INFO("CameraComponent created with type: " + std::to_string((int)m_Type) +
+                    ", width: " + std::to_string(m_Width) + ", height: " + std::to_string(m_Height) +
+                    ", FOV: " + std::to_string(m_FOV) + ", nearClip: " + std::to_string(m_NearClip) +
+                    ", farClip: " + std::to_string(m_FarClip));
 }
 
 void MCEngine::CameraComponent::Resize(float width, float height)
 {
-    if (m_Type == CameraType::Ortho)
+    m_Width = width / 100.0f;
+    m_Height = height / 100.0f;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetType(CameraType type)
+{
+    m_Type = type;
+    UpdateProjectionMatrix();
+}
+
+void MCEngine::CameraComponent::SetScale(float scale)
+{
+    if (m_Type != CameraType::Orthographic)
     {
-        m_Size = glm::vec3(width / 100.0f, height / 100.0f, m_Size.z);
+        LOG_ENGINE_WARN("Trying to set scale on a non-orthographic camera");
+        return;
     }
-    else if (m_Type == CameraType::Perspective)
-    {
-        m_AspectRatio = width / height;
-    }
+    m_Scale = scale;
     UpdateProjectionMatrix();
 }
 
@@ -65,13 +73,13 @@ void MCEngine::CameraComponent::UpdateProjectionMatrix()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (m_Type == CameraType::Ortho)
+    if (m_Type == CameraType::Orthographic)
     {
-        m_ProjectionMatrix = glm::ortho(-m_Size.x / 2.0f, m_Size.x / 2.0f, -m_Size.y / 2.0f, m_Size.y / 2.0f,
-                                        -m_Size.z / 2.0f, m_Size.z / 2.0f);
+        m_ProjectionMatrix = glm::ortho(-m_Width / 2.0f * m_Scale, m_Width / 2.0f * m_Scale, -m_Height / 2.0f * m_Scale,
+                                        m_Height / 2.0f * m_Scale, -1.0f, 1.0f);
     }
     else if (m_Type == CameraType::Perspective)
     {
-        m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+        m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_Width / m_Height, m_NearClip, m_FarClip);
     }
 }

@@ -12,8 +12,8 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
     ENGINE_PROFILE_FUNCTION();
 
     MCEngine::Entity m_Camera(m_Registry.create(), &m_Registry);
-    m_Camera.AddComponent<MCEngine::TransformComponent>(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-    m_Camera.AddComponent<MCEngine::CameraComponent>(45.0f, 16.0 / 9.0, 0.1f, 100.0f);
+    m_Camera.AddComponent<MCEngine::TransformComponent>();
+    m_Camera.AddComponent<MCEngine::CameraComponent>(MCEngine::CameraType::Perspective);
     m_Camera.AddComponent<MCEngine::NativeScriptComponent>().Bind<CameraController>();
 
     // Scene

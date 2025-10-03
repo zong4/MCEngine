@@ -93,8 +93,8 @@ void main()
     // Light
     vec3 resultLight = vec3(0.0);
     resultLight += CalcDirectionalLight(viewDir);
-    // resultLight += CalcPointLight(u_PointLight, viewDir);
-    // resultLight += CalcSpotLight(u_SpotLight, viewDir);
+    resultLight += CalcPointLight(u_PointLight, viewDir);
+    resultLight += CalcSpotLight(u_SpotLight, viewDir);
 
     // Skybox
     vec3 resultSkybox = vec3(0.0);
