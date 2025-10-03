@@ -1,5 +1,87 @@
 #include "SceneSerializer.hpp"
 
+namespace YAML
+{
+
+// clang-format off
+template <>
+// clang-format on
+struct convert<glm::vec3>
+{
+    static Node encode(const glm::vec3 &rhs)
+    {
+        Node node;
+        node.push_back(rhs.x);
+        node.push_back(rhs.y);
+        node.push_back(rhs.z);
+        return node;
+    }
+    static bool decode(const Node &node, glm::vec3 &rhs)
+    {
+        if (!node.IsSequence() || node.size() != 3)
+            return false;
+
+        rhs.x = node[0].as<float>();
+        rhs.y = node[1].as<float>();
+        rhs.z = node[2].as<float>();
+        return true;
+    }
+};
+
+// clang-format off
+template <>
+// clang-format on
+struct convert<glm::vec4>
+{
+    static Node encode(const glm::vec4 &rhs)
+    {
+        Node node;
+        node.push_back(rhs.x);
+        node.push_back(rhs.y);
+        node.push_back(rhs.z);
+        node.push_back(rhs.w);
+        return node;
+    }
+    static bool decode(const Node &node, glm::vec4 &rhs)
+    {
+        if (!node.IsSequence() || node.size() != 4)
+            return false;
+
+        rhs.x = node[0].as<float>();
+        rhs.y = node[1].as<float>();
+        rhs.z = node[2].as<float>();
+        rhs.w = node[3].as<float>();
+        return true;
+    }
+};
+
+// clang-format off
+template <>
+// clang-format on
+struct convert<glm::mat4>
+{
+    static Node encode(const glm::mat4 &rhs)
+    {
+        Node node;
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                node.push_back(rhs[i][j]);
+        return node;
+    }
+    static bool decode(const Node &node, glm::mat4 &rhs)
+    {
+        if (!node.IsSequence() || node.size() != 16)
+            return false;
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                rhs[i][j] = node[i * 4 + j].as<float>();
+        return true;
+    }
+};
+
+} // namespace YAML
+
 YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec3 &v)
 {
     out << YAML::Flow;
@@ -11,6 +93,17 @@ YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec4 &v)
 {
     out << YAML::Flow;
     out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+    return out;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &out, const glm::mat4 &m)
+{
+    out << YAML::Flow;
+    out << YAML::BeginSeq;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            out << m[i][j];
+    out << YAML::EndSeq;
     return out;
 }
 
@@ -141,6 +234,15 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
         out << YAML::Key << "VAO" << YAML::Value
             << MCEngine::VAOLibrary::GetInstance().GetName(meshRendererComponent.GetVAOPtr());
 
+        // Instance
+        out << YAML::Key << "Offsets";
+        out << YAML::BeginSeq;
+        for (auto &offset : meshRendererComponent.GetOffsets())
+        {
+            out << offset;
+        }
+        out << YAML::EndSeq;
+
         out << YAML::Key << "Material";
         out << YAML::BeginMap;
         out << YAML::Key << "Color" << YAML::Value << meshRendererComponent.GetMaterial().GetColor();
@@ -259,6 +361,17 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
         auto &meshRendererComponent = deserializedEntity.AddComponent<MeshRendererComponent>(
             MCEngine::VAOLibrary::GetInstance().GetVAO(meshRendererComponentData["VAO"].as<std::string>()));
         const auto &materialData = meshRendererComponentData["Material"];
+
+        // Instance
+        const auto &offsetsData = meshRendererComponentData["Offsets"];
+        if (offsetsData && offsetsData.IsSequence())
+        {
+            for (const auto &offsetData : offsetsData)
+            {
+                meshRendererComponent.AddOffset(offsetData.as<glm::mat4>());
+            }
+        }
+
         if (materialData)
         {
             auto &material = meshRendererComponent.GetMaterial();

@@ -155,7 +155,21 @@ void MCEngine::Scene::Render(const Entity &camera) const
                 }
             }
 
-            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+            auto &&offsets = mesh.GetOffsets();
+            if (offsets.empty())
+            {
+                shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+            }
+            else
+            {
+                // Instance
+                for (int instanceCount = 0; instanceCount < offsets.size(); instanceCount++)
+                {
+                    shader->SetUniformMat4("u_Models[" + std::to_string(instanceCount) + "]",
+                                           offsets[instanceCount] * transform.GetTransformMatrix());
+                }
+            }
+
             mesh.GetMaterial().Bind(shader, "u_Material");
             mesh.GetVAOPtr()->Render();
             shader->Unbind();
@@ -178,6 +192,8 @@ void MCEngine::Scene::Render(const Entity &camera) const
         shader->Unbind();
         MCEngine::RendererCommand::EnableDepthTest();
     }
+
+    RenderReally();
 }
 
 void MCEngine::Scene::Resize(float width, float height)

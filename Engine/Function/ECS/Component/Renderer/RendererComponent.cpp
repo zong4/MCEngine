@@ -19,3 +19,9 @@ MCEngine::MeshRendererComponent::MeshRendererComponent(const std::shared_ptr<Ver
         "MeshRendererComponent created with RendererID: " + std::to_string((uint32_t)m_VAOPtr->GetRendererID()) +
         ", ShaderID: " + std::to_string((uint32_t)m_ShaderPtr->GetRendererID()) + ", " + m_Material.ToString());
 }
+
+void MCEngine::MeshRendererComponent::AddOffset(const glm::mat4 &offset)
+{
+    m_Offsets.push_back(offset);
+    m_VAOPtr->SetInstanceCount(static_cast<int>(m_Offsets.size()));
+}
