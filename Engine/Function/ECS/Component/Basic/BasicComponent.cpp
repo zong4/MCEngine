@@ -41,6 +41,16 @@ glm::vec3 MCEngine::TransformComponent::GetUp() const
     return glm::normalize(glm::vec3(m_LocalRotationMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
 }
 
+void MCEngine::TransformComponent::SetScale(const glm::vec3 &scale)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_Scale = scale;
+    m_Scale.x = std::max(m_Scale.x, 0.001f);
+    m_Scale.y = std::max(m_Scale.y, 0.001f);
+    m_Scale.z = std::max(m_Scale.z, 0.001f);
+}
+
 void MCEngine::TransformComponent::UpdateTransformMatrix(const glm::mat4 &parentTransformMatrix,
                                                          const RelationshipComponent &relationship)
 {

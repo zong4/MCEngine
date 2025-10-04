@@ -60,7 +60,7 @@ public:
     // Setters
     void SetPosition(const glm::vec3 &position) { m_Position = position; }
     void SetRotation(const glm::vec3 &rotation) { m_Rotation = rotation; }
-    void SetScale(const glm::vec3 &scale) { m_Scale = scale; }
+    void SetScale(const glm::vec3 &scale);
 
 public:
     void UpdateTransformMatrix(const glm::mat4 &parentTransformMatrix, const RelationshipComponent &relationship);
