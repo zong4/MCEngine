@@ -82,6 +82,21 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
     Unbind();
 }
 
+int MCEngine::FrameBuffer::PickPixel(int x, int y) const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_NONE);
+
+    int pixelData;
+    glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return pixelData;
+}
+
 void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -93,10 +108,19 @@ void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
     }
     else if (m_Type == FrameBufferType::Depth)
     {
-        m_Texture = std::make_shared<Texture2D>(width, height);
+        m_Texture = std::make_shared<Texture2D>(width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
+    }
+    else if (m_Type == FrameBufferType::Integer)
+    {
+        m_Texture = std::make_shared<Texture2D>(width, height, GL_R32I, GL_RED_INTEGER, GL_INT);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
+    }
+    else
+    {
+        LOG_ENGINE_ERROR("Invalid FrameBufferType for basic texture.");
     }
 }
 

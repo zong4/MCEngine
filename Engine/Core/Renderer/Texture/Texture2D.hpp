@@ -10,7 +10,7 @@ class Texture2D : public Texture
 public:
     Texture2D(int width, int height, void *data);
     Texture2D(int width, int height, int samples);
-    Texture2D(int width, int height); // Depth texture
+    Texture2D(int width, int height, unsigned int internalFormat, unsigned int format, unsigned int type);
     Texture2D(const std::string &path);
     virtual ~Texture2D() override;
 
@@ -21,8 +21,12 @@ public:
     void Resize(int width, int height);
 
 private:
-    unsigned int m_Format;
+    unsigned int m_InternalFormat, m_Format, m_Type;
     int m_Samples;
+
+private:
+    void CreateTexture(int width, int height, unsigned int internalFormat, unsigned int format, unsigned int type,
+                       void *data);
 };
 
 } // namespace MCEngine

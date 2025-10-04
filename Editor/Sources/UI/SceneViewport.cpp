@@ -4,11 +4,20 @@ void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) con
 {
     ENGINE_PROFILE_FUNCTION();
 
+    if (!m_Camera || !scene)
+    {
+        LOG_ENGINE_WARN("SceneViewport: No camera or scene set, please set a camera and scene before rendering.");
+        return;
+    }
+
     if (m_ViewportDirty)
     {
         m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
         m_FBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         m_MultisampleFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        m_EntityPickingFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        LOG_EDITOR_TRACE("SceneViewport resized to: (" + std::to_string((int)m_ViewportSize.x) + ", " +
+                         std::to_string((int)m_ViewportSize.y) + ")");
     }
 
     m_MultisampleFBO->Bind();
@@ -16,6 +25,11 @@ void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) con
     scene->Render(m_Camera);
     m_MultisampleFBO->Blit(m_FBO->GetRendererID());
     m_MultisampleFBO->Unbind();
+
+    m_EntityPickingFBO->Bind();
+    MCEngine::RendererCommand::Clear();
+    scene->RenderColorID(m_Camera);
+    m_EntityPickingFBO->Unbind();
 }
 
 void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType)
@@ -34,6 +48,12 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
         }
     }
     ImGui::Image((ImTextureID)(intptr_t)m_FBO->GetTexture()->GetRendererID(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+
+    // Print cursor position
+    ImVec2 mouseInViewport = {ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetWindowContentRegionMin().x,
+                              ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetWindowContentRegionMin().y};
+    int pixelData = m_EntityPickingFBO->PickPixel((int)mouseInViewport.x, (int)(m_ViewportSize.y - mouseInViewport.y));
+    ImGui::Text("Cursor: (%.1f, %.1f) - Entity ID: %d", mouseInViewport.x, mouseInViewport.y, pixelData - 1);
 
     // Gizmos
     if (selectedEntity && gizmoType != ImGuizmoType::None)

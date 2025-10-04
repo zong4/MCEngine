@@ -37,7 +37,7 @@ public:
     void Blit(unsigned int resolveID) const;
 
     void Resize(int width, int height);
-    // int PickPixel(int x, int y) const;
+    int PickPixel(int x, int y) const;
 
 private:
     FrameBufferType m_Type;
