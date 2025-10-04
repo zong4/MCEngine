@@ -27,7 +27,7 @@ public:
     // clang-format on
     bool HasComponent() const
     {
-        if (!m_Registry)
+        if (!m_Registry || m_Entity == entt::null || !m_Registry->valid(m_Entity))
             return false;
         return m_Registry->all_of<T>(m_Entity);
     }

@@ -332,7 +332,8 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     if (cameraComponentData)
     {
         auto &&cameraComponent = deserializedEntity.AddComponent<CameraComponent>(
-            (CameraType)cameraComponentData["Type"].as<int>(), cameraComponentData["FOV"].as<float>(),
+            (CameraType)cameraComponentData["Type"].as<int>(), cameraComponentData["Width"].as<float>(),
+            cameraComponentData["Height"].as<float>(), cameraComponentData["FOV"].as<float>(),
             cameraComponentData["NearClip"].as<float>(), cameraComponentData["FarClip"].as<float>());
         cameraComponent.SetScale(cameraComponentData["Scale"].as<float>());
 
