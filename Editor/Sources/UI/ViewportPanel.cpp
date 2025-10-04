@@ -6,8 +6,8 @@ MCEditor::ViewportPanel::ViewportPanel()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_FBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
-    m_MultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
+    m_FBO = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
+    m_MultisampleFBO = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
 }
 
 void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene) const
@@ -21,15 +21,15 @@ void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MC
             camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        m_FBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
-        m_MultisampleFBOPtr->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        m_FBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        m_MultisampleFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
     }
 
-    m_MultisampleFBOPtr->Bind();
+    m_MultisampleFBO->Bind();
     MCEngine::RendererCommand::Clear();
     scene->Render(camera);
-    m_MultisampleFBOPtr->Blit(m_FBOPtr->GetRendererID());
-    m_MultisampleFBOPtr->Unbind();
+    m_MultisampleFBO->Blit(m_FBO->GetRendererID());
+    m_MultisampleFBO->Unbind();
 }
 
 void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType)
@@ -48,8 +48,7 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
             m_ViewportSize = {viewportSize.x, viewportSize.y};
         }
     }
-    ImGui::Image((ImTextureID)(intptr_t)m_FBOPtr->GetTexturePtr()->GetRendererID(), viewportSize, ImVec2(0, 1),
-                 ImVec2(1, 0));
+    ImGui::Image((ImTextureID)(intptr_t)m_FBO->GetTexture()->GetRendererID(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 
     // Gizmos
     if (selectedEntity && gizmoType != ImGuizmoType::None)

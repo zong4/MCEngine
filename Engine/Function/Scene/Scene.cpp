@@ -46,7 +46,7 @@ void MCEngine::Scene::RenderShadowMap() const
     if (!m_MainLight)
         return;
 
-    m_ShadowMapPtr->Bind();
+    m_ShadowMap->Bind();
     RendererCommand::ClearDepthBuffer();
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
     shader->Bind();
@@ -58,11 +58,11 @@ void MCEngine::Scene::RenderShadowMap() const
     {
         auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-        mesh.GetVAOPtr()->Render(MCEngine::RendererType::Triangles);
+        mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
     }
 
     shader->Unbind();
-    m_ShadowMapPtr->Unbind();
+    m_ShadowMap->Unbind();
 }
 
 void MCEngine::Scene::Render(const Entity &camera) const
@@ -157,8 +157,8 @@ void MCEngine::Scene::Render2D() const
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
         shader->SetUniformVec4("u_Color", sprite.GetColor());
         shader->SetUniformInt("u_Texture", 0);
-        sprite.GetTexturePtr()->Bind(0);
-        sprite.GetVAOPtr()->Render();
+        sprite.GetTexture()->Bind(0);
+        sprite.GetVAO()->Render();
     }
 
     shader->Unbind();
@@ -172,14 +172,14 @@ void MCEngine::Scene::Render3D() const
     for (auto &&entity : meshView)
     {
         auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
-        auto &&shader = mesh.GetShaderPtr();
+        auto &&shader = mesh.GetShader();
         shader->Bind();
 
         // Shadow
         if (m_MainLight)
         {
             shader->SetUniformInt("u_ShadowMap", 0);
-            m_ShadowMapPtr->GetTexturePtr()->Bind(0);
+            m_ShadowMap->GetTexture()->Bind(0);
             shader->SetUniformMat4("u_LightView",
                                    m_MainLight.GetComponent<MCEngine::TransformComponent>().GetViewMatrix());
             shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
@@ -237,7 +237,7 @@ void MCEngine::Scene::Render3D() const
         }
 
         mesh.GetMaterial().Bind(shader, "u_Material");
-        mesh.GetVAOPtr()->Render();
+        mesh.GetVAO()->Render();
         shader->Unbind();
     }
 }
@@ -254,7 +254,7 @@ void MCEngine::Scene::RenderSkybox() const
     if (!view.empty())
     {
         if (view.size() > 1)
-            ENGINE_LOG_WARNING("Multiple SkyboxComponents detected! Only the first one will be rendered.");
+            LOG_ENGINE_WARN("Multiple SkyboxComponents detected! Only the first one will be rendered.");
 
         auto &&skybox = m_Registry.get<MCEngine::SkyboxComponent>(view.front());
         shader->SetUniformInt("u_Skybox", 0);

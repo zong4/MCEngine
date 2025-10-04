@@ -2,7 +2,7 @@
 
 MCEngine::TagComponent::TagComponent(const std::string &tag) : m_Tag(tag)
 {
-    LOG_ENGINE_INFO("Tag Component created with Tag: " + m_Tag);
+    LOG_ENGINE_TRACE("Tag Component created with Tag: " + m_Tag);
 }
 
 void MCEngine::RelationshipComponent::RemoveChild(Entity child)
@@ -16,8 +16,8 @@ MCEngine::TransformComponent::TransformComponent(const glm::vec3 &position, cons
                                                  const glm::vec3 &scale)
     : m_Position(position), m_Rotation(rotation), m_Scale(scale)
 {
-    LOG_ENGINE_INFO("Transform Component created with Position: " + ToString(m_Position) +
-                    ", Rotation: " + ToString(m_Rotation) + ", Scale: " + ToString(m_Scale));
+    LOG_ENGINE_TRACE("Transform Component created with Position: " + ToString(m_Position) +
+                     ", Rotation: " + ToString(m_Rotation) + ", Scale: " + ToString(m_Scale));
 }
 
 glm::vec3 MCEngine::TransformComponent::GetForward() const
@@ -57,17 +57,14 @@ void MCEngine::TransformComponent::UpdateTransformMatrix(const glm::mat4 &parent
     ENGINE_PROFILE_FUNCTION();
 
     glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), m_Position);
-
     glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
     m_LocalRotationMatrix = rotationZ * rotationY * rotationX;
-
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), m_Scale);
 
     m_LocalTransformMatrix = translationMatrix * m_LocalRotationMatrix * scaleMatrix;
     m_TransformMatrix = parentTransformMatrix * m_LocalTransformMatrix;
-
     for (auto &&child : relationship.GetChildren())
     {
         child.GetComponent<TransformComponent>().UpdateTransformMatrix(m_TransformMatrix,

@@ -15,7 +15,7 @@ public:
 
     // Getters
     bool IsRunning() const;
-    void *GetNativeWindowPtr() const { return m_NativeWindowPtr; }
+    void *GetNativeWindow() const { return m_NativeWindow; }
     WindowProperty &GetProperty() { return m_Property; }
     const WindowProperty &GetProperty() const { return m_Property; }
     const RendererAPIProperty &GetRendererAPIProperty() const { return m_RendererAPIProperty; }
@@ -36,7 +36,7 @@ public:
 
 private:
     bool m_Running = true;
-    void *m_NativeWindowPtr = nullptr;
+    void *m_NativeWindow = nullptr;
     WindowProperty m_Property;
 
     // Renderer

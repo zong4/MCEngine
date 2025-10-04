@@ -16,7 +16,7 @@ bool MCEngine::Window::IsRunning() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindowPtr)) || !m_Running;
+    return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_NativeWindow)) || !m_Running;
 }
 
 void MCEngine::Window::SetVSync(bool enabled)
@@ -43,7 +43,7 @@ void MCEngine::Window::Update(float deltaTime)
     m_LayerStack.Update(deltaTime);
 
     // Post-update
-    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindowPtr));
+    glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwPollEvents();
 }
 
@@ -76,9 +76,9 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Create window
-    m_NativeWindowPtr = glfwCreateWindow(m_Property.GetWidth(), m_Property.GetHeight(), m_Property.GetTitle().c_str(),
-                                         nullptr, nullptr);
-    if (!m_NativeWindowPtr)
+    m_NativeWindow = glfwCreateWindow(m_Property.GetWidth(), m_Property.GetHeight(), m_Property.GetTitle().c_str(),
+                                      nullptr, nullptr);
+    if (!m_NativeWindow)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
@@ -86,7 +86,7 @@ void MCEngine::Window::Init()
     LOG_ENGINE_INFO("GLFW window created: " + m_Property.ToString());
 
     // Make context current
-    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindowPtr));
+    glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindow));
     SetCallbacks();
     SetVSync(m_Property.IsVSync());
 
@@ -107,7 +107,7 @@ void MCEngine::Window::Shutdown()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindowPtr));
+    glfwDestroyWindow(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwTerminate();
     LOG_ENGINE_INFO("Window destroyed");
 }
@@ -116,9 +116,9 @@ void MCEngine::Window::SetCallbacks()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindowPtr), this);
+    glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_NativeWindow), this);
 
-    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
+    glfwSetFramebufferSizeCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                                    [](GLFWwindow *nativeWindow, int width, int height) {
                                        // Framebuffer size
                                        glViewport(0, 0, width, height);
@@ -136,21 +136,21 @@ void MCEngine::Window::SetCallbacks()
                                        window->OnEvent(event);
                                    });
 
-    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
+    glfwSetKeyCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                        [](GLFWwindow *nativeWindow, int key, int scancode, int action, int mods) {
                            Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
                            KeyEvent event(key, action);
                            window->OnEvent(event);
                        });
 
-    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
+    glfwSetMouseButtonCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                                [](GLFWwindow *nativeWindow, int button, int action, int mods) {
                                    Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
                                    MouseButtonEvent event(button, action);
                                    window->OnEvent(event);
                                });
 
-    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindowPtr),
+    glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_NativeWindow),
                              [](GLFWwindow *nativeWindow, double xPos, double yPos) {
                                  Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
                                  MouseMoveEvent event(xPos, yPos);

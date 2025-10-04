@@ -27,11 +27,11 @@ public:
     static void LogEditorError(const std::string &message);
 
 private:
-    static std::shared_ptr<spdlog::logger> s_EngineLoggerPtr;
-    static std::shared_ptr<spdlog::logger> s_EditorLoggerPtr;
+    static std::shared_ptr<spdlog::logger> s_EngineLogger;
+    static std::shared_ptr<spdlog::logger> s_EditorLogger;
 
 private:
-    static std::shared_ptr<spdlog::logger> CreateLoggerPtr(const std::string &dirPath, const std::string &name);
+    static std::shared_ptr<spdlog::logger> CreateLogger(const std::string &dirPath, const std::string &name);
 };
 
 #ifdef DEBUG

@@ -4,7 +4,7 @@ MCEditor::Editor::Editor(const MCEngine::WindowProperty &props) : Application(pr
 {
     ENGINE_PROFILE_FUNCTION();
 
-    AddLayer(std::make_shared<EditorLayer>(m_WindowPtr));
+    AddLayer(std::make_shared<EditorLayer>(m_Window));
 
     LOG_EDITOR_INFO("Editor created");
 }

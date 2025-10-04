@@ -9,9 +9,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &windowPtr, const std::string &filePath,
+MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &window, const std::string &filePath,
                                  const std::string &name)
-    : Layer(name), m_WindowPtr(windowPtr), m_ImGuiFilePath(filePath)
+    : Layer(name), m_Window(window), m_ImGuiFilePath(filePath)
 {
 }
 
@@ -64,8 +64,7 @@ void MCEngine::ImGuiLayer::EndRenderImGui() const
     ENGINE_PROFILE_FUNCTION();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.DisplaySize =
-        ImVec2((float)m_WindowPtr->GetProperty().GetWidth(), (float)m_WindowPtr->GetProperty().GetHeight());
+    io.DisplaySize = ImVec2((float)m_Window->GetProperty().GetWidth(), (float)m_Window->GetProperty().GetHeight());
 
     // Rendering
     ImGui::Render();
@@ -138,9 +137,9 @@ void MCEngine::ImGuiLayer::OnAttach()
     ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
 
     // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_WindowPtr->GetNativeWindowPtr()), true);
-    std::string glsl_version = "#version " + std::to_string(m_WindowPtr->GetRendererAPIProperty().GetMajorVersion()) +
-                               std::to_string(m_WindowPtr->GetRendererAPIProperty().GetMinorVersion()) + "0";
+    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
+    std::string glsl_version = "#version " + std::to_string(m_Window->GetRendererAPIProperty().GetMajorVersion()) +
+                               std::to_string(m_Window->GetRendererAPIProperty().GetMinorVersion()) + "0";
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 }
 

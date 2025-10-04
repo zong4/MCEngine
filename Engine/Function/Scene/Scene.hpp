@@ -56,7 +56,7 @@ protected:
 
     // Lighting
     Entity m_MainLight;
-    std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMapPtr =
+    std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMap =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
 
 protected:

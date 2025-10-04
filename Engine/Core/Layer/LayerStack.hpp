@@ -18,8 +18,8 @@ public:
     void Render();
 
     // Layer management
-    void PushLayer(const std::shared_ptr<Layer> &layerPtr);
-    void PopLayer(const std::shared_ptr<Layer> &layerPtr);
+    void PushLayer(const std::shared_ptr<Layer> &layer);
+    void PopLayer(const std::shared_ptr<Layer> &layer);
 
 private:
     std::vector<std::shared_ptr<Layer>> m_Layers;

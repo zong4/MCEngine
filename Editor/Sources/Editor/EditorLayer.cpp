@@ -2,8 +2,8 @@
 
 #include "Scene/SceneManager.hpp"
 
-MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr)
-    : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
+MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
+    : ImGuiLayer(window, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
 {
 }
 
@@ -238,7 +238,7 @@ void MCEditor::EditorLayer::RenderMenuBar()
 
             if (ImGui::MenuItem("Exit"))
             {
-                m_WindowPtr->SetRunning(false);
+                m_Window->SetRunning(false);
             }
             ImGui::EndMenu();
         }

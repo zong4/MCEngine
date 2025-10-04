@@ -20,7 +20,7 @@ class EditorLayer : public MCEngine::ImGuiLayer
 {
 
 public:
-    EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr);
+    EditorLayer(const std::shared_ptr<MCEngine::Window> &window);
     virtual ~EditorLayer() override;
 
     // Getters

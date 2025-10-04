@@ -74,9 +74,9 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
     m_Width = width;
     m_Height = height;
 
-    m_TexturePtr->Resize(width, height);
-    if (m_RenderBufferPtr)
-        m_RenderBufferPtr->Resize(width, height);
+    m_Texture->Resize(width, height);
+    if (m_RenderBuffer)
+        m_RenderBuffer->Resize(width, height);
 
     Bind();
     Unbind();
@@ -88,13 +88,13 @@ void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
 
     if (m_Type == FrameBufferType::Color)
     {
-        m_TexturePtr = std::make_shared<Texture2D>(width, height, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
+        m_Texture = std::make_shared<Texture2D>(width, height, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
     }
     else if (m_Type == FrameBufferType::Depth)
     {
-        m_TexturePtr = std::make_shared<Texture2D>(width, height);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TexturePtr->GetRendererID(), 0);
+        m_Texture = std::make_shared<Texture2D>(width, height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
     }
@@ -110,16 +110,16 @@ void MCEngine::FrameBuffer::BindMultiSampleTexture(int width, int height, int sa
         return;
     }
 
-    m_TexturePtr = std::make_shared<Texture2D>(width, height, samples);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           m_TexturePtr->GetRendererID(), 0);
+    m_Texture = std::make_shared<Texture2D>(width, height, samples);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_Texture->GetRendererID(),
+                           0);
 }
 
 void MCEngine::FrameBuffer::BindRenderBuffer(int width, int height, unsigned int internalFormat, int samples)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_RenderBufferPtr = std::make_shared<RenderBuffer>(width, height, internalFormat, samples);
+    m_RenderBuffer = std::make_shared<RenderBuffer>(width, height, internalFormat, samples);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                              m_RenderBufferPtr->GetRendererID());
+                              m_RenderBuffer->GetRendererID());
 }

@@ -200,10 +200,10 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
 
         auto &spriteRendererComponent = entity.GetComponent<MCEngine::SpriteRendererComponent>();
         out << YAML::Key << "VAO" << YAML::Value
-            << MCEngine::VAOLibrary::GetInstance().GetName(spriteRendererComponent.GetVAOPtr());
+            << MCEngine::VAOLibrary::GetInstance().GetName(spriteRendererComponent.GetVAO());
         out << YAML::Key << "Color" << YAML::Value << (YAML::Node)spriteRendererComponent.GetColor();
         out << YAML::Key << "Texture" << YAML::Value
-            << MCEngine::TextureLibrary::GetInstance().GetName(spriteRendererComponent.GetTexturePtr());
+            << MCEngine::TextureLibrary::GetInstance().GetName(spriteRendererComponent.GetTexture());
 
         out << YAML::EndMap;
     }
@@ -216,7 +216,7 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
 
         auto &meshRendererComponent = entity.GetComponent<MCEngine::MeshRendererComponent>();
         out << YAML::Key << "VAO" << YAML::Value
-            << MCEngine::VAOLibrary::GetInstance().GetName(meshRendererComponent.GetVAOPtr());
+            << MCEngine::VAOLibrary::GetInstance().GetName(meshRendererComponent.GetVAO());
 
         // Instance
         out << YAML::Key << "Offsets";
@@ -242,7 +242,7 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
         out << YAML::EndMap;
 
         out << YAML::Key << "Shader" << YAML::Value
-            << MCEngine::ShaderLibrary::GetInstance().GetName(meshRendererComponent.GetShaderPtr());
+            << MCEngine::ShaderLibrary::GetInstance().GetName(meshRendererComponent.GetShader());
 
         out << YAML::EndMap;
     }
@@ -332,8 +332,7 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     if (cameraComponentData)
     {
         auto &&cameraComponent = deserializedEntity.AddComponent<CameraComponent>(
-            (CameraType)cameraComponentData["Type"].as<int>(), cameraComponentData["Width"].as<float>(),
-            cameraComponentData["Height"].as<float>(), cameraComponentData["FOV"].as<float>(),
+            (CameraType)cameraComponentData["Type"].as<int>(), cameraComponentData["FOV"].as<float>(),
             cameraComponentData["NearClip"].as<float>(), cameraComponentData["FarClip"].as<float>());
         cameraComponent.SetScale(cameraComponentData["Scale"].as<float>());
 

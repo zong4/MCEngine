@@ -35,7 +35,7 @@ static void DrawComponent(const std::string &name, MCEngine::Entity entity, UIFu
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (entity.HasComponent<T>())
+    if (entity && entity.HasComponent<T>())
     {
         std::string header = name + "##" + std::to_string(static_cast<uint32_t>(entity));
 

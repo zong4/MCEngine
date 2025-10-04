@@ -8,7 +8,7 @@ namespace MCEngine
 class ImGuiLayer : public Layer
 {
 public:
-    ImGuiLayer(const std::shared_ptr<Window> &windowPtr, const std::string &filePath,
+    ImGuiLayer(const std::shared_ptr<Window> &window, const std::string &filePath,
                const std::string &name = "ImGuiLayer");
     virtual ~ImGuiLayer() override = default;
 
@@ -26,7 +26,7 @@ public:
 
 protected:
     bool m_BlockEvents = true;
-    std::shared_ptr<Window> m_WindowPtr;
+    std::shared_ptr<Window> m_Window;
     std::string m_ImGuiFilePath;
 
 protected:

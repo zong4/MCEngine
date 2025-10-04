@@ -28,7 +28,7 @@ public:
     unsigned int GetRendererID() const { return m_RendererID; }
     int GetWidth() const { return m_Width; }
     int GetHeight() const { return m_Height; }
-    std::shared_ptr<Texture2D> GetTexturePtr() const { return m_TexturePtr; }
+    std::shared_ptr<Texture2D> GetTexture() const { return m_Texture; }
 
 public:
     void Bind() const;
@@ -40,8 +40,8 @@ private:
     FrameBufferType m_Type;
     unsigned int m_RendererID = 0;
     int m_Width, m_Height;
-    std::shared_ptr<Texture2D> m_TexturePtr = nullptr;
-    std::shared_ptr<RenderBuffer> m_RenderBufferPtr = nullptr;
+    std::shared_ptr<Texture2D> m_Texture = nullptr;
+    std::shared_ptr<RenderBuffer> m_RenderBuffer = nullptr;
 
 private:
     void BindBasicTexture(int width, int height);

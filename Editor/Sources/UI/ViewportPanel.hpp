@@ -36,8 +36,8 @@ private:
     bool m_Hovered = false;
     bool m_ViewportDirty = false;
     glm::vec2 m_ViewportSize = {0.0f, 0.0f};
-    std::unique_ptr<MCEngine::FrameBuffer> m_FBOPtr;
-    std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBOPtr;
+    std::unique_ptr<MCEngine::FrameBuffer> m_FBO;
+    std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBO;
 };
 
 } // namespace MCEditor

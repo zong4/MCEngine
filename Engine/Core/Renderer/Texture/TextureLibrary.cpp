@@ -41,7 +41,7 @@ std::shared_ptr<MCEngine::TextureCube> MCEngine::TextureLibrary::GetTextureCube(
     return std::dynamic_pointer_cast<TextureCube>(m_TextureMap[name]);
 }
 
-void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::shared_ptr<Texture> &texturePtr)
+void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::shared_ptr<Texture> &texture)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -50,7 +50,7 @@ void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::sh
         LOG_ENGINE_ERROR("Texture already exists: " + name);
         return;
     }
-    m_TextureMap[name] = texturePtr;
+    m_TextureMap[name] = texture;
     LOG_ENGINE_INFO("Texture added: " + name);
 }
 

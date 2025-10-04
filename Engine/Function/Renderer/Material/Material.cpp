@@ -4,7 +4,7 @@ MCEngine::Material::Material(const glm::vec4 &color, float ambient, float diffus
     : m_Color(color), m_AmbientStrength(ambient), m_DiffuseStrength(diffuse), m_SpecularStrength(specular),
       m_Shininess(shininess)
 {
-    LOG_ENGINE_INFO("Material created with " + ToString());
+    LOG_ENGINE_TRACE("Material created with " + ToString());
 }
 
 void MCEngine::Material::Bind(const std::shared_ptr<MCEngine::Shader> &shader, const std::string &name) const

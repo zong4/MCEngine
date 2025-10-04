@@ -80,6 +80,7 @@ class NativeScriptComponent
 {
 public:
     NativeScriptComponent() = default;
+
     std::function<std::shared_ptr<ScriptableEntity>()> InstantiateScript;
     std::function<void()> DestroyScript;
 
