@@ -23,6 +23,9 @@ public:
     EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr);
     virtual ~EditorLayer() override;
 
+    // Getters
+    ImGuizmoType GetGizmoType() const { return m_GizmoType; }
+
 public:
     void OnEvent(MCEngine::Event &event) override;
     void OnUpdate(float deltaTime) override;
@@ -32,6 +35,7 @@ public:
 
 private:
     EditorAction m_Action = EditorAction::None;
+    ImGuizmoType m_GizmoType = ImGuizmoType::None;
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;

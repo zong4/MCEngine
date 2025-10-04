@@ -8,6 +8,8 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+// After import imgui
+#include <ImGuizmo.h>
 
 MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &windowPtr, const std::string &filePath,
                                  const std::string &name)
@@ -18,6 +20,9 @@ MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &windowPtr, const
 void MCEngine::ImGuiLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
+
+    ImGuiIO &io = ImGui::GetIO();
+    io.WantCaptureMouse = false;
 
     if (!event.IsHandled())
     {
@@ -57,6 +62,7 @@ void MCEngine::ImGuiLayer::BeginRenderImGui() const
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 }
 
 void MCEngine::ImGuiLayer::EndRenderImGui() const

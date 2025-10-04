@@ -1,9 +1,6 @@
 #include "EditorLayer.hpp"
 
 #include "Scene/SceneManager.hpp"
-#include <imgui.h>
-// After import imgui
-#include <ImGuizmo.h>
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr)
     : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
@@ -16,30 +13,60 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // Store key states in KeyCodeLibrary
     if (!event.IsHandled())
     {
         MCEngine::EventDispatcher dispatcher(event);
-
-        // Store key states in KeyCodeLibrary
         dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
             MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
             return false;
         });
+    }
 
-        // Handle key events for editor actions
+    // Handle key events for editor actions
+    if (!event.IsHandled())
+    {
+        MCEngine::EventDispatcher dispatcher(event);
         dispatcher.Dispatch<MCEngine::KeyEvent>(std::function<bool(MCEngine::KeyEvent &)>(
             std::bind(&EditorLayer::OnKeyEvent, this, std::placeholders::_1)));
     }
 
-    // Store the event in ImGuiLayer for further processing
+    // Capture events first
     ImGuiLayer::OnEvent(event);
 }
 
 bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
 {
-    LOG_ENGINE_TRACE(event.ToString());
+    // LOG_ENGINE_TRACE(event.ToString());
 
-    if (event.GetAction() == 1) // Key Pressed
+    // Key Pressed for imguizmo type change
+    if (event.GetAction() == 1)
+    {
+        switch (event.GetKeyCode())
+        {
+        case ENGINE_KEY_Q:
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmoType::None;
+            break;
+        case ENGINE_KEY_W:
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmoType::Translate;
+            break;
+        case ENGINE_KEY_E:
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmoType::Rotate;
+            break;
+        case ENGINE_KEY_R:
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmoType::Scale;
+            break;
+        default:
+            break;
+        }
+    }
+
+    // Key Pressed for editor actions
+    if (event.GetAction() == 1)
     {
         bool control = MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_CONTROL) ||
                        MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_CONTROL) ||
@@ -66,6 +93,7 @@ bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
             break;
         }
     }
+
     return true;
 }
 
@@ -126,11 +154,12 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Game");
-    m_GamePanel.OnImGuiRender();
+    m_GamePanel.OnImGuiRender(MCEngine::Entity(), m_GizmoType);
     ImGui::End();
 
     ImGui::Begin("Scene");
-    m_ScenePanel.OnImGuiRender();
+    m_ScenePanel.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity(), m_GizmoType);
+    SetBlockEvents(!m_ScenePanel.IsFocused() && !m_ScenePanel.IsHovered());
     ImGui::End();
 }
 

@@ -50,7 +50,7 @@ public:
     const glm::vec3 &GetRotation() const { return m_Rotation; }
     const glm::vec3 &GetScale() const { return m_Scale; }
     const glm::mat4 &GetLocalRotationMatrix() const { return m_LocalRotationMatrix; }
-    const glm::mat4 &GetLocalTransformMatrix() const { return m_LocalTransformMatrix; }
+    // const glm::mat4 &GetLocalTransformMatrix() const { return m_LocalTransformMatrix; }
     const glm::mat4 &GetTransformMatrix() const { return m_TransformMatrix; }
     const glm::mat4 &GetViewMatrix() const { return m_ViewMatrix; }
     glm::vec3 GetForward() const;

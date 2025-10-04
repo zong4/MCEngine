@@ -12,6 +12,9 @@ public:
                const std::string &name = "ImGuiLayer");
     virtual ~ImGuiLayer() override = default;
 
+    // Setters
+    void SetBlockEvents(bool block) { m_BlockEvents = block; }
+
 public:
     // Main loop
     void OnEvent(Event &event) override;
@@ -22,6 +25,7 @@ public:
     void OnDetach() override;
 
 protected:
+    bool m_BlockEvents = true;
     std::shared_ptr<Window> m_WindowPtr;
     std::string m_ImGuiFilePath;
 

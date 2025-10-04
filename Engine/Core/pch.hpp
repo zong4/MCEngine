@@ -17,6 +17,7 @@
 #include <vector>
 
 // Utility
+#include "Utility/Math.hpp"
 #include "Utility/ToString.hpp"
 
 // Recorder
@@ -27,6 +28,5 @@
 
 // Third Party
 #include "Utility/libtinyfiledialogs/tinyfiledialogs.h"
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
