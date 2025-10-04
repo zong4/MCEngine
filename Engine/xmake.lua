@@ -41,7 +41,8 @@ target("Function")
     add_includedirs("Function", {public = true})
 
     -- ECS
-    add_packages("entt", "yaml-cpp", {public = true})
+    add_packages("entt", {public = true})
+    add_packages("yaml-cpp")
 
 -- Engine Target
 --set_runtimes("MTd")

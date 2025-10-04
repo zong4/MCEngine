@@ -2,6 +2,12 @@
 
 #include "Scene.hpp"
 
+namespace YAML
+{
+class Emitter;
+class Node;
+} // namespace YAML
+
 namespace MCEngine
 {
 

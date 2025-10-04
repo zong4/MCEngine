@@ -14,6 +14,7 @@ void MCEngine::Scene::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // Update all transform matrices
     auto &&view = m_Registry.view<TransformComponent, RelationshipComponent>();
     for (auto &&entity : view)
     {
@@ -25,6 +26,7 @@ void MCEngine::Scene::Update(float deltaTime)
         }
     }
 
+    // Update all scripts
     m_Registry.view<MCEngine::NativeScriptComponent>().each([&](auto &&entity, auto &&nsc) {
         if (!nsc.Instance)
         {
@@ -80,120 +82,9 @@ void MCEngine::Scene::Render(const Entity &camera) const
              sizeof(glm::mat4) + sizeof(glm::mat4)},
         });
 
-    // 2D
-    {
-        auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Texture");
-        shader->Bind();
-        auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
-        for (auto &&entity : spriteView)
-        {
-            auto &&[transform, sprite] =
-                spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
-            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-            shader->SetUniformVec4("u_Color", sprite.GetColor());
-            shader->SetUniformInt("u_Texture", 0);
-            sprite.GetTexturePtr()->Bind(0);
-            sprite.GetVAOPtr()->Render();
-        }
-        shader->Unbind();
-    }
-
-    // 3D
-    {
-        auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-        for (auto &&entity : meshView)
-        {
-            auto &&[transform, mesh] =
-                meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
-            auto &&shader = mesh.GetShaderPtr();
-            shader->Bind();
-
-            // Shadow
-            if (m_MainLight)
-            {
-                shader->SetUniformInt("u_ShadowMap", 0);
-                m_ShadowMapPtr->GetTexturePtr()->Bind(0);
-                shader->SetUniformMat4("u_LightView",
-                                       m_MainLight.GetComponent<MCEngine::TransformComponent>().GetViewMatrix());
-                shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
-            }
-
-            // Light
-            auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
-            for (auto &&entity : lightView)
-            {
-                auto &&[transform, light] =
-                    lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(entity);
-
-                if (light.GetType() == MCEngine::LightType::Directional)
-                {
-                    MCEngine::UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
-                        "UniformBuffer0",
-                        {{glm::value_ptr(glm::normalize(-transform.GetPosition())), sizeof(glm::vec3),
-                          sizeof(glm::mat4) + sizeof(glm::mat4) + sizeof(glm::vec4)},
-                         {glm::value_ptr(light.GetColor() * light.GetIntensity()), sizeof(glm::vec3),
-                          sizeof(glm::mat4) + sizeof(glm::mat4) + sizeof(glm::vec4) + sizeof(glm::vec4)}});
-                }
-                else if (light.GetType() == MCEngine::LightType::Point)
-                {
-                    shader->SetUniformVec3("u_PointLight.Position", transform.GetPosition());
-                    shader->SetUniformVec3("u_PointLight.Color", light.GetColor() * light.GetIntensity());
-                    shader->SetUniformFloat("u_PointLight.Constant", light.GetConstant());
-                    shader->SetUniformFloat("u_PointLight.Linear", light.GetLinear());
-                    shader->SetUniformFloat("u_PointLight.Quadratic", light.GetQuadratic());
-                }
-                else if (light.GetType() == MCEngine::LightType::Spot)
-                {
-                    shader->SetUniformVec3("u_SpotLight.Position", transform.GetPosition());
-                    shader->SetUniformVec3("u_SpotLight.Direction", -transform.GetUp());
-                    shader->SetUniformVec3("u_SpotLight.Color", light.GetColor() * light.GetIntensity());
-                    shader->SetUniformFloat("u_SpotLight.Constant", light.GetConstant());
-                    shader->SetUniformFloat("u_SpotLight.Linear", light.GetLinear());
-                    shader->SetUniformFloat("u_SpotLight.Quadratic", light.GetQuadratic());
-                    shader->SetUniformFloat("u_SpotLight.CutOff", glm::cos(glm::radians(light.GetInnerAngle())));
-                    shader->SetUniformFloat("u_SpotLight.OuterCutOff", glm::cos(glm::radians(light.GetOuterAngle())));
-                }
-            }
-
-            auto &&offsets = mesh.GetOffsets();
-            if (offsets.empty())
-            {
-                shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-            }
-            else
-            {
-                // Instance
-                for (int instanceCount = 0; instanceCount < offsets.size(); instanceCount++)
-                {
-                    shader->SetUniformMat4("u_Models[" + std::to_string(instanceCount) + "]",
-                                           offsets[instanceCount] * transform.GetTransformMatrix());
-                }
-            }
-
-            mesh.GetMaterial().Bind(shader, "u_Material");
-            mesh.GetVAOPtr()->Render();
-            shader->Unbind();
-        }
-    }
-
-    // Skybox
-    {
-        MCEngine::RendererCommand::DisableDepthTest();
-        auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Skybox");
-        shader->Bind();
-        auto &&view = m_Registry.view<MCEngine::SkyboxComponent>();
-        if (!view.empty())
-        {
-            auto &&skybox = m_Registry.get<MCEngine::SkyboxComponent>(view.front());
-            shader->SetUniformInt("u_Skybox", 0);
-            skybox.GetTextureCube()->Bind(0);
-            MCEngine::VAOLibrary::GetInstance().GetVAO("Skybox")->Render();
-        }
-        shader->Unbind();
-        MCEngine::RendererCommand::EnableDepthTest();
-    }
-
-    RenderReally();
+    Render2D();
+    Render3D();
+    RenderSkybox();
 }
 
 void MCEngine::Scene::Resize(float width, float height)
@@ -249,4 +140,128 @@ MCEngine::Entity MCEngine::Scene::AddLight(const std::string &name, const Transf
     Entity entity = AddEmptyEntity(name, transform);
     entity.AddComponent<LightComponent>(lightComponent);
     return entity;
+}
+
+void MCEngine::Scene::Render2D() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Texture");
+    shader->Bind();
+
+    auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
+    for (auto &&entity : spriteView)
+    {
+        auto &&[transform, sprite] =
+            spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
+        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+        shader->SetUniformVec4("u_Color", sprite.GetColor());
+        shader->SetUniformInt("u_Texture", 0);
+        sprite.GetTexturePtr()->Bind(0);
+        sprite.GetVAOPtr()->Render();
+    }
+
+    shader->Unbind();
+}
+
+void MCEngine::Scene::Render3D() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+    for (auto &&entity : meshView)
+    {
+        auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
+        auto &&shader = mesh.GetShaderPtr();
+        shader->Bind();
+
+        // Shadow
+        if (m_MainLight)
+        {
+            shader->SetUniformInt("u_ShadowMap", 0);
+            m_ShadowMapPtr->GetTexturePtr()->Bind(0);
+            shader->SetUniformMat4("u_LightView",
+                                   m_MainLight.GetComponent<MCEngine::TransformComponent>().GetViewMatrix());
+            shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
+        }
+
+        // Light
+        auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
+        for (auto &&entity : lightView)
+        {
+            auto &&[transform, light] = lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(entity);
+
+            if (light.GetType() == MCEngine::LightType::Directional)
+            {
+                MCEngine::UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
+                    "UniformBuffer0",
+                    {{glm::value_ptr(glm::normalize(-transform.GetPosition())), sizeof(glm::vec3),
+                      sizeof(glm::mat4) + sizeof(glm::mat4) + sizeof(glm::vec4)},
+                     {glm::value_ptr(light.GetColor() * light.GetIntensity()), sizeof(glm::vec3),
+                      sizeof(glm::mat4) + sizeof(glm::mat4) + sizeof(glm::vec4) + sizeof(glm::vec4)}});
+            }
+            else if (light.GetType() == MCEngine::LightType::Point)
+            {
+                shader->SetUniformVec3("u_PointLight.Position", transform.GetPosition());
+                shader->SetUniformVec3("u_PointLight.Color", light.GetColor() * light.GetIntensity());
+                shader->SetUniformFloat("u_PointLight.Constant", light.GetConstant());
+                shader->SetUniformFloat("u_PointLight.Linear", light.GetLinear());
+                shader->SetUniformFloat("u_PointLight.Quadratic", light.GetQuadratic());
+            }
+            else if (light.GetType() == MCEngine::LightType::Spot)
+            {
+                shader->SetUniformVec3("u_SpotLight.Position", transform.GetPosition());
+                shader->SetUniformVec3("u_SpotLight.Direction", -transform.GetUp());
+                shader->SetUniformVec3("u_SpotLight.Color", light.GetColor() * light.GetIntensity());
+                shader->SetUniformFloat("u_SpotLight.Constant", light.GetConstant());
+                shader->SetUniformFloat("u_SpotLight.Linear", light.GetLinear());
+                shader->SetUniformFloat("u_SpotLight.Quadratic", light.GetQuadratic());
+                shader->SetUniformFloat("u_SpotLight.CutOff", glm::cos(glm::radians(light.GetInnerAngle())));
+                shader->SetUniformFloat("u_SpotLight.OuterCutOff", glm::cos(glm::radians(light.GetOuterAngle())));
+            }
+        }
+
+        auto &&offsets = mesh.GetOffsets();
+        if (offsets.empty())
+        {
+            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+        }
+        else
+        {
+            // Instance
+            for (int instanceCount = 0; instanceCount < offsets.size(); instanceCount++)
+            {
+                shader->SetUniformMat4("u_Models[" + std::to_string(instanceCount) + "]",
+                                       offsets[instanceCount] * transform.GetTransformMatrix());
+            }
+        }
+
+        mesh.GetMaterial().Bind(shader, "u_Material");
+        mesh.GetVAOPtr()->Render();
+        shader->Unbind();
+    }
+}
+
+void MCEngine::Scene::RenderSkybox() const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    MCEngine::RendererCommand::DisableDepthTest();
+    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Skybox");
+    shader->Bind();
+
+    auto &&view = m_Registry.view<MCEngine::SkyboxComponent>();
+    if (!view.empty())
+    {
+        if (view.size() > 1)
+            ENGINE_LOG_WARNING("Multiple SkyboxComponents detected! Only the first one will be rendered.");
+
+        auto &&skybox = m_Registry.get<MCEngine::SkyboxComponent>(view.front());
+        shader->SetUniformInt("u_Skybox", 0);
+        skybox.GetTextureCube()->Bind(0);
+        MCEngine::VAOLibrary::GetInstance().GetVAO("Skybox")->Render();
+    }
+
+    shader->Unbind();
+    MCEngine::RendererCommand::EnableDepthTest();
 }

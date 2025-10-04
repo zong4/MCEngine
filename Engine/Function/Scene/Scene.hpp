@@ -35,6 +35,7 @@ public:
 
     void Resize(float width, float height);
 
+    // Entity management
     Entity AddEmptyEntity(const std::string &name, const TransformComponent &transform = TransformComponent());
     Entity Add2DObject(const std::string &name, const TransformComponent &transform,
                        const SpriteRendererComponent &spriteRenderer =
@@ -48,14 +49,20 @@ public:
 
 protected:
     std::string m_Name;
+
+    // Scene data
     entt::registry m_Registry = {};
     Entity m_MainCamera;
+
+    // Lighting
     Entity m_MainLight;
     std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMapPtr =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
 
 protected:
-    virtual void RenderReally() const {}
+    void Render2D() const;
+    void Render3D() const;
+    void RenderSkybox() const;
 };
 
 } // namespace MCEngine
