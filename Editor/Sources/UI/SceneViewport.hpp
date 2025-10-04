@@ -44,6 +44,8 @@ private:
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
     std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBO =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
+    std::unique_ptr<MCEngine::FrameBuffer> m_EntityPickingFBO =
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Integer, 1280, 720);
 };
 
 } // namespace MCEditor

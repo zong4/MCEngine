@@ -32,6 +32,7 @@ public:
     void Update(float deltaTime);
     void RenderShadowMap() const;
     void Render(const Entity &camera) const;
+    void RenderColorID(const Entity &camera) const;
 
     void Resize(float width, float height);
 

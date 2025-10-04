@@ -11,11 +11,6 @@ layout(std140) uniform UniformBuffer0
     // Position
     mat4 u_View;
     mat4 u_Projection;
-
-    // Light
-    vec3 u_CameraPosition;
-    vec3 u_DirectionalLightDirection;
-    vec3 u_DirectionalLightColor;
 };
 
 // Outputs

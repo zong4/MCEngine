@@ -87,6 +87,26 @@ void MCEngine::Scene::Render(const Entity &camera) const
     RenderSkybox();
 }
 
+void MCEngine::Scene::RenderColorID(const Entity &camera) const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    if (!camera || !camera.HasComponent<CameraComponent>() || !camera.HasComponent<TransformComponent>())
+        return;
+
+    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ColorIDPicking");
+    shader->Bind();
+    auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+    for (auto &&entity : meshView)
+    {
+        auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
+        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+        shader->SetUniformInt("u_EntityID", static_cast<int>(entity));
+        mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
+    }
+    shader->Unbind();
+}
+
 void MCEngine::Scene::Resize(float width, float height)
 {
     ENGINE_PROFILE_FUNCTION();

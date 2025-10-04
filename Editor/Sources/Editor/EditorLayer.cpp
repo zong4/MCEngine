@@ -129,7 +129,7 @@ void MCEditor::EditorLayer::OnRender() const
 
     auto &&sceneManager = SceneManager::GetInstance();
 
-    // Render shadow map once per frame
+    // Once per frame
     sceneManager.GetActiveScene()->RenderShadowMap();
 
     // Render viewports
