@@ -20,6 +20,10 @@ target("Core")
     add_files("Core/**/*.cpp")
     add_includedirs("Core", {public = true})
 
+    if is_plat("windows") then
+        add_syslinks("ole32", "comdlg32")
+    end
+
     -- Common
     add_packages("spdlog")
     add_packages("glm", {public = true})

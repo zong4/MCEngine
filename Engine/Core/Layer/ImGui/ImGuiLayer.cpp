@@ -1,8 +1,9 @@
-#include "ImGuiLayer.hpp"
+﻿#include "ImGuiLayer.hpp"
 
 #include "Event/EventDispatcher.hpp"
 #include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
+#include "Window/WindowUtility.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <imgui.h>
@@ -97,15 +98,19 @@ void MCEngine::ImGuiLayer::OnAttach()
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
     // Fonts
+    float dpiScale = WindowUtility::GetDPIScale();
+    LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
+    float fontSize = 18.0f * dpiScale;
     ImFont *fontChild = io.Fonts->AddFontFromFileTTF(
         (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf").c_str(),
-        18.0f);
+        fontSize);
     ImFont *fontCute = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Delius/Delius-Regular.ttf").c_str(), 18.0f);
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Delius/Delius-Regular.ttf").c_str(), fontSize);
     ImFont *fontActive = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Regular.ttf").c_str(), 18.0f);
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Regular.ttf").c_str(), fontSize);
     ImFont *fontActiveBold = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Bold.ttf").c_str(), 18.0f);
+        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Bold.ttf").c_str(), fontSize);
+    io.FontGlobalScale = 1.0f;
 
     // Set default font
     ImFont *customFont = fontCute;
