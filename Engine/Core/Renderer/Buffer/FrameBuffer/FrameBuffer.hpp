@@ -11,6 +11,7 @@ enum class FrameBufferType
     Color,
     Depth,
     Multisample,
+    Integer
 };
 
 class FrameBuffer
@@ -34,7 +35,9 @@ public:
     void Bind() const;
     void Unbind() const;
     void Blit(unsigned int resolveID) const;
+
     void Resize(int width, int height);
+    // int PickPixel(int x, int y) const;
 
 private:
     FrameBufferType m_Type;
