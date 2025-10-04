@@ -1,20 +1,11 @@
 #include "EditorLayer.hpp"
 
-#include "Scene/EditorScene.hpp"
-#include "Scene/EmptyScene.hpp"
-#include "Scene/GeometryScene.hpp"
-#include "Scene/InstanceScene.hpp"
-#include "Script/CameraController.hpp"
+#include "Scene/SceneManager.hpp"
 #include <imgui.h>
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr)
     : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    // Scene
-    m_EditorScene = std::make_shared<MCEditor::EditorScene>();
-    m_ActiveScene = std::make_unique<MCEditor::EmptyScene>();
 }
 
 MCEditor::EditorLayer::~EditorLayer() {}
@@ -23,38 +14,94 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    ImGuiLayer::OnEvent(event);
-
     if (!event.IsHandled())
     {
         MCEngine::EventDispatcher dispatcher(event);
 
+        // Store key states in KeyCodeLibrary
         dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
             MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
-            return true;
+            return false;
         });
+
+        // Handle key events for editor actions
+        dispatcher.Dispatch<MCEngine::KeyEvent>(std::function<bool(MCEngine::KeyEvent &)>(
+            std::bind(&EditorLayer::OnKeyEvent, this, std::placeholders::_1)));
     }
+
+    // Store the event in ImGuiLayer for further processing
+    ImGuiLayer::OnEvent(event);
+}
+
+bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
+{
+    LOG_ENGINE_TRACE(event.ToString());
+
+    if (event.GetAction() == 1) // Key Pressed
+    {
+        bool control = MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_CONTROL) ||
+                       MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_CONTROL) ||
+                       MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_SUPER) ||
+                       MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_SUPER);
+        bool shift = MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_SHIFT) ||
+                     MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_SHIFT);
+
+        switch (event.GetKeyCode())
+        {
+        case ENGINE_KEY_N:
+            if (control)
+                m_Action = EditorAction::NewScene;
+            break;
+        case ENGINE_KEY_O:
+            if (control)
+                m_Action = EditorAction::OpenScene;
+            break;
+        case ENGINE_KEY_S:
+            if (control && shift)
+                m_Action = EditorAction::SaveSceneAs;
+            break;
+        default:
+            break;
+        }
+    }
+    return true;
 }
 
 void MCEditor::EditorLayer::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    switch (m_Action)
+    {
+    case EditorAction::NewScene:
+        SceneManager::GetInstance().NewScene();
+        break;
+    case EditorAction::OpenScene:
+        SceneManager::GetInstance().OpenScene();
+        break;
+    case EditorAction::SaveSceneAs:
+        SceneManager::GetInstance().SaveSceneAs();
+        break;
+    default:
+        break;
+    }
+    m_Action = EditorAction::None;
+
     if (m_ScenePanel.IsFocused())
     {
-        m_EditorScene->Update(deltaTime);
+        SceneManager::GetInstance().GetEditorScene()->Update(deltaTime);
     }
-
-    m_ActiveScene->Update(deltaTime);
+    SceneManager::GetInstance().GetActiveScene()->Update(deltaTime);
 }
 
-void MCEditor::EditorLayer::OnRender()
+void MCEditor::EditorLayer::OnRender() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_ActiveScene->RenderShadowMap();
-    m_ScenePanel.Render(m_EditorScene->GetMainCamera(), m_ActiveScene);
-    m_GamePanel.Render(m_ActiveScene->GetMainCamera(), m_ActiveScene);
+    auto &&sceneManager = SceneManager::GetInstance();
+    sceneManager.GetActiveScene()->RenderShadowMap();
+    m_ScenePanel.Render(sceneManager.GetEditorScene()->GetMainCamera(), sceneManager.GetActiveScene());
+    m_GamePanel.Render(sceneManager.GetActiveScene()->GetMainCamera(), sceneManager.GetActiveScene());
 }
 
 void MCEditor::EditorLayer::RenderImGui()
@@ -65,11 +112,11 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Hierarchy");
-    m_HierarchyPanel.OnImGuiRender(m_ActiveScene->GetRegistry());
+    m_HierarchyPanel.OnImGuiRender(SceneManager::GetInstance().GetActiveScene());
     ImGui::End();
 
     ImGui::Begin("Inspector");
-    m_InspectorPanel.OnImGuiRender({m_HierarchyPanel.GetSelectedEntity(), &m_ActiveScene->GetRegistry()});
+    m_InspectorPanel.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity());
     ImGui::End();
 
     ImGui::Begin("File Browser");
@@ -83,38 +130,6 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::Begin("Game");
     m_GamePanel.OnImGuiRender();
     ImGui::End();
-}
-
-void MCEditor::EditorLayer::NewScene() { m_ActiveScene = std::make_shared<EmptyScene>(); }
-
-void MCEditor::EditorLayer::OpenScene()
-{
-    const char *filters[] = {"*.mcs"};
-    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/";
-    const char *file = tinyfd_openFileDialog("Open Scene", defaultPath.c_str(), 1, filters, nullptr, 0);
-    if (file)
-    {
-        m_ActiveScene = std::make_shared<MCEngine::Scene>();
-        MCEngine::SceneSerializer::Deserialize(m_ActiveScene, file);
-    }
-}
-
-void MCEditor::EditorLayer::SaveSceneAs() const
-{
-    const char *filters[] = {"*.mcs"};
-    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/" + m_ActiveScene->GetName() + ".mcs";
-    const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
-
-    if (file)
-    {
-        // Trim whitespace and ensure the file has the correct extension
-        std::string filepath = file ? std::string(file) : "";
-        filepath.erase(filepath.find_last_not_of(" \n\r\t") + 1);
-        if (!filepath.empty() && filepath.substr(filepath.size() - 4) != ".mcs")
-            filepath += ".mcs";
-
-        MCEngine::SceneSerializer::Serialize(m_ActiveScene, filepath);
-    }
 }
 
 void MCEditor::EditorLayer::RenderDockSpace()
@@ -184,13 +199,11 @@ void MCEditor::EditorLayer::RenderMenuBar()
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New", "Ctrl+N"))
-                NewScene();
-
+                SceneManager::GetInstance().NewScene();
             if (ImGui::MenuItem("Open...", "Ctrl+O"))
-                OpenScene();
-
+                SceneManager::GetInstance().OpenScene();
             if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-                SaveSceneAs();
+                SceneManager::GetInstance().SaveSceneAs();
 
             if (ImGui::MenuItem("Exit"))
             {

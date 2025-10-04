@@ -11,16 +11,16 @@ public:
     HierarchyPanel() = default;
     ~HierarchyPanel() = default;
 
-    entt::entity GetSelectedEntity() const { return m_SelectedEntity; }
+    MCEngine::Entity GetSelectedEntity() const { return m_SelectedEntity; }
 
 public:
-    void OnImGuiRender(entt::registry &registry);
+    void OnImGuiRender(std::shared_ptr<MCEngine::Scene> scene);
 
 private:
-    entt::entity m_SelectedEntity = entt::null;
+    MCEngine::Entity m_SelectedEntity;
 
 private:
-    void DrawEntityNode(entt::registry &registry, entt::entity entity);
+    void DrawEntityNode(MCEngine::Entity entity);
 };
 
 } // namespace MCEditor

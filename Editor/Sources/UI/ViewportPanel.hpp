@@ -16,7 +16,7 @@ public:
     bool IsFocused() const { return m_Focused; }
 
 public:
-    void Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene);
+    void Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene) const;
     void OnImGuiRender();
 
 private:

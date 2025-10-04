@@ -50,7 +50,7 @@ void MCEngine::ImGuiLayer::OnImGuiRender()
     EndRenderImGui();
 }
 
-void MCEngine::ImGuiLayer::BeginRenderImGui()
+void MCEngine::ImGuiLayer::BeginRenderImGui() const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -59,7 +59,7 @@ void MCEngine::ImGuiLayer::BeginRenderImGui()
     ImGui::NewFrame();
 }
 
-void MCEngine::ImGuiLayer::EndRenderImGui()
+void MCEngine::ImGuiLayer::EndRenderImGui() const
 {
     ENGINE_PROFILE_FUNCTION();
 

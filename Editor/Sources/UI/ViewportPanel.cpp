@@ -10,7 +10,7 @@ MCEditor::ViewportPanel::ViewportPanel()
     m_MultisampleFBOPtr = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
 }
 
-void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene)
+void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene) const
 {
     ENGINE_PROFILE_FUNCTION();
 

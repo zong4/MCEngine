@@ -26,9 +26,9 @@ protected:
     std::string m_ImGuiFilePath;
 
 protected:
-    void BeginRenderImGui();
+    void BeginRenderImGui() const;
     virtual void RenderImGui() = 0;
-    void EndRenderImGui();
+    void EndRenderImGui() const;
 
     void SetDarkThemeColors();
 };

@@ -8,6 +8,14 @@
 namespace MCEditor
 {
 
+enum class EditorAction
+{
+    None = 0,
+    NewScene,
+    OpenScene,
+    SaveSceneAs
+};
+
 class EditorLayer : public MCEngine::ImGuiLayer
 {
 
@@ -18,14 +26,12 @@ public:
 public:
     void OnEvent(MCEngine::Event &event) override;
     void OnUpdate(float deltaTime) override;
-    void OnRender() override;
+    void OnRender() const override;
+
+    bool OnKeyEvent(MCEngine::KeyEvent &event);
 
 private:
-    // Scene
-    std::shared_ptr<MCEngine::Scene> m_EditorScene;
-    std::shared_ptr<MCEngine::Scene> m_ActiveScene;
-
-    // UI
+    EditorAction m_Action = EditorAction::None;
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
@@ -36,12 +42,6 @@ protected:
     void RenderImGui() override;
 
 private:
-    // Scene
-    void NewScene();
-    void OpenScene();
-    void SaveSceneAs() const;
-
-    // UI
     void RenderDockSpace();
     void RenderMenuBar();
 };
