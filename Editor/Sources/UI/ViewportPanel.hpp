@@ -3,7 +3,7 @@
 #include <Function.hpp>
 #include <imgui.h>
 // After import imgui
-#include <ImGuizmo.h>
+#include "ImGuizmo/ImGuizmo.h"
 
 namespace MCEditor
 {
@@ -25,7 +25,6 @@ public:
     // Getters
     bool IsFocused() const { return m_Focused; }
     bool IsHovered() const { return m_Hovered; }
-    glm::vec2 GetViewportPos() const { return m_ViewportPos; }
     glm::vec2 GetViewportSize() const { return m_ViewportSize; }
 
 public:
@@ -36,7 +35,6 @@ private:
     bool m_Focused = false;
     bool m_Hovered = false;
     bool m_ViewportDirty = false;
-    glm::vec2 m_ViewportPos = {0.0f, 0.0f};
     glm::vec2 m_ViewportSize = {0.0f, 0.0f};
     std::unique_ptr<MCEngine::FrameBuffer> m_FBOPtr;
     std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBOPtr;

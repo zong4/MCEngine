@@ -39,14 +39,12 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
     m_Focused = ImGui::IsWindowFocused();
     m_Hovered = ImGui::IsWindowHovered();
 
-    ImVec2 viewportPos = ImGui::GetWindowPos();
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if (viewportSize.x > 0 && viewportSize.y > 0)
     {
         if (viewportSize.x != m_ViewportSize.x || viewportSize.y != m_ViewportSize.y)
         {
             m_ViewportDirty = true;
-            m_ViewportPos = {viewportPos.x, viewportPos.y};
             m_ViewportSize = {viewportSize.x, viewportSize.y};
         }
     }
@@ -56,11 +54,10 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
     // Gizmos
     if (selectedEntity && gizmoType != ImGuizmoType::None)
     {
+        ImGuizmo::BeginFrame();
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::SetDrawlist();
 
-        float windowWidth = ImGui::GetWindowWidth();
-        float windowHeight = ImGui::GetWindowHeight();
         ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, m_ViewportSize.x, m_ViewportSize.y);
 
         // Camera
@@ -74,10 +71,7 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
         glm::mat4 transform = transformComponent.GetTransformMatrix();
 
         // Snapping
-        bool snap = MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_CONTROL) ||
-                    MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_CONTROL) ||
-                    MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_SHIFT) ||
-                    MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_SHIFT);
+        bool snap = ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift);
         // Snap to 0.5m for translation/scale
         float snapValue = 0.5f;
         // Snap to 45 degrees for rotation
@@ -85,18 +79,16 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
             snapValue = 45.0f;
         float snapValues[3] = {snapValue, snapValue, snapValue};
         ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-                             ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+                             (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
+                             snap ? snapValues : nullptr);
 
         if (ImGuizmo::IsUsing())
         {
-            LOG_ENGINE_INFO("Using ImGuizmo");
-            transformComponent.SetPosition(glm::vec3(transform[3]));
-
-            // glm::vec3 position, rotation, scale;
-            // MCEngine::Math::DecomposeTransform(transform, position, rotation, scale);
-            // transformComponent.SetPosition(position);
-            // transformComponent.SetRotation(rotation);
-            // transformComponent.SetScale(scale);
+            glm::vec3 position, rotation, scale;
+            MCEngine::Math::DecomposeTransform(transform, position, rotation, scale);
+            transformComponent.SetPosition(position);
+            transformComponent.SetRotation(glm::degrees(rotation));
+            transformComponent.SetScale(scale);
         }
     }
 }

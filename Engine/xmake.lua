@@ -6,7 +6,6 @@ add_requires("glfw", "glad", "stb")
 
 -- GUI
 add_requires("imgui v1.92.1-docking", {configs = {glfw_opengl3 = true}})
-add_requires("imguizmo")
 
 -- ECS
 add_requires("entt", "yaml-cpp")
@@ -30,7 +29,6 @@ target("Core")
 
     -- GUI
     add_packages("imgui", {public = true});
-    add_packages("imguizmo", {public = true})
 
 -- Function Target
 target("Function")

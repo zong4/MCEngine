@@ -31,7 +31,7 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
             std::bind(&EditorLayer::OnKeyEvent, this, std::placeholders::_1)));
     }
 
-    // Capture events first
+    // Capture events
     ImGuiLayer::OnEvent(event);
 }
 
