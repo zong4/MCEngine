@@ -16,28 +16,34 @@ enum class ImGuizmoType
     Scale = ImGuizmo::OPERATION::SCALE
 };
 
-class ViewportPanel
+class SceneViewport
 {
 public:
-    ViewportPanel();
-    ~ViewportPanel() = default;
+    SceneViewport() = default;
+    ~SceneViewport() = default;
 
     // Getters
     bool IsFocused() const { return m_Focused; }
     bool IsHovered() const { return m_Hovered; }
     glm::vec2 GetViewportSize() const { return m_ViewportSize; }
 
+    // Setters
+    void SetCamera(MCEngine::Entity camera) { m_Camera = camera; }
+
 public:
-    void Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene) const;
+    void Render(std::shared_ptr<MCEngine::Scene> scene) const;
     void OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType);
 
 private:
+    MCEngine::Entity m_Camera;
     bool m_Focused = false;
     bool m_Hovered = false;
     bool m_ViewportDirty = false;
     glm::vec2 m_ViewportSize = {0.0f, 0.0f};
-    std::unique_ptr<MCEngine::FrameBuffer> m_FBO;
-    std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBO;
+    std::unique_ptr<MCEngine::FrameBuffer> m_FBO =
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
+    std::unique_ptr<MCEngine::FrameBuffer> m_MultisampleFBO =
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
 };
 
 } // namespace MCEditor

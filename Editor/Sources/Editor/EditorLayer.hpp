@@ -3,7 +3,8 @@
 #include "UI/FileBrowserPanel.hpp"
 #include "UI/HierarchyPanel.hpp"
 #include "UI/InspectorPanel.hpp"
-#include "UI/ViewportPanel.hpp"
+#include "UI/SceneViewport.hpp"
+#include "UI/Viewport.hpp"
 
 namespace MCEditor
 {
@@ -21,7 +22,7 @@ class EditorLayer : public MCEngine::ImGuiLayer
 
 public:
     EditorLayer(const std::shared_ptr<MCEngine::Window> &window);
-    virtual ~EditorLayer() override;
+    virtual ~EditorLayer() override = default;
 
     // Getters
     ImGuizmoType GetGizmoType() const { return m_GizmoType; }
@@ -36,11 +37,15 @@ public:
 private:
     EditorAction m_Action = EditorAction::None;
     ImGuizmoType m_GizmoType = ImGuizmoType::None;
+
+    // Panels
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
-    ViewportPanel m_ScenePanel;
-    ViewportPanel m_GamePanel;
+
+    // Viewports
+    Viewport m_GameViewport;
+    SceneViewport m_SceneViewport;
 
 protected:
     void RenderImGui() override;

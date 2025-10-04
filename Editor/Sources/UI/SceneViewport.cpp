@@ -1,44 +1,29 @@
-#include "ViewportPanel.hpp"
+#include "SceneViewport.hpp"
 
-#include "Scene/SceneManager.hpp"
-
-MCEditor::ViewportPanel::ViewportPanel()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_FBO = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Color, 1280, 720);
-    m_MultisampleFBO = std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Multisample, 1280, 720, 4);
-}
-
-void MCEditor::ViewportPanel::Render(MCEngine::Entity camera, std::shared_ptr<MCEngine::Scene> scene) const
+void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) const
 {
     ENGINE_PROFILE_FUNCTION();
 
     if (m_ViewportDirty)
     {
-        if (camera.HasComponent<MCEngine::CameraComponent>())
-        {
-            camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
-        }
-
+        m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
         m_FBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         m_MultisampleFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
     }
 
     m_MultisampleFBO->Bind();
     MCEngine::RendererCommand::Clear();
-    scene->Render(camera);
+    scene->Render(m_Camera);
     m_MultisampleFBO->Blit(m_FBO->GetRendererID());
     m_MultisampleFBO->Unbind();
 }
 
-void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType)
+void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType)
 {
     ENGINE_PROFILE_FUNCTION();
 
     m_Focused = ImGui::IsWindowFocused();
     m_Hovered = ImGui::IsWindowHovered();
-
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if (viewportSize.x > 0 && viewportSize.y > 0)
     {
@@ -57,13 +42,12 @@ void MCEditor::ViewportPanel::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::SetDrawlist();
 
+        // ImGuizmo rect
         ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, m_ViewportSize.x, m_ViewportSize.y);
 
         // Camera
-        auto &&cameraEntity = SceneManager::GetInstance().GetEditorScene()->GetMainCamera();
-        const glm::mat4 &cameraProjection =
-            cameraEntity.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
-        const glm::mat4 &cameraView = cameraEntity.GetComponent<MCEngine::TransformComponent>().GetViewMatrix();
+        const glm::mat4 &cameraProjection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
+        const glm::mat4 &cameraView = m_Camera.GetComponent<MCEngine::TransformComponent>().GetViewMatrix();
 
         // Entity transform
         auto &&transformComponent = selectedEntity.GetComponent<MCEngine::TransformComponent>();

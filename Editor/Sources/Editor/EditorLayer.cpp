@@ -5,13 +5,17 @@
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
     : ImGuiLayer(window, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
 {
-}
+    ENGINE_PROFILE_FUNCTION();
 
-MCEditor::EditorLayer::~EditorLayer() {}
+    m_SceneViewport.SetCamera(SceneManager::GetInstance().GetEditorScene()->GetMainCamera());
+}
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
+
+    // Capture events in ImGuiLayer first
+    ImGuiLayer::OnEvent(event);
 
     // Store key states in KeyCodeLibrary
     if (!event.IsHandled())
@@ -30,15 +34,10 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
         dispatcher.Dispatch<MCEngine::KeyEvent>(std::function<bool(MCEngine::KeyEvent &)>(
             std::bind(&EditorLayer::OnKeyEvent, this, std::placeholders::_1)));
     }
-
-    // Capture events
-    ImGuiLayer::OnEvent(event);
 }
 
 bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
 {
-    // LOG_ENGINE_TRACE(event.ToString());
-
     // Key Pressed for imguizmo type change
     if (event.GetAction() == 1)
     {
@@ -117,7 +116,7 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
     }
     m_Action = EditorAction::None;
 
-    if (m_ScenePanel.IsFocused())
+    if (m_SceneViewport.IsFocused())
     {
         SceneManager::GetInstance().GetEditorScene()->Update(deltaTime);
     }
@@ -129,9 +128,13 @@ void MCEditor::EditorLayer::OnRender() const
     ENGINE_PROFILE_FUNCTION();
 
     auto &&sceneManager = SceneManager::GetInstance();
+
+    // Render shadow map once per frame
     sceneManager.GetActiveScene()->RenderShadowMap();
-    m_ScenePanel.Render(sceneManager.GetEditorScene()->GetMainCamera(), sceneManager.GetActiveScene());
-    m_GamePanel.Render(sceneManager.GetActiveScene()->GetMainCamera(), sceneManager.GetActiveScene());
+
+    // Render viewports
+    m_GameViewport.Render(sceneManager.GetActiveScene());
+    m_SceneViewport.Render(sceneManager.GetActiveScene());
 }
 
 void MCEditor::EditorLayer::RenderImGui()
@@ -154,12 +157,12 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Game");
-    m_GamePanel.OnImGuiRender(MCEngine::Entity(), m_GizmoType);
+    m_GameViewport.OnImGuiRender();
     ImGui::End();
 
     ImGui::Begin("Scene");
-    m_ScenePanel.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity(), m_GizmoType);
-    SetBlockEvents(!m_ScenePanel.IsFocused() && !m_ScenePanel.IsHovered());
+    m_SceneViewport.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity(), m_GizmoType);
+    SetBlockEvents(!m_SceneViewport.IsFocused() && !m_SceneViewport.IsHovered());
     ImGui::End();
 }
 
