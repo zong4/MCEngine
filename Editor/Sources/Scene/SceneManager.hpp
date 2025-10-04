@@ -24,7 +24,8 @@ public:
 
 private:
     std::shared_ptr<MCEngine::Scene> m_EditorScene;
-    std::shared_ptr<MCEngine::Scene> m_ActiveScene;
+    std::shared_ptr<MCEngine::Scene> m_ActiveScene; // todo: add active bool in scene class
+    std::vector<std::shared_ptr<MCEngine::Scene>> m_Scenes;
 
 private:
     SceneManager();

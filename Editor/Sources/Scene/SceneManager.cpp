@@ -47,4 +47,5 @@ MCEditor::SceneManager::SceneManager()
 
     m_EditorScene = std::make_shared<MCEditor::EditorScene>();
     m_ActiveScene = std::make_shared<MCEditor::EmptyScene>();
+    m_Scenes.push_back(m_ActiveScene);
 }
