@@ -48,6 +48,15 @@ void MCEngine::Shader::SetUniformInt(const std::string &name, int value)
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
 
+void MCEngine::Shader::SetUniformUInt(const std::string &name, unsigned int value)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform1ui(location, value);
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+}
+
 void MCEngine::Shader::SetUniformFloat(const std::string &name, float value)
 {
     ENGINE_PROFILE_FUNCTION();

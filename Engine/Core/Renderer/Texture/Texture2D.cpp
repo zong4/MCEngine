@@ -2,15 +2,12 @@
 
 #include <glad/glad.h>
 
-MCEngine::Texture2D::Texture2D(int width, int height, void *data) : Texture(), m_Format(GL_RGBA), m_Samples(0)
+MCEngine::Texture2D::Texture2D(int width, int height, void *data)
+    : Texture(), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA), m_Type(GL_UNSIGNED_BYTE), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glGenTextures(1, &m_RendererID);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, data);
-    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+    CreateTexture(width, height, m_InternalFormat, m_Format, m_Type, data);
 
     // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -20,42 +17,44 @@ MCEngine::Texture2D::Texture2D(int width, int height, void *data) : Texture(), m
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-MCEngine::Texture2D::Texture2D(int width, int height, int samples) : Texture(), m_Format(GL_RGBA), m_Samples(samples)
+MCEngine::Texture2D::Texture2D(int width, int height, int samples)
+    : Texture(), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA), m_Type(GL_UNSIGNED_BYTE), m_Samples(samples)
 {
     ENGINE_PROFILE_FUNCTION();
 
     glGenTextures(1, &m_RendererID);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
 
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, m_Format, width, height, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, m_InternalFormat, width, height, GL_TRUE);
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 }
 
-MCEngine::Texture2D::Texture2D(int width, int height) : Texture(), m_Format(GL_DEPTH_COMPONENT), m_Samples(0)
+MCEngine::Texture2D::Texture2D(int width, int height, unsigned int internalFormat, unsigned int format,
+                               unsigned int type)
+    : Texture(), m_InternalFormat(internalFormat), m_Format(format), m_Type(type), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    glGenTextures(1, &m_RendererID);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_FLOAT, nullptr);
-    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+    CreateTexture(width, height, internalFormat, format, type, nullptr);
 
     // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    if (m_Format == GL_DEPTH_COMPONENT)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    }
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Samples(0)
+MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Type(GL_UNSIGNED_BYTE), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -67,8 +66,28 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Samples(0
         int width, height, channels;
         unsigned char *data = LoadImage(path, width, height, channels, true);
 
-        m_Format = (channels == 4) ? GL_RGBA : GL_RGB;
-        glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, data);
+        if (channels == 1)
+        {
+            m_Format = GL_RED;
+            m_InternalFormat = GL_R8;
+        }
+        else if (channels == 3)
+        {
+            m_Format = GL_RGB;
+            m_InternalFormat = GL_RGB8;
+        }
+        else if (channels == 4)
+        {
+            m_Format = GL_RGBA;
+            m_InternalFormat = GL_RGBA8;
+        }
+        else
+        {
+            LOG_ENGINE_ERROR("Unsupported number of channels: " + std::to_string(channels) + " in texture: " + path);
+            FreeImage(data);
+            return;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_Format, m_Type, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
@@ -96,6 +115,12 @@ void MCEngine::Texture2D::Bind(unsigned int slot) const
 {
     ENGINE_PROFILE_FUNCTION();
 
+    if (m_Samples > 0)
+    {
+        LOG_ENGINE_WARN("Trying to bind a multisampled texture to slot: " + std::to_string(slot));
+        return;
+    }
+
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
@@ -116,16 +141,26 @@ void MCEngine::Texture2D::Resize(int width, int height)
     if (m_Samples == 0)
     {
         glBindTexture(GL_TEXTURE_2D, m_RendererID);
-        m_Format == GL_DEPTH_COMPONENT
-            ? glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_FLOAT, nullptr)
-            : glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_Format, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_Format, m_Type, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
     {
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_Format, width, height, GL_TRUE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_InternalFormat, width, height, GL_TRUE);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     }
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 }
+
+void MCEngine::Texture2D::CreateTexture(int width, int height, unsigned int internalFormat, unsigned int format,
+                                        unsigned int type, void *data)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    glGenTextures(1, &m_RendererID);
+    glBindTexture(GL_TEXTURE_2D, m_RendererID);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+};

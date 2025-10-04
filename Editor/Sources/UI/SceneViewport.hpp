@@ -31,8 +31,8 @@ public:
     void SetCamera(MCEngine::Entity camera) { m_Camera = camera; }
 
 public:
-    void Render(std::shared_ptr<MCEngine::Scene> scene) const;
-    void OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType);
+    void Render(std::shared_ptr<MCEngine::Scene> scene);
+    void OnImGuiRender(MCEngine::Entity &selectedEntity, ImGuizmoType gizmoType);
 
 private:
     MCEngine::Entity m_Camera;

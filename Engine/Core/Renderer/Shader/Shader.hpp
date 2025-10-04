@@ -16,6 +16,7 @@ public:
 
     // Setters
     void SetUniformInt(const std::string &name, int value);
+    void SetUniformUInt(const std::string &name, unsigned int value);
     void SetUniformFloat(const std::string &name, float value);
     void SetUniformVec3(const std::string &name, glm::vec3 vector3);
     void SetUniformVec4(const std::string &name, glm::vec4 vector4);

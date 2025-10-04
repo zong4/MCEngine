@@ -20,6 +20,8 @@ public:
 
     // Getters
     entt::entity GetHandle() const { return m_Entity; }
+    entt::registry &GetRegistry() const { return *m_Registry; }
+    void SetHandle(entt::entity handle) { m_Entity = handle; }
 
 public:
     // clang-format off

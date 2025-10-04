@@ -9,7 +9,20 @@ MCEditor::SceneManager &MCEditor::SceneManager::GetInstance()
     return instance;
 }
 
-void MCEditor::SceneManager::NewScene() { m_ActiveScene = std::make_shared<MCEditor::EmptyScene>(); }
+void MCEditor::SceneManager::SetActiveScene(const std::shared_ptr<MCEngine::Scene> &scene)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_ActiveScene = scene;
+    if (m_ActiveScene)
+        m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
+}
+
+void MCEditor::SceneManager::NewScene()
+{
+    m_ActiveScene = std::make_shared<MCEditor::EmptyScene>();
+    m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
+}
 
 void MCEditor::SceneManager::OpenScene()
 {
@@ -20,6 +33,7 @@ void MCEditor::SceneManager::OpenScene()
     {
         m_ActiveScene = std::make_shared<MCEngine::Scene>();
         MCEngine::SceneSerializer::Deserialize(m_ActiveScene, file);
+        m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
     }
 }
 
@@ -46,6 +60,7 @@ MCEditor::SceneManager::SceneManager()
     ENGINE_PROFILE_FUNCTION();
 
     m_EditorScene = std::make_shared<MCEditor::EditorScene>();
-    m_ActiveScene = std::make_shared<MCEditor::EmptyScene>();
+
+    NewScene();
     m_Scenes.push_back(m_ActiveScene);
 }

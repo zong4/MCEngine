@@ -30,20 +30,16 @@ public:
 public:
     void OnEvent(MCEngine::Event &event) override;
     void OnUpdate(float deltaTime) override;
-    void OnRender() const override;
+    void OnRender() override;
 
     bool OnKeyEvent(MCEngine::KeyEvent &event);
 
 private:
     EditorAction m_Action = EditorAction::None;
     ImGuizmoType m_GizmoType = ImGuizmoType::None;
-
-    // Panels
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
-
-    // Viewports
     Viewport m_GameViewport;
     SceneViewport m_SceneViewport;
 

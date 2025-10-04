@@ -96,14 +96,28 @@ void MCEngine::Scene::RenderColorID(const Entity &camera) const
 
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ColorIDPicking");
     shader->Bind();
+
+    // Pick 2D
+    auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
+    for (auto &&entity : spriteView)
+    {
+        auto &&[transform, sprite] =
+            spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
+        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+        shader->SetUniformUInt("u_EntityID", static_cast<unsigned int>(entity) + 1); // 0 = no entity
+        sprite.GetVAO()->Render();
+    }
+
+    // Pick 3D
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto &&entity : meshView)
     {
         auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-        shader->SetUniformInt("u_EntityID", static_cast<int>(entity));
+        shader->SetUniformUInt("u_EntityID", static_cast<unsigned int>(entity) + 1); // 0 = no entity
         mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
     }
+
     shader->Unbind();
 }
 

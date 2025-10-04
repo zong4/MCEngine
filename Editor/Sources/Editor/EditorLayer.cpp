@@ -123,7 +123,7 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
     SceneManager::GetInstance().GetActiveScene()->Update(deltaTime);
 }
 
-void MCEditor::EditorLayer::OnRender() const
+void MCEditor::EditorLayer::OnRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -145,11 +145,12 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Hierarchy");
-    m_HierarchyPanel.OnImGuiRender(SceneManager::GetInstance().GetActiveScene());
+    m_HierarchyPanel.OnImGuiRender(SceneManager::GetInstance().GetActiveScene(),
+                                   SceneManager::GetInstance().GetSelectedEntity());
     ImGui::End();
 
     ImGui::Begin("Inspector");
-    m_InspectorPanel.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity());
+    m_InspectorPanel.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity());
     ImGui::End();
 
     ImGui::Begin("File Browser");
@@ -161,7 +162,7 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Scene");
-    m_SceneViewport.OnImGuiRender(m_HierarchyPanel.GetSelectedEntity(), m_GizmoType);
+    m_SceneViewport.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity(), m_GizmoType);
     SetBlockEvents(!m_SceneViewport.IsFocused() && !m_SceneViewport.IsHovered());
     ImGui::End();
 }

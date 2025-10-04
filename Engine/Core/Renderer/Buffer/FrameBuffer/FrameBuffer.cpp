@@ -82,17 +82,18 @@ void MCEngine::FrameBuffer::Resize(int width, int height)
     Unbind();
 }
 
-int MCEngine::FrameBuffer::PickPixel(int x, int y) const
+unsigned int MCEngine::FrameBuffer::PickPixel(int x, int y) const
 {
     ENGINE_PROFILE_FUNCTION();
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+    unsigned int pixelData;
+    glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixelData);
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+
     glReadBuffer(GL_NONE);
-
-    int pixelData;
-    glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return pixelData;
 }
@@ -115,7 +116,7 @@ void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
     }
     else if (m_Type == FrameBufferType::Integer)
     {
-        m_Texture = std::make_shared<Texture2D>(width, height, GL_R32I, GL_RED_INTEGER, GL_INT);
+        m_Texture = std::make_shared<Texture2D>(width, height, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
     }
     else

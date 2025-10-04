@@ -1,6 +1,6 @@
 #include "SceneViewport.hpp"
 
-void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) const
+void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -18,6 +18,8 @@ void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) con
         m_EntityPickingFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         LOG_EDITOR_TRACE("SceneViewport resized to: (" + std::to_string((int)m_ViewportSize.x) + ", " +
                          std::to_string((int)m_ViewportSize.y) + ")");
+
+        m_ViewportDirty = false;
     }
 
     m_MultisampleFBO->Bind();
@@ -32,7 +34,7 @@ void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene) con
     m_EntityPickingFBO->Unbind();
 }
 
-void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImGuizmoType gizmoType)
+void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, ImGuizmoType gizmoType)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -49,12 +51,6 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
     }
     ImGui::Image((ImTextureID)(intptr_t)m_FBO->GetTexture()->GetRendererID(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 
-    // Print cursor position
-    ImVec2 mouseInViewport = {ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetWindowContentRegionMin().x,
-                              ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetWindowContentRegionMin().y};
-    int pixelData = m_EntityPickingFBO->PickPixel((int)mouseInViewport.x, (int)(m_ViewportSize.y - mouseInViewport.y));
-    ImGui::Text("Cursor: (%.1f, %.1f) - Entity ID: %d", mouseInViewport.x, mouseInViewport.y, pixelData - 1);
-
     // Gizmos
     if (selectedEntity && gizmoType != ImGuizmoType::None)
     {
@@ -63,7 +59,9 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
         ImGuizmo::SetDrawlist();
 
         // ImGuizmo rect
-        ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, m_ViewportSize.x, m_ViewportSize.y);
+        ImGuizmo::SetRect(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x,
+                          ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, m_ViewportSize.x,
+                          m_ViewportSize.y);
 
         // Camera
         const glm::mat4 &cameraProjection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
@@ -93,5 +91,17 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity selectedEntity, ImG
             transformComponent.SetRotation(glm::degrees(rotation));
             transformComponent.SetScale(scale);
         }
+    }
+
+    // Entity picking
+    ImVec2 mouseInViewport = {ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetWindowContentRegionMin().x,
+                              ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetWindowContentRegionMin().y};
+    if (m_Hovered && !ImGuizmo::IsUsing() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        selectedEntity =
+            MCEngine::Entity((entt::entity)(m_EntityPickingFBO->PickPixel((int)mouseInViewport.x,
+                                                                          (int)(m_ViewportSize.y - mouseInViewport.y)) -
+                                            1),
+                             &selectedEntity.GetRegistry());
     }
 }
