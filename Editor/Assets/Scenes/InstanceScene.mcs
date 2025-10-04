@@ -2,6 +2,24 @@ Scene: InstanceScene
 Entities:
   - Entity: 1
     TagComponent:
+      Tag: MainCamera
+    TransformComponent:
+      Position: [0, 5, 8]
+      Rotation: [-30, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Type: 1
+      Width: 5.94999981
+      Height: 4.01999998
+      Scale: 1
+      FOV: 45
+      NearClip: 0.100000001
+      FarClip: 100
+    RelationshipComponent:
+      Children:
+        []
+  - Entity: 0
+    TagComponent:
       Tag: Cubes
     TransformComponent:
       Position: [0, 0, 0]
@@ -42,24 +60,6 @@ Entities:
         SpecularStrength: 0.5
         Shininess: 32
       Shader: Instance
-    RelationshipComponent:
-      Children:
-        []
-  - Entity: 0
-    TagComponent:
-      Tag: MainCamera
-    TransformComponent:
-      Position: [0, 5, 8]
-      Rotation: [-30, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Type: 1
-      Width: 5.94999981
-      Height: 4.01999998
-      Scale: 1
-      FOV: 45
-      NearClip: 0.100000001
-      FarClip: 100
     RelationshipComponent:
       Children:
         []

@@ -14,6 +14,7 @@ struct convert<glm::vec3>
         node.push_back(rhs.x);
         node.push_back(rhs.y);
         node.push_back(rhs.z);
+        node.SetStyle(EmitterStyle::Flow);
         return node;
     }
     static bool decode(const Node &node, glm::vec3 &rhs)
@@ -40,6 +41,7 @@ struct convert<glm::vec4>
         node.push_back(rhs.y);
         node.push_back(rhs.z);
         node.push_back(rhs.w);
+        node.SetStyle(EmitterStyle::Flow);
         return node;
     }
     static bool decode(const Node &node, glm::vec4 &rhs)
@@ -66,6 +68,7 @@ struct convert<glm::mat4>
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 node.push_back(rhs[i][j]);
+        node.SetStyle(EmitterStyle::Flow);
         return node;
     }
     static bool decode(const Node &node, glm::mat4 &rhs)
@@ -139,11 +142,7 @@ bool MCEngine::SceneSerializer::Deserialize(std::shared_ptr<Scene> scene, const 
 {
     ENGINE_PROFILE_FUNCTION();
 
-    std::ifstream stream(filepath);
-    std::stringstream strStream;
-    strStream << stream.rdbuf();
-
-    YAML::Node data = YAML::Load(strStream.str());
+    YAML::Node data = YAML::LoadFile(filepath);
     if (!data["Scene"])
         return false;
 

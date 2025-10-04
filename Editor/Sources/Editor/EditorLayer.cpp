@@ -2,6 +2,8 @@
 
 #include "Scene/SceneManager.hpp"
 #include <imgui.h>
+// After import imgui
+#include <ImGuizmo.h>
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &windowPtr)
     : ImGuiLayer(windowPtr, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
@@ -123,12 +125,12 @@ void MCEditor::EditorLayer::RenderImGui()
     m_FileBrowserPanel.OnImGuiRender(std::string(PROJECT_ROOT) + "Editor/Assets");
     ImGui::End();
 
-    ImGui::Begin("Scene");
-    m_ScenePanel.OnImGuiRender();
-    ImGui::End();
-
     ImGui::Begin("Game");
     m_GamePanel.OnImGuiRender();
+    ImGui::End();
+
+    ImGui::Begin("Scene");
+    m_ScenePanel.OnImGuiRender();
     ImGui::End();
 }
 
