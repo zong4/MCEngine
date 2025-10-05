@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorLayer.hpp"
+#include <Function.hpp>
 
 namespace MCEditor
 {

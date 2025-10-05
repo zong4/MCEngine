@@ -1,5 +1,8 @@
 #include "Editor.hpp"
 
+#include "EditorConfig.hpp"
+#include "EditorLayer.hpp"
+
 MCEditor::Editor::Editor(const MCEngine::WindowProperty &props) : Application(props)
 {
     ENGINE_PROFILE_FUNCTION();

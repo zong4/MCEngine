@@ -100,7 +100,7 @@ void MCEngine::ImGuiLayer::OnAttach()
     // Fonts
     float dpiScale = WindowUtility::GetDPIScale();
     LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
-    float fontSize = 18.0f * dpiScale;
+    float fontSize = 10.0f * dpiScale;
     ImFont *fontChild = io.Fonts->AddFontFromFileTTF(
         (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf").c_str(),
         fontSize);

@@ -1,5 +1,6 @@
 #include "SceneManager.hpp"
 
+#include "Editor/EditorConfig.hpp"
 #include "EditorScene.hpp"
 #include "EmptyScene.hpp"
 
@@ -27,8 +28,8 @@ void MCEditor::SceneManager::NewScene()
 void MCEditor::SceneManager::OpenScene()
 {
     const char *filters[] = {"*.mcs"};
-    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/";
-    const char *file = tinyfd_openFileDialog("Open Scene", defaultPath.c_str(), 1, filters, nullptr, 0);
+    const char *file = tinyfd_openFileDialog("Open Scene", EditorConfig::GetInstance().GetScenesPath().c_str(), 1,
+                                             filters, nullptr, 0);
     if (file)
     {
         m_ActiveScene = std::make_shared<MCEngine::Scene>();
@@ -40,7 +41,7 @@ void MCEditor::SceneManager::OpenScene()
 void MCEditor::SceneManager::SaveSceneAs() const
 {
     const char *filters[] = {"*.mcs"};
-    std::string defaultPath = std::string(PROJECT_ROOT) + "/Editor/Assets/Scenes/" + m_ActiveScene->GetName() + ".mcs";
+    std::string defaultPath = EditorConfig::GetInstance().GetScenesPath() + m_ActiveScene->GetName() + ".mcs";
     const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
 
     if (file)

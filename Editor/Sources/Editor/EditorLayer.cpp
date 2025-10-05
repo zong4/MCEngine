@@ -1,9 +1,10 @@
 #include "EditorLayer.hpp"
 
+#include "EditorConfig.hpp"
 #include "Scene/SceneManager.hpp"
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
-    : ImGuiLayer(window, std::string(PROJECT_ROOT) + "/Editor/Configs/imgui.ini", "EditorLayer")
+    : ImGuiLayer(window, EditorConfig::GetInstance().GetConfigsPath() + "/imgui.ini", "EditorLayer")
 {
     ENGINE_PROFILE_FUNCTION();
 

@@ -1,3 +1,5 @@
+add_requires("nlohmann_json")
+
 target("Editor")
     set_kind("binary")
 
@@ -9,5 +11,8 @@ target("Editor")
     add_deps("Function")
     add_deps("Engine")
     
+    add_headerfiles("Sources/**/*.hpp")
     add_files("Sources/**/*.cpp")
     add_includedirs("Sources")
+
+    add_packages("nlohmann_json")
