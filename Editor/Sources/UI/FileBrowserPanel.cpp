@@ -10,8 +10,8 @@ MCEditor::FileBrowserPanel::FileBrowserPanel() : m_CurrentDirectory(ConfigManage
 
     // Load icons
     m_DirectoryIcon =
-        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() + "Directory.png");
-    m_FileIcon = std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() + "File.png");
+        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "Directory.png");
+    m_FileIcon = std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "File.png");
 }
 
 void MCEditor::FileBrowserPanel::OnImGuiRender()
@@ -72,7 +72,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
                 }
                 else
                 {
-                    if (relativePath.extension() == ".mcscene")
+                    if (ConfigManager::IsScene(path))
                     {
                         SceneManager::GetInstance().OpenScene(path.string());
                     }

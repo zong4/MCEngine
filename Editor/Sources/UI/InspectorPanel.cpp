@@ -170,7 +170,7 @@ void MCEditor::InspectorPanel::OnImGuiRender() const
                         std::filesystem::relative(filepath, ConfigManager::GetInstance().GetAssetsPath()).string();
                     if (std::filesystem::is_regular_file(filepath))
                     {
-                        if (filepath.extension() == ".jpg" || filepath.extension() == ".png")
+                        if (ConfigManager::IsTexture(filepath))
                         {
                             if (selectedEntity)
                             {

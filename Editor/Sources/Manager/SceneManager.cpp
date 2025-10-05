@@ -56,7 +56,7 @@ void MCEditor::SceneManager::OpenSceneDialog()
 void MCEditor::SceneManager::SaveSceneAsDialog() const
 {
     const char *filters[] = {"*.mcscene"};
-    std::string defaultPath = ConfigManager::GetInstance().GetScenesPath() + m_ActiveScene->GetName() + ".mcscene";
+    std::string defaultPath = ConfigManager::GetInstance().GetScenesPath() / (m_ActiveScene->GetName() + ".mcscene");
     const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
 
     if (file)

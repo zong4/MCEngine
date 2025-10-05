@@ -13,15 +13,11 @@
         "Texture": [
             ".png",
             ".jpg",
-            ".jpeg",
-            ".bmp",
-            ".tga",
-            ".gif"
+            ".jpeg"
         ],
         "Audio": [
             ".wav",
-            ".mp3",
-            ".ogg"
+            ".mp3"
         ]
     }
 }

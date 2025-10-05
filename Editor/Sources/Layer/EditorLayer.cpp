@@ -5,7 +5,7 @@
 #include <imgui.h>
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
-    : ImGuiLayer(window, ConfigManager::GetInstance().GetConfigsPath() + "/imgui.ini", "EditorLayer")
+    : ImGuiLayer(window, ConfigManager::GetInstance().GetConfigsPath() / "imgui.ini", "EditorLayer")
 {
 }
 
@@ -164,7 +164,7 @@ void MCEditor::EditorLayer::RenderImGui()
                 }
                 else
                 {
-                    if (filepath.extension() == ".mcscene")
+                    if (ConfigManager::IsScene(filepath))
                     {
                         SceneManager::GetInstance().OpenScene(path);
                     }

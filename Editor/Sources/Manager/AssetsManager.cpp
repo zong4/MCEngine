@@ -15,7 +15,7 @@ void MCEditor::AssetsManager::AddAsset(const std::filesystem::path &filepath)
     std::string relativePath =
         std::filesystem::relative(filepath, ConfigManager::GetInstance().GetAssetsPath()).string();
 
-    if (filepath.extension() == ".png" || filepath.extension() == ".jpg" || filepath.extension() == ".jpeg")
+    if (ConfigManager::IsTexture(filepath))
     {
         MCEngine::TextureLibrary::GetInstance().AddTexture(relativePath,
                                                            std::make_shared<MCEngine::Texture2D>(filepath));
