@@ -1,11 +1,17 @@
 #include "Editor.hpp"
 
-#include "EditorConfig.hpp"
-#include "EditorLayer.hpp"
+#include "Layer/EditorLayer.hpp"
+#include "Manager/AssetsManager.hpp"
+#include "Manager/ConfigManager.hpp"
+#include "Manager/SceneManager.hpp"
 
 MCEditor::Editor::Editor(const MCEngine::WindowProperty &props) : Application(props)
 {
     ENGINE_PROFILE_FUNCTION();
+
+    ConfigManager::GetInstance(); // Initialize editor config
+    AssetsManager::GetInstance(); // Initialize assets manager
+    SceneManager::GetInstance();  // Initialize scene manager
 
     AddLayer(std::make_shared<EditorLayer>(m_Window));
 

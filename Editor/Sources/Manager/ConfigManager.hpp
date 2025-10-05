@@ -5,10 +5,10 @@
 namespace MCEditor
 {
 
-class EditorConfig
+class ConfigManager
 {
 public:
-    static EditorConfig &GetInstance();
+    static ConfigManager &GetInstance();
 
     static std::string GetConfigsPath() { return s_ConfigsPath; }
     static std::string GetAssetsPath() { return s_AssetsPath; }
@@ -22,7 +22,7 @@ private:
     static std::string s_IconsPath;
 
 private:
-    EditorConfig();
+    ConfigManager();
 };
 
 } // namespace MCEditor

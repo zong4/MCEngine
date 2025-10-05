@@ -1,17 +1,17 @@
 #include "FileBrowserPanel.hpp"
 
-#include "Editor/EditorConfig.hpp"
-#include "Scene/SceneManager.hpp"
+#include "Manager/ConfigManager.hpp"
+#include "Manager/SceneManager.hpp"
 #include <imgui.h>
 
-MCEditor::FileBrowserPanel::FileBrowserPanel() : m_CurrentDirectory(EditorConfig::GetInstance().GetAssetsPath())
+MCEditor::FileBrowserPanel::FileBrowserPanel() : m_CurrentDirectory(ConfigManager::GetInstance().GetAssetsPath())
 {
     ENGINE_PROFILE_FUNCTION();
 
     // Load icons
     m_DirectoryIcon =
-        std::make_shared<MCEngine::Texture2D>(EditorConfig::GetInstance().GetIconsPath() + "Directory.png");
-    m_FileIcon = std::make_shared<MCEngine::Texture2D>(EditorConfig::GetInstance().GetIconsPath() + "File.png");
+        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() + "Directory.png");
+    m_FileIcon = std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() + "File.png");
 }
 
 void MCEditor::FileBrowserPanel::OnImGuiRender()
@@ -20,7 +20,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
 
     ImGui::Begin("File Browser");
 
-    if (!std::filesystem::equivalent(m_CurrentDirectory, EditorConfig::GetInstance().GetAssetsPath()))
+    if (!std::filesystem::equivalent(m_CurrentDirectory, ConfigManager::GetInstance().GetAssetsPath()))
     {
         if (ImGui::Button("<-"))
         {
@@ -39,7 +39,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
     for (auto &&directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
     {
         const auto &path = directoryEntry.path();
-        auto &&relativePath = std::filesystem::relative(path, EditorConfig::GetInstance().GetAssetsPath());
+        auto &&relativePath = std::filesystem::relative(path, ConfigManager::GetInstance().GetAssetsPath());
 
         // ID
         std::string filenameString = relativePath.filename().string();

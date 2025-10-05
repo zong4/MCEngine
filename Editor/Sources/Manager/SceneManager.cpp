@@ -1,8 +1,8 @@
 #include "SceneManager.hpp"
 
-#include "Editor/EditorConfig.hpp"
-#include "EditorScene.hpp"
-#include "ExampleScene.hpp"
+#include "Manager/ConfigManager.hpp"
+#include "Scene/EditorScene.hpp"
+#include "Scene/ExampleScene.hpp"
 
 MCEditor::SceneManager &MCEditor::SceneManager::GetInstance()
 {
@@ -36,7 +36,7 @@ void MCEditor::SceneManager::OpenScene(std::string filepath)
 void MCEditor::SceneManager::OpenSceneDialog()
 {
     const char *filters[] = {"*.mcsene"};
-    const char *file = tinyfd_openFileDialog("Open Scene", EditorConfig::GetInstance().GetScenesPath().c_str(), 1,
+    const char *file = tinyfd_openFileDialog("Open Scene", ConfigManager::GetInstance().GetScenesPath().c_str(), 1,
                                              filters, nullptr, 0);
     if (file)
     {
@@ -49,7 +49,7 @@ void MCEditor::SceneManager::OpenSceneDialog()
 void MCEditor::SceneManager::SaveSceneAsDialog() const
 {
     const char *filters[] = {"*.mcsene"};
-    std::string defaultPath = EditorConfig::GetInstance().GetScenesPath() + m_ActiveScene->GetName() + ".mcsene";
+    std::string defaultPath = ConfigManager::GetInstance().GetScenesPath() + m_ActiveScene->GetName() + ".mcsene";
     const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
 
     if (file)

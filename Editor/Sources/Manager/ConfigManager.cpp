@@ -1,20 +1,20 @@
-#include "EditorConfig.hpp"
+#include "ConfigManager.hpp"
 
 #include <nlohmann/json.hpp>
 
 // Set default paths
-std::string MCEditor::EditorConfig::s_ConfigsPath = "Editor/Configs/";
-std::string MCEditor::EditorConfig::s_AssetsPath = "Editor/Assets/";
-std::string MCEditor::EditorConfig::s_ScenesPath = "Editor/Assets/Scenes/";
-std::string MCEditor::EditorConfig::s_IconsPath = "Editor/Resources/Icons/";
+std::string MCEditor::ConfigManager::s_ConfigsPath = "Editor/Configs/";
+std::string MCEditor::ConfigManager::s_AssetsPath = "Editor/Assets/";
+std::string MCEditor::ConfigManager::s_ScenesPath = "Editor/Assets/Scenes/";
+std::string MCEditor::ConfigManager::s_IconsPath = "Editor/Resources/Icons/";
 
-MCEditor::EditorConfig &MCEditor::EditorConfig::GetInstance()
+MCEditor::ConfigManager &MCEditor::ConfigManager::GetInstance()
 {
-    static EditorConfig instance;
+    static ConfigManager instance;
     return instance;
 }
 
-MCEditor::EditorConfig::EditorConfig()
+MCEditor::ConfigManager::ConfigManager()
 {
     ENGINE_PROFILE_FUNCTION();
 

@@ -19,7 +19,7 @@ enum class ImGuizmoType
 class SceneViewport
 {
 public:
-    SceneViewport() = default;
+    SceneViewport();
     ~SceneViewport() = default;
 
     // Getters
@@ -27,11 +27,8 @@ public:
     bool IsHovered() const { return m_Hovered; }
     glm::vec2 GetViewportSize() const { return m_ViewportSize; }
 
-    // Setters
-    void SetCamera(MCEngine::Entity camera) { m_Camera = camera; }
-
 public:
-    void Render(std::shared_ptr<MCEngine::Scene> scene);
+    void Render();
     void OnImGuiRender(MCEngine::Entity &selectedEntity, ImGuizmoType gizmoType);
 
 private:

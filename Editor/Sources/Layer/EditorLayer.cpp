@@ -1,14 +1,11 @@
 #include "EditorLayer.hpp"
 
-#include "EditorConfig.hpp"
-#include "Scene/SceneManager.hpp"
+#include "Manager/ConfigManager.hpp"
+#include "Manager/SceneManager.hpp"
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
-    : ImGuiLayer(window, EditorConfig::GetInstance().GetConfigsPath() + "/imgui.ini", "EditorLayer")
+    : ImGuiLayer(window, ConfigManager::GetInstance().GetConfigsPath() + "/imgui.ini", "EditorLayer")
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    m_SceneViewport.SetCamera(SceneManager::GetInstance().GetEditorScene()->GetMainCamera());
 }
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
@@ -135,7 +132,7 @@ void MCEditor::EditorLayer::OnRender()
 
     // Render viewports
     m_GameViewport.Render(sceneManager.GetActiveScene());
-    m_SceneViewport.Render(sceneManager.GetActiveScene());
+    m_SceneViewport.Render();
 }
 
 void MCEditor::EditorLayer::RenderImGui()

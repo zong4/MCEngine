@@ -1,14 +1,17 @@
 #include "SceneViewport.hpp"
 
-void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene)
+#include "Manager/SceneManager.hpp"
+
+MCEditor::SceneViewport::SceneViewport()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (!m_Camera || !scene)
-    {
-        LOG_ENGINE_WARN("SceneViewport: No camera or scene set, please set a camera and scene before rendering.");
-        return;
-    }
+    m_Camera = SceneManager::GetInstance().GetEditorScene()->GetMainCamera();
+}
+
+void MCEditor::SceneViewport::Render()
+{
+    ENGINE_PROFILE_FUNCTION();
 
     if (m_ViewportDirty)
     {
@@ -24,13 +27,13 @@ void MCEditor::SceneViewport::Render(std::shared_ptr<MCEngine::Scene> scene)
 
     m_MultisampleFBO->Bind();
     MCEngine::RendererCommand::Clear();
-    scene->Render(m_Camera);
+    SceneManager::GetInstance().GetActiveScene()->Render(m_Camera);
     m_MultisampleFBO->Blit(m_FBO->GetRendererID());
     m_MultisampleFBO->Unbind();
 
     m_EntityPickingFBO->Bind();
     MCEngine::RendererCommand::Clear();
-    scene->RenderColorID(m_Camera);
+    SceneManager::GetInstance().GetActiveScene()->RenderColorID(m_Camera);
     m_EntityPickingFBO->Unbind();
 }
 
