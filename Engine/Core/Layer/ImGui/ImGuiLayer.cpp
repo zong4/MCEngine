@@ -11,7 +11,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &window, const std::string &filePath,
+MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &window, const std::filesystem::path &filePath,
                                  const std::string &name)
     : Layer(name), m_Window(window), m_ImGuiFilePath(filePath)
 {
@@ -101,7 +101,10 @@ void MCEngine::ImGuiLayer::OnAttach()
     // DPI Scaling
     float dpiScale = WindowUtility::GetDPIScale();
     LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
-    float fontSize = 10.0f * dpiScale;
+    std::pair<int, int> screenResolution = WindowUtility::GetScreenResolution();
+    LOG_ENGINE_INFO("Screen Resolution: " + std::to_string(screenResolution.first) + "x" +
+                    std::to_string(screenResolution.second));
+    float fontSize = 10.0f * dpiScale * WindowUtility::GetScreenResolutionScale();
 
     // Set default font
     FontLibrary::GetInstance().Init(fontSize, 0.8f);
@@ -130,8 +133,8 @@ void MCEngine::ImGuiLayer::OnAttach()
     SetDarkThemeColors();
 
     // Read ini file
-    ImGui::GetIO().IniFilename = m_ImGuiFilePath.c_str();
-    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
+    ImGui::GetIO().IniFilename = m_ImGuiFilePath.string().c_str();
+    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.string().c_str());
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
@@ -145,7 +148,7 @@ void MCEngine::ImGuiLayer::OnDetach()
     ENGINE_PROFILE_FUNCTION();
 
     // Save ini file
-    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.c_str());
+    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.string().c_str());
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();

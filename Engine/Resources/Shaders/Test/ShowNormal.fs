@@ -9,9 +9,15 @@ uniform samplerCube u_Skybox;
 // Inputs
 in VS_OUT
 {
+    // Light
     vec3 GlobalPosition;
     vec3 Normal;
     vec3 CameraPosition;
+    vec3 DirectionalLightDirection;
+    vec3 DirectionalLightColor;
+
+    // Shadow
+    vec4 LightSpacePosition;
 }
 fs_in;
 

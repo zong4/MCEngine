@@ -10,8 +10,9 @@ MCEditor::FileBrowserPanel::FileBrowserPanel() : m_CurrentDirectory(ConfigManage
 
     // Load icons
     m_DirectoryIcon =
-        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "Directory.png");
-    m_FileIcon = std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "File.png");
+        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "Directory.png").string());
+    m_FileIcon =
+        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "File.png").string());
 }
 
 void MCEditor::FileBrowserPanel::OnImGuiRender()
@@ -57,7 +58,8 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
         // Drag and Drop Source
         if (ImGui::BeginDragDropSource())
         {
-            ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", path.c_str(), (strlen(path.c_str()) + 1) * sizeof(char));
+            ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", path.c_str(),
+                                      (strlen(path.string().c_str()) + 1) * sizeof(char));
             ImGui::EndDragDropSource();
         }
 

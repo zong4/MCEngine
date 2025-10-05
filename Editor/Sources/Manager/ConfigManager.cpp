@@ -22,7 +22,7 @@ bool MCEditor::ConfigManager::IsScene(std::filesystem::path path) { return path.
 
 bool MCEditor::ConfigManager::IsTexture(std::filesystem::path path)
 {
-    return IsExtensionInSet(path.extension(), s_TextureExtensions);
+    return IsExtensionInSet(path.extension().string(), s_TextureExtensions);
 }
 
 MCEditor::ConfigManager::ConfigManager()
