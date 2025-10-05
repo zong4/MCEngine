@@ -11,12 +11,13 @@ public:
     static SceneManager &GetInstance();
 
     // Getters
-    MCEngine::Entity &GetSelectedEntity() { return m_SelectedEntity; }
     MCEngine::Entity GetSelectedEntity() const { return m_SelectedEntity; }
     std::shared_ptr<MCEngine::Scene> GetEditorScene() const { return m_EditorScene; }
     std::shared_ptr<MCEngine::Scene> GetActiveScene() const { return m_ActiveScene; }
 
     // Setters
+    void SetSelectedEntity(entt::entity entity);
+    void SetSelectedEntity(const MCEngine::Entity &entity) { m_SelectedEntity = entity; }
     void SetActiveScene(const std::shared_ptr<MCEngine::Scene> &scene);
 
 public:

@@ -36,7 +36,7 @@ public:
 
 private:
     EditorAction m_Action = EditorAction::None;
-    ImGuizmoType m_GizmoType = ImGuizmoType::None;
+    ImGuizmoType m_GizmoType = ImGuizmoType::Translate;
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;

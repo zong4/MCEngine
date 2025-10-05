@@ -1,5 +1,6 @@
 #include "InspectorPanel.hpp"
 
+#include "Manager/SceneManager.hpp"
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -66,17 +67,18 @@ static void DrawComponent(const std::string &name, MCEngine::Entity entity, UIFu
     }
 }
 
-void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) const
+void MCEditor::InspectorPanel::OnImGuiRender() const
 {
     ENGINE_PROFILE_FUNCTION();
 
     ImGui::Begin("Inspector");
 
-    if (m_SelectedEntity)
+    auto &&selectedEntity = SceneManager::GetInstance().GetSelectedEntity();
+    if (selectedEntity)
     {
         // TagComponent
         DrawComponent<MCEngine::TagComponent>(
-            "Tag Component", m_SelectedEntity,
+            "Tag Component", selectedEntity,
             [](MCEngine::TagComponent &tag) {
                 DrawTable2<MCEngine::TagComponent>("Tag", [&tag]() {
                     char buffer[256];
@@ -91,7 +93,7 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
             false);
 
         // TransformComponent
-        DrawComponent<MCEngine::TransformComponent>("Transform Component", m_SelectedEntity,
+        DrawComponent<MCEngine::TransformComponent>("Transform Component", selectedEntity,
                                                     [](MCEngine::TransformComponent &transform) {
                                                         DrawVec3Control("Position", transform.GetPosition(), 0.0f);
                                                         DrawVec3Control("Rotation", transform.GetRotation(), 0.0f);
@@ -100,7 +102,7 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
 
         // CameraComponent
         DrawComponent<MCEngine::CameraComponent>(
-            "Camera Component", m_SelectedEntity, [](MCEngine::CameraComponent &camera) {
+            "Camera Component", selectedEntity, [](MCEngine::CameraComponent &camera) {
                 DrawTable2<MCEngine::CameraComponent>("Type", [&camera]() {
                     const char *cameraTypes[] = {"Orthographic", "Perspective"};
                     int currentType = static_cast<int>(camera.GetType());
@@ -149,14 +151,14 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
 
         // SpriteRendererComponent
         DrawComponent<MCEngine::SpriteRendererComponent>(
-            "Sprite Renderer Component", m_SelectedEntity, [](MCEngine::SpriteRendererComponent &sprite) {
+            "Sprite Renderer Component", selectedEntity, [](MCEngine::SpriteRendererComponent &sprite) {
                 DrawTable2<MCEngine::SpriteRendererComponent>(
                     "Color", [&sprite]() { ImGui::ColorEdit4("##Color", glm::value_ptr(sprite.GetColor())); });
             });
 
         // MeshRendererComponent
         DrawComponent<MCEngine::MeshRendererComponent>(
-            "Mesh Renderer Component", m_SelectedEntity, [](MCEngine::MeshRendererComponent &meshRenderer) {
+            "Mesh Renderer Component", selectedEntity, [](MCEngine::MeshRendererComponent &meshRenderer) {
                 DrawTable2<MCEngine::MeshRendererComponent>("Color", [&meshRenderer]() {
                     ImGui::ColorEdit4("##Color", glm::value_ptr(meshRenderer.GetMaterial().GetColor()));
                 });
@@ -175,38 +177,36 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
             });
 
         // LightComponent
-        DrawComponent<MCEngine::LightComponent>(
-            "Light Component", m_SelectedEntity, [](MCEngine::LightComponent &light) {
+        DrawComponent<MCEngine::LightComponent>("Light Component", selectedEntity, [](MCEngine::LightComponent &light) {
+            DrawTable2<MCEngine::LightComponent>(
+                "Color", [&light]() { ImGui::ColorEdit3("##Color", glm::value_ptr(light.GetColor())); });
+            DrawTable2<MCEngine::LightComponent>(
+                "Intensity", [&light]() { ImGui::DragFloat("##Intensity", &light.GetIntensity(), 0.1f, 0.0f, 10.0f); });
+
+            if (light.GetType() == MCEngine::LightType::Point || light.GetType() == MCEngine::LightType::Spot)
+            {
+                DrawTable2<MCEngine::LightComponent>("Constant", [&light]() {
+                    ImGui::DragFloat("##Constant", &light.GetConstant(), 0.01f, 0.0f, 1.0f);
+                });
                 DrawTable2<MCEngine::LightComponent>(
-                    "Color", [&light]() { ImGui::ColorEdit3("##Color", glm::value_ptr(light.GetColor())); });
-                DrawTable2<MCEngine::LightComponent>("Intensity", [&light]() {
-                    ImGui::DragFloat("##Intensity", &light.GetIntensity(), 0.1f, 0.0f, 10.0f);
+                    "Linear", [&light]() { ImGui::DragFloat("##Linear", &light.GetLinear(), 0.001f, 0.0f, 1.0f); });
+                DrawTable2<MCEngine::LightComponent>("Quadratic", [&light]() {
+                    ImGui::DragFloat("##Quadratic", &light.GetQuadratic(), 0.0001f, 0.0f, 1.0f);
                 });
 
-                if (light.GetType() == MCEngine::LightType::Point || light.GetType() == MCEngine::LightType::Spot)
+                if (light.GetType() == MCEngine::LightType::Spot)
                 {
-                    DrawTable2<MCEngine::LightComponent>("Constant", [&light]() {
-                        ImGui::DragFloat("##Constant", &light.GetConstant(), 0.01f, 0.0f, 1.0f);
+                    DrawTable2<MCEngine::LightComponent>("CutOff", [&light]() {
+                        ImGui::DragFloat("##CutOff", &light.GetInnerAngle(), 1.0f, 0.0f, 90.0f);
                     });
-                    DrawTable2<MCEngine::LightComponent>(
-                        "Linear", [&light]() { ImGui::DragFloat("##Linear", &light.GetLinear(), 0.001f, 0.0f, 1.0f); });
-                    DrawTable2<MCEngine::LightComponent>("Quadratic", [&light]() {
-                        ImGui::DragFloat("##Quadratic", &light.GetQuadratic(), 0.0001f, 0.0f, 1.0f);
+                    DrawTable2<MCEngine::LightComponent>("Outer CutOff", [&light]() {
+                        ImGui::DragFloat("##Outer CutOff", &light.GetOuterAngle(), 1.0f, 0.0f, 90.0f);
                     });
-
-                    if (light.GetType() == MCEngine::LightType::Spot)
-                    {
-                        DrawTable2<MCEngine::LightComponent>("CutOff", [&light]() {
-                            ImGui::DragFloat("##CutOff", &light.GetInnerAngle(), 1.0f, 0.0f, 90.0f);
-                        });
-                        DrawTable2<MCEngine::LightComponent>("Outer CutOff", [&light]() {
-                            ImGui::DragFloat("##Outer CutOff", &light.GetOuterAngle(), 1.0f, 0.0f, 90.0f);
-                        });
-                    }
                 }
-            });
+            }
+        });
 
-        DrawAddComponentButton(m_SelectedEntity);
+        DrawAddComponentButton(selectedEntity);
     }
 
     ImGui::End();

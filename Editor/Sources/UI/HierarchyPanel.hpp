@@ -12,10 +12,10 @@ public:
     ~HierarchyPanel() = default;
 
 public:
-    void OnImGuiRender(std::shared_ptr<MCEngine::Scene> scene, MCEngine::Entity &selectedEntity);
+    void OnImGuiRender();
 
 private:
-    void DrawEntityNode(MCEngine::Entity entity, MCEngine::Entity &selectedEntity);
+    void DrawEntityNode(MCEngine::Entity entity);
 };
 
 } // namespace MCEditor

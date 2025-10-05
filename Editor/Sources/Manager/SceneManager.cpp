@@ -10,13 +10,20 @@ MCEditor::SceneManager &MCEditor::SceneManager::GetInstance()
     return instance;
 }
 
+void MCEditor::SceneManager::SetSelectedEntity(entt::entity entity)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_SelectedEntity = MCEngine::Entity(entity, &m_ActiveScene->GetRegistry());
+}
+
 void MCEditor::SceneManager::SetActiveScene(const std::shared_ptr<MCEngine::Scene> &scene)
 {
     ENGINE_PROFILE_FUNCTION();
 
     m_ActiveScene = scene;
-    if (m_ActiveScene)
-        m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
+    // if (m_ActiveScene)
+    //     m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
 }
 
 void MCEditor::SceneManager::NewExampleScene()

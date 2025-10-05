@@ -2,6 +2,7 @@
 
 #include "Manager/ConfigManager.hpp"
 #include "Manager/SceneManager.hpp"
+#include <imgui.h>
 
 MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &window)
     : ImGuiLayer(window, ConfigManager::GetInstance().GetConfigsPath() + "/imgui.ini", "EditorLayer")
@@ -42,21 +43,17 @@ bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
         switch (event.GetKeyCode())
         {
         case ENGINE_KEY_Q:
-            if (!ImGuizmo::IsUsing())
-                m_GizmoType = ImGuizmoType::None;
-            break;
+            m_SceneViewport.SetGizmoType(ImGuizmoType::None);
+            return true;
         case ENGINE_KEY_W:
-            if (!ImGuizmo::IsUsing())
-                m_GizmoType = ImGuizmoType::Translate;
-            break;
+            m_SceneViewport.SetGizmoType(ImGuizmoType::Translate);
+            return true;
         case ENGINE_KEY_E:
-            if (!ImGuizmo::IsUsing())
-                m_GizmoType = ImGuizmoType::Rotate;
-            break;
+            m_SceneViewport.SetGizmoType(ImGuizmoType::Rotate);
+            return true;
         case ENGINE_KEY_R:
-            if (!ImGuizmo::IsUsing())
-                m_GizmoType = ImGuizmoType::Scale;
-            break;
+            m_SceneViewport.SetGizmoType(ImGuizmoType::Scale);
+            return true;
         default:
             break;
         }
@@ -77,21 +74,21 @@ bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
         case ENGINE_KEY_N:
             if (control)
                 m_Action = EditorAction::NewScene;
-            break;
+            return true;
         case ENGINE_KEY_O:
             if (control)
                 m_Action = EditorAction::OpenScene;
-            break;
+            return true;
         case ENGINE_KEY_S:
             if (control && shift)
                 m_Action = EditorAction::SaveSceneAs;
-            break;
+            return true;
         default:
             break;
         }
     }
 
-    return true;
+    return false;
 }
 
 void MCEditor::EditorLayer::OnUpdate(float deltaTime)
@@ -141,11 +138,8 @@ void MCEditor::EditorLayer::RenderImGui()
 
     RenderDockSpace();
 
-    m_HierarchyPanel.OnImGuiRender(SceneManager::GetInstance().GetActiveScene(),
-                                   SceneManager::GetInstance().GetSelectedEntity());
-
-    m_InspectorPanel.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity());
-
+    m_HierarchyPanel.OnImGuiRender();
+    m_InspectorPanel.OnImGuiRender();
     m_FileBrowserPanel.OnImGuiRender();
 
     ImGui::Begin("Game");
@@ -153,7 +147,7 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("Scene");
-    m_SceneViewport.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity(), m_GizmoType);
+    m_SceneViewport.OnImGuiRender();
 
     // Receive drag and drop
     if (ImGui::BeginDragDropTarget())

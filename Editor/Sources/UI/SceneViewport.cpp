@@ -1,12 +1,21 @@
 #include "SceneViewport.hpp"
 
 #include "Manager/SceneManager.hpp"
+#include <imgui.h>
+// After import imgui
+#include "ImGuizmo/ImGuizmo.h"
 
 MCEditor::SceneViewport::SceneViewport()
 {
     ENGINE_PROFILE_FUNCTION();
 
     m_Camera = SceneManager::GetInstance().GetEditorScene()->GetMainCamera();
+}
+
+void MCEditor::SceneViewport::SetGizmoType(ImGuizmoType type)
+{
+    if (!ImGuizmo::IsUsing())
+        m_GizmoType = type;
 }
 
 void MCEditor::SceneViewport::Render()
@@ -37,7 +46,7 @@ void MCEditor::SceneViewport::Render()
     m_EntityPickingFBO->Unbind();
 }
 
-void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, ImGuizmoType gizmoType)
+void MCEditor::SceneViewport::OnImGuiRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -54,8 +63,16 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, Im
     }
     ImGui::Image((ImTextureID)(intptr_t)m_FBO->GetTexture()->GetRendererID(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 
-    // Gizmos
-    if (selectedEntity && gizmoType != ImGuizmoType::None)
+    RenderGizmos();
+    PickEntity(); // After RenderGizmos to avoid conflict with ImGuizmo
+}
+
+void MCEditor::SceneViewport::RenderGizmos()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto &&selectedEntity = SceneManager::GetInstance().GetSelectedEntity();
+    if (m_GizmoType != ImGuizmoType::None)
     {
         ImGuizmo::BeginFrame();
         ImGuizmo::SetOrthographic(false);
@@ -74,17 +91,31 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, Im
         auto &&transformComponent = selectedEntity.GetComponent<MCEngine::TransformComponent>();
         glm::mat4 transform = transformComponent.GetTransformMatrix();
 
+        ImGuizmo::OPERATION gizmoOperation;
+        switch (m_GizmoType)
+        {
+        case ImGuizmoType::Translate:
+            gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        case ImGuizmoType::Rotate:
+            gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+            break;
+        case ImGuizmoType::Scale:
+            gizmoOperation = ImGuizmo::OPERATION::SCALE;
+            break;
+        default:
+            gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        }
+
         // Snapping
         bool snap = ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift);
-        // Snap to 0.5m for translation/scale
-        float snapValue = 0.5f;
-        // Snap to 45 degrees for rotation
-        if ((ImGuizmo::OPERATION)gizmoType == ImGuizmo::OPERATION::ROTATE)
-            snapValue = 45.0f;
+        float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+        if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
+            snapValue = 45.0f; // Snap to 45 degrees for rotation
         float snapValues[3] = {snapValue, snapValue, snapValue};
-        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-                             (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
-                             snap ? snapValues : nullptr);
+        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), gizmoOperation,
+                             ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
 
         if (ImGuizmo::IsUsing())
         {
@@ -95,16 +126,19 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, Im
             transformComponent.SetScale(scale);
         }
     }
+}
 
-    // Entity picking
+void MCEditor::SceneViewport::PickEntity()
+{
+    ENGINE_PROFILE_FUNCTION();
+
     ImVec2 mouseInViewport = {ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetWindowContentRegionMin().x,
                               ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetWindowContentRegionMin().y};
     if (m_Hovered && !ImGuizmo::IsUsing() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
-        selectedEntity =
-            MCEngine::Entity((entt::entity)(m_EntityPickingFBO->PickPixel((int)mouseInViewport.x,
-                                                                          (int)(m_ViewportSize.y - mouseInViewport.y)) -
-                                            1),
-                             &selectedEntity.GetRegistry());
+        SceneManager::GetInstance().SetSelectedEntity(
+            (entt::entity)(m_EntityPickingFBO->PickPixel((int)mouseInViewport.x,
+                                                         (int)(m_ViewportSize.y - mouseInViewport.y)) -
+                           1));
     }
 }

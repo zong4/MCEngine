@@ -1,27 +1,25 @@
 #include "HierarchyPanel.hpp"
 
+#include "Manager/SceneManager.hpp"
 #include <imgui.h>
 
-void MCEditor::HierarchyPanel::OnImGuiRender(std::shared_ptr<MCEngine::Scene> scene, MCEngine::Entity &selectedEntity)
+void MCEditor::HierarchyPanel::OnImGuiRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
     ImGui::Begin("Hierarchy");
 
-    auto &&view = scene->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
-    for (auto &&entity : view)
+    auto &&registry = SceneManager::GetInstance().GetActiveScene()->GetRegistry();
+    for (auto &&entity : registry.view<MCEngine::RelationshipComponent>())
     {
-        auto &&rel = view.get<MCEngine::RelationshipComponent>(entity);
-        if (!rel.GetParent())
-        {
-            DrawEntityNode({entity, &scene->GetRegistry()}, selectedEntity);
-        }
+        if (!registry.get<MCEngine::RelationshipComponent>(entity).GetParent())
+            DrawEntityNode({entity, &registry});
     }
 
     ImGui::End();
 }
 
-void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity, MCEngine::Entity &selectedEntity)
+void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -36,12 +34,12 @@ void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity, MCEngine:
 
     bool opened = ImGui::TreeNodeEx(entity.GetComponent<MCEngine::TagComponent>().GetTag().c_str(), node_flags);
     if (ImGui::IsItemClicked())
-        selectedEntity = entity;
+        SceneManager::GetInstance().SetSelectedEntity(entity);
 
     if (opened)
     {
         for (auto &&child : children)
-            DrawEntityNode(child, selectedEntity);
+            DrawEntityNode(child);
         ImGui::TreePop();
     }
 
