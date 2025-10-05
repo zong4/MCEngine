@@ -70,6 +70,8 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
 {
     ENGINE_PROFILE_FUNCTION();
 
+    ImGui::Begin("Inspector");
+
     if (m_SelectedEntity)
     {
         // TagComponent
@@ -206,6 +208,8 @@ void MCEditor::InspectorPanel::OnImGuiRender(MCEngine::Entity m_SelectedEntity) 
 
         DrawAddComponentButton(m_SelectedEntity);
     }
+
+    ImGui::End();
 }
 
 void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::vec3 &values, float resetValue)

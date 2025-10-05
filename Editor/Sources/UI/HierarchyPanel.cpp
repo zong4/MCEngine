@@ -6,6 +6,8 @@ void MCEditor::HierarchyPanel::OnImGuiRender(std::shared_ptr<MCEngine::Scene> sc
 {
     ENGINE_PROFILE_FUNCTION();
 
+    ImGui::Begin("Hierarchy");
+
     auto &&view = scene->GetRegistry().view<MCEngine::TagComponent, MCEngine::RelationshipComponent>();
     for (auto &&entity : view)
     {
@@ -15,6 +17,8 @@ void MCEditor::HierarchyPanel::OnImGuiRender(std::shared_ptr<MCEngine::Scene> sc
             DrawEntityNode({entity, &scene->GetRegistry()}, selectedEntity);
         }
     }
+
+    ImGui::End();
 }
 
 void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity, MCEngine::Entity &selectedEntity)

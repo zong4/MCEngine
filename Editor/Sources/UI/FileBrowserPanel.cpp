@@ -18,6 +18,8 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    ImGui::Begin("File Browser");
+
     if (!std::filesystem::equivalent(m_CurrentDirectory, EditorConfig::GetInstance().GetAssetsPath()))
     {
         if (ImGui::Button("<-"))
@@ -54,8 +56,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
         // Drag and Drop Source
         if (ImGui::BeginDragDropSource())
         {
-            const char *itemPath = relativePath.c_str();
-            ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (strlen(itemPath) + 1) * sizeof(char));
+            ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", path.c_str(), (strlen(path.c_str()) + 1) * sizeof(char));
             ImGui::EndDragDropSource();
         }
 
@@ -70,7 +71,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
                 }
                 else
                 {
-                    if (relativePath.extension() == ".mcs")
+                    if (relativePath.extension() == ".mcsene")
                     {
                         SceneManager::GetInstance().OpenScene(path.string());
                     }
@@ -94,4 +95,33 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
     ImGui::Columns(1);
     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
     ImGui::SliderFloat("Padding", &padding, 0, 32);
+
+    // if (ImGui::BeginDragDropTarget())
+    // {
+    //     LOG_EDITOR_TRACE("Begin drag drop target");
+    //     if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+    //     {
+    //         LOG_EDITOR_TRACE("Accept payload: CONTENT_BROWSER_ITEM");
+    //         if (payload->Data)
+    //         {
+    //             const char *path = static_cast<const char *>(payload->Data);
+    //             std::filesystem::path filepath(path);
+    //             if (std::filesystem::is_directory(filepath))
+    //             {
+    //                 SetCurrentDirectory(filepath);
+    //                 LOG_EDITOR_TRACE("Open directory: " + filepath.string());
+    //             }
+    //             else
+    //             {
+    //                 if (filepath.extension() == ".mcsene")
+    //                 {
+    //                     SceneManager::GetInstance().OpenScene(path);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     ImGui::EndDragDropTarget();
+    // }
+
+    ImGui::End();
 }

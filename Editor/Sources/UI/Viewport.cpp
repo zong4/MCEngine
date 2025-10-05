@@ -24,6 +24,8 @@ void MCEditor::Viewport::OnImGuiRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    ImGui::Begin("Game");
+
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if (viewportSize.x > 0 && viewportSize.y > 0)
     {
@@ -34,4 +36,6 @@ void MCEditor::Viewport::OnImGuiRender()
         }
     }
     ImGui::Image((ImTextureID)(intptr_t)m_FBO->GetTexture()->GetRendererID(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+
+    ImGui::End();
 }

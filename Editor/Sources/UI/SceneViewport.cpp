@@ -38,6 +38,8 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, Im
 {
     ENGINE_PROFILE_FUNCTION();
 
+    ImGui::Begin("Scene");
+
     m_Focused = ImGui::IsWindowFocused();
     m_Hovered = ImGui::IsWindowHovered();
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
@@ -104,4 +106,6 @@ void MCEditor::SceneViewport::OnImGuiRender(MCEngine::Entity &selectedEntity, Im
                                             1),
                              &selectedEntity.GetRegistry());
     }
+
+    ImGui::End();
 }

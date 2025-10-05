@@ -143,29 +143,19 @@ void MCEditor::EditorLayer::RenderImGui()
     ENGINE_PROFILE_FUNCTION();
 
     RenderDockSpace();
-    ImGui::End();
 
-    ImGui::Begin("Hierarchy");
     m_HierarchyPanel.OnImGuiRender(SceneManager::GetInstance().GetActiveScene(),
                                    SceneManager::GetInstance().GetSelectedEntity());
-    ImGui::End();
 
-    ImGui::Begin("Inspector");
     m_InspectorPanel.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity());
-    ImGui::End();
 
-    ImGui::Begin("File Browser");
     m_FileBrowserPanel.OnImGuiRender();
-    ImGui::End();
 
-    ImGui::Begin("Game");
     m_GameViewport.OnImGuiRender();
-    ImGui::End();
-
-    ImGui::Begin("Scene");
     m_SceneViewport.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity(), m_GizmoType);
+
+    // Logic
     SetBlockEvents(!m_SceneViewport.IsFocused() && !m_SceneViewport.IsHovered());
-    ImGui::End();
 }
 
 void MCEditor::EditorLayer::RenderDockSpace()
@@ -224,6 +214,8 @@ void MCEditor::EditorLayer::RenderDockSpace()
     style.WindowMinSize.x = minWinSizeX;
 
     RenderMenuBar();
+
+    ImGui::End();
 }
 
 void MCEditor::EditorLayer::RenderMenuBar()

@@ -12,6 +12,8 @@ public:
     FileBrowserPanel();
     ~FileBrowserPanel() = default;
 
+    void SetCurrentDirectory(const std::filesystem::path &path) { m_CurrentDirectory = path; }
+
 public:
     void OnImGuiRender();
 
