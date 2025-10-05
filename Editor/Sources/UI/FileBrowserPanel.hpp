@@ -9,14 +9,18 @@ class FileBrowserPanel
 {
 
 public:
-    FileBrowserPanel() = default;
+    FileBrowserPanel();
     ~FileBrowserPanel() = default;
 
 public:
-    void OnImGuiRender(const std::filesystem::path &directory) const { RenderFileBrowser(directory); }
+    void OnImGuiRender();
 
 private:
-    void RenderFileBrowser(const std::filesystem::path &directory) const;
+    std::filesystem::path m_CurrentDirectory;
+
+    // Icons
+    std::shared_ptr<MCEngine::Texture2D> m_DirectoryIcon;
+    std::shared_ptr<MCEngine::Texture2D> m_FileIcon;
 };
 
 } // namespace MCEditor

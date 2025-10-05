@@ -20,9 +20,10 @@ public:
     void SetActiveScene(const std::shared_ptr<MCEngine::Scene> &scene);
 
 public:
-    void NewScene();
-    void OpenScene();
-    void SaveSceneAs() const;
+    void NewExampleScene();
+    void OpenScene(std::string filepath);
+    void OpenSceneDialog();
+    void SaveSceneAsDialog() const;
 
 private:
     MCEngine::Entity m_SelectedEntity;
@@ -33,6 +34,8 @@ private:
 private:
     SceneManager();
     ~SceneManager() = default;
+
+    void NewEmptyScene();
 };
 
 } // namespace MCEditor

@@ -104,13 +104,13 @@ void MCEditor::EditorLayer::OnUpdate(float deltaTime)
     switch (m_Action)
     {
     case EditorAction::NewScene:
-        SceneManager::GetInstance().NewScene();
+        SceneManager::GetInstance().NewExampleScene();
         break;
     case EditorAction::OpenScene:
-        SceneManager::GetInstance().OpenScene();
+        SceneManager::GetInstance().OpenSceneDialog();
         break;
     case EditorAction::SaveSceneAs:
-        SceneManager::GetInstance().SaveSceneAs();
+        SceneManager::GetInstance().SaveSceneAsDialog();
         break;
     default:
         break;
@@ -155,7 +155,7 @@ void MCEditor::EditorLayer::RenderImGui()
     ImGui::End();
 
     ImGui::Begin("File Browser");
-    m_FileBrowserPanel.OnImGuiRender(std::string(PROJECT_ROOT) + "Editor/Assets");
+    m_FileBrowserPanel.OnImGuiRender();
     ImGui::End();
 
     ImGui::Begin("Game");
@@ -235,11 +235,11 @@ void MCEditor::EditorLayer::RenderMenuBar()
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New", "Ctrl+N"))
-                SceneManager::GetInstance().NewScene();
+                SceneManager::GetInstance().NewExampleScene();
             if (ImGui::MenuItem("Open...", "Ctrl+O"))
-                SceneManager::GetInstance().OpenScene();
+                SceneManager::GetInstance().OpenSceneDialog();
             if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-                SceneManager::GetInstance().SaveSceneAs();
+                SceneManager::GetInstance().SaveSceneAsDialog();
 
             if (ImGui::MenuItem("Exit"))
             {

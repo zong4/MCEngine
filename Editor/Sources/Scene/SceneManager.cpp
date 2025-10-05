@@ -2,7 +2,7 @@
 
 #include "Editor/EditorConfig.hpp"
 #include "EditorScene.hpp"
-#include "EmptyScene.hpp"
+#include "ExampleScene.hpp"
 
 MCEditor::SceneManager &MCEditor::SceneManager::GetInstance()
 {
@@ -19,26 +19,34 @@ void MCEditor::SceneManager::SetActiveScene(const std::shared_ptr<MCEngine::Scen
         m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
 }
 
-void MCEditor::SceneManager::NewScene()
+void MCEditor::SceneManager::NewExampleScene()
 {
-    m_ActiveScene = std::make_shared<MCEditor::EmptyScene>();
-    m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
+    ENGINE_PROFILE_FUNCTION();
+
+    SetActiveScene(std::make_shared<MCEditor::ExampleScene>());
 }
 
-void MCEditor::SceneManager::OpenScene()
+void MCEditor::SceneManager::OpenScene(std::string filepath)
+{
+    NewEmptyScene();
+    MCEngine::SceneSerializer::Deserialize(m_ActiveScene, filepath);
+    SetActiveScene(m_ActiveScene);
+}
+
+void MCEditor::SceneManager::OpenSceneDialog()
 {
     const char *filters[] = {"*.mcs"};
     const char *file = tinyfd_openFileDialog("Open Scene", EditorConfig::GetInstance().GetScenesPath().c_str(), 1,
                                              filters, nullptr, 0);
     if (file)
     {
-        m_ActiveScene = std::make_shared<MCEngine::Scene>();
+        NewEmptyScene();
         MCEngine::SceneSerializer::Deserialize(m_ActiveScene, file);
-        m_SelectedEntity = MCEngine::Entity((entt::entity)0, &m_ActiveScene->GetRegistry());
+        SetActiveScene(m_ActiveScene);
     }
 }
 
-void MCEditor::SceneManager::SaveSceneAs() const
+void MCEditor::SceneManager::SaveSceneAsDialog() const
 {
     const char *filters[] = {"*.mcs"};
     std::string defaultPath = EditorConfig::GetInstance().GetScenesPath() + m_ActiveScene->GetName() + ".mcs";
@@ -62,6 +70,13 @@ MCEditor::SceneManager::SceneManager()
 
     m_EditorScene = std::make_shared<MCEditor::EditorScene>();
 
-    NewScene();
+    NewExampleScene();
     m_Scenes.push_back(m_ActiveScene);
+}
+
+void MCEditor::SceneManager::NewEmptyScene()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    SetActiveScene(std::make_shared<MCEngine::Scene>());
 }

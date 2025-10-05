@@ -1,6 +1,6 @@
-#include "EmptyScene.hpp"
+#include "ExampleScene.hpp"
 
-MCEditor::EmptyScene::EmptyScene()
+MCEditor::ExampleScene::ExampleScene()
 {
     m_MainCamera = AddCamera("MainCamera",
                              MCEngine::TransformComponent(glm::vec3(0.0f, 5.0f, 8.0f), glm::vec3(-30.0f, 0.0f, 0.0f)),

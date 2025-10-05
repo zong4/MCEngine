@@ -2,6 +2,12 @@
 
 #include <nlohmann/json.hpp>
 
+// Set default paths
+std::string MCEditor::EditorConfig::s_ConfigsPath = "Editor/Configs/";
+std::string MCEditor::EditorConfig::s_AssetsPath = "Editor/Assets/";
+std::string MCEditor::EditorConfig::s_ScenesPath = "Editor/Assets/Scenes/";
+std::string MCEditor::EditorConfig::s_IconsPath = "Editor/Resources/Icons/";
+
 MCEditor::EditorConfig &MCEditor::EditorConfig::GetInstance()
 {
     static EditorConfig instance;
@@ -13,7 +19,7 @@ MCEditor::EditorConfig::EditorConfig()
     ENGINE_PROFILE_FUNCTION();
 
     // Load configuration from JSON file
-    std::string configFilePath = std::string(PROJECT_ROOT) + "/Editor/Configs/config.json";
+    std::string configFilePath = std::string(PROJECT_ROOT) + "Editor/Configs/config.json";
     std::ifstream configFile(configFilePath);
     if (configFile.is_open())
     {
@@ -24,11 +30,13 @@ MCEditor::EditorConfig::EditorConfig()
         {
             auto relativePaths = configJson["RelativePath"];
             if (relativePaths.contains("Configs"))
-                m_ConfigsPath = relativePaths["Configs"].get<std::string>();
+                s_ConfigsPath = relativePaths["Configs"].get<std::string>();
             if (relativePaths.contains("Assets"))
-                m_AssetsPath = relativePaths["Assets"].get<std::string>();
+                s_AssetsPath = relativePaths["Assets"].get<std::string>();
             if (relativePaths.contains("Scenes"))
-                m_ScenesPath = relativePaths["Scenes"].get<std::string>();
+                s_ScenesPath = relativePaths["Scenes"].get<std::string>();
+            if (relativePaths.contains("Icons"))
+                s_IconsPath = relativePaths["Icons"].get<std::string>();
         }
         else
         {
@@ -40,6 +48,9 @@ MCEditor::EditorConfig::EditorConfig()
         LOG_ENGINE_WARN("Could not open config file: " + configFilePath + ". Using default paths.");
     }
 
-    LOG_ENGINE_INFO("EditorConfig initialized with ConfigsPath: " + m_ConfigsPath + ", AssetsPath: " + m_AssetsPath +
-                    ", ScenesPath: " + m_ScenesPath);
+    // Prepend PROJECT_ROOT to make paths absolute
+    s_ConfigsPath = std::string(PROJECT_ROOT) + s_ConfigsPath;
+    s_AssetsPath = std::string(PROJECT_ROOT) + s_AssetsPath;
+    s_ScenesPath = std::string(PROJECT_ROOT) + s_ScenesPath;
+    s_IconsPath = std::string(PROJECT_ROOT) + s_IconsPath;
 }

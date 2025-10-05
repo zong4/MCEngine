@@ -10,15 +10,16 @@ class EditorConfig
 public:
     static EditorConfig &GetInstance();
 
-    // Getters
-    std::string GetConfigsPath() const { return std::string(PROJECT_ROOT) + m_ConfigsPath; }
-    std::string GetAssetsPath() const { return std::string(PROJECT_ROOT) + m_AssetsPath; }
-    std::string GetScenesPath() const { return std::string(PROJECT_ROOT) + m_ScenesPath; }
+    static std::string GetConfigsPath() { return s_ConfigsPath; }
+    static std::string GetAssetsPath() { return s_AssetsPath; }
+    static std::string GetScenesPath() { return s_ScenesPath; }
+    static std::string GetIconsPath() { return s_IconsPath; }
 
 private:
-    std::string m_ConfigsPath = "/Editor/Configs/";
-    std::string m_AssetsPath = "/Editor/Assets/";
-    std::string m_ScenesPath = "/Editor/Assets/Scenes/";
+    static std::string s_ConfigsPath;
+    static std::string s_AssetsPath;
+    static std::string s_ScenesPath;
+    static std::string s_IconsPath;
 
 private:
     EditorConfig();

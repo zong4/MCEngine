@@ -1,7 +1,8 @@
 {
     "RelativePath": {
-        "Configs": "/Editor/Configs/",
-        "Assets": "/Editor/Assets/",
-        "Scenes": "/Editor/Assets/Scenes/"
+        "Configs": "Editor/Configs/",
+        "Assets": "Editor/Assets/",
+        "Scenes": "Editor/Assets/Scenes/",
+        "Icons": "Editor/Resources/Icons/"
     }
 }
