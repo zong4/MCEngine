@@ -14,11 +14,13 @@ public:
 
     // Operators
     operator bool() const { return m_Entity != entt::null && m_Registry && m_Registry->valid(m_Entity); }
+    operator uint32_t() const { return (uint32_t)m_Entity; }
     operator entt::entity() const { return m_Entity; }
     bool operator==(const Entity &other) const { return m_Entity == other.m_Entity; }
     bool operator!=(const Entity &other) const { return !(*this == other); }
 
     // Getters
+    // bool IsValid() const { return m_Entity != entt::null && m_Registry && m_Registry->valid(m_Entity); }
     entt::entity GetHandle() const { return m_Entity; }
     entt::registry &GetRegistry() const { return *m_Registry; }
     void SetHandle(entt::entity handle) { m_Entity = handle; }

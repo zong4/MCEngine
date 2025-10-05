@@ -57,17 +57,15 @@ void MCEditor::SceneManager::SaveSceneAsDialog() const
 {
     const char *filters[] = {"*.mcscene"};
     std::string defaultPath = ConfigManager::GetInstance().GetScenesPath() / (m_ActiveScene->GetName() + ".mcscene");
-    const char *file = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
+    const char *filepath = tinyfd_saveFileDialog("Save Scene As", defaultPath.c_str(), 1, filters, nullptr);
 
-    if (file)
+    if (filepath)
     {
-        // Trim whitespace and ensure the file has the correct extension
-        std::string filepath = file ? std::string(file) : "";
-        filepath.erase(filepath.find_last_not_of(" \n\r\t") + 1);
-        if (!filepath.empty() && filepath.substr(filepath.size() - 4) != ".mcscene")
-            filepath += ".mcscene";
+        std::string file = filepath;
+        if (std::filesystem::path(file).extension() != ".mcscene")
+            file += ".mcscene";
 
-        MCEngine::SceneSerializer::Serialize(m_ActiveScene, filepath);
+        MCEngine::SceneSerializer::Serialize(m_ActiveScene, file);
     }
 }
 
