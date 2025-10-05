@@ -3,7 +3,8 @@
 #include <glad/glad.h>
 
 MCEngine::Texture2D::Texture2D(int width, int height, void *data)
-    : Texture(), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA), m_Type(GL_UNSIGNED_BYTE), m_Samples(0)
+    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA),
+      m_Type(GL_UNSIGNED_BYTE), m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -18,7 +19,8 @@ MCEngine::Texture2D::Texture2D(int width, int height, void *data)
 }
 
 MCEngine::Texture2D::Texture2D(int width, int height, int samples)
-    : Texture(), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA), m_Type(GL_UNSIGNED_BYTE), m_Samples(samples)
+    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA),
+      m_Type(GL_UNSIGNED_BYTE), m_Samples(samples)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -33,7 +35,8 @@ MCEngine::Texture2D::Texture2D(int width, int height, int samples)
 
 MCEngine::Texture2D::Texture2D(int width, int height, unsigned int internalFormat, unsigned int format,
                                unsigned int type)
-    : Texture(), m_InternalFormat(internalFormat), m_Format(format), m_Type(type), m_Samples(0)
+    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(internalFormat), m_Format(format), m_Type(type),
+      m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -63,8 +66,8 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Type(GL_U
 
     // Load image
     {
-        int width, height, channels;
-        unsigned char *data = LoadImage(path, width, height, channels, true);
+        int channels;
+        unsigned char *data = LoadImage(path, m_Width, m_Height, channels, true);
 
         if (channels == 1)
         {
@@ -87,7 +90,7 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Type(GL_U
             FreeImage(data);
             return;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_Format, m_Type, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_Format, m_Type, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
@@ -138,16 +141,19 @@ void MCEngine::Texture2D::Resize(int width, int height)
 {
     ENGINE_PROFILE_FUNCTION();
 
+    m_Width = width;
+    m_Height = height;
+
     if (m_Samples == 0)
     {
         glBindTexture(GL_TEXTURE_2D, m_RendererID);
-        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_Format, m_Type, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_Format, m_Type, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
     {
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_RendererID);
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_InternalFormat, width, height, GL_TRUE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Samples, m_InternalFormat, m_Width, m_Height, GL_TRUE);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     }
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));

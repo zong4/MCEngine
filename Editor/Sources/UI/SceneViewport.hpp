@@ -25,7 +25,6 @@ public:
     // Getters
     bool IsFocused() const { return m_Focused; }
     bool IsHovered() const { return m_Hovered; }
-    glm::vec2 GetViewportSize() const { return m_ViewportSize; }
 
 public:
     void Render();

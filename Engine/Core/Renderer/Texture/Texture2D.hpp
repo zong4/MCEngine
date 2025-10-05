@@ -14,6 +14,10 @@ public:
     Texture2D(const std::string &path);
     virtual ~Texture2D() override;
 
+    // Getters
+    int GetWidth() const { return m_Width; }
+    int GetHeight() const { return m_Height; }
+
 public:
     virtual void Bind(unsigned int slot) const override;
     virtual void Unbind() const override;
@@ -21,6 +25,7 @@ public:
     void Resize(int width, int height);
 
 private:
+    int m_Width, m_Height;
     unsigned int m_InternalFormat, m_Format, m_Type;
     int m_Samples;
 

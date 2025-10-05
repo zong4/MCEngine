@@ -9,6 +9,13 @@
 namespace MCEditor
 {
 
+enum class EditorState
+{
+    Edit = 0,
+    Play,
+    Simulate
+};
+
 enum class EditorAction
 {
     None = 0,
@@ -24,9 +31,6 @@ public:
     EditorLayer(const std::shared_ptr<MCEngine::Window> &window);
     virtual ~EditorLayer() override = default;
 
-    // Getters
-    ImGuizmoType GetGizmoType() const { return m_GizmoType; }
-
 public:
     void OnEvent(MCEngine::Event &event) override;
     void OnUpdate(float deltaTime) override;
@@ -35,20 +39,32 @@ public:
     bool OnKeyEvent(MCEngine::KeyEvent &event);
 
 private:
+    // Logic
+    EditorState m_State = EditorState::Edit;
     EditorAction m_Action = EditorAction::None;
-    ImGuizmoType m_GizmoType = ImGuizmoType::Translate;
+
+    // Panels
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
     Viewport m_GameViewport;
     SceneViewport m_SceneViewport;
 
+    // Toolbar
+    std::shared_ptr<MCEngine::Texture2D> m_PlayButtonIcon;
+    std::shared_ptr<MCEngine::Texture2D> m_StopButtonIcon;
+
 protected:
     void RenderImGui() override;
 
 private:
     void RenderDockSpace();
-    void RenderMenuBar();
+    void RenderMenubar();
+
+    // Toolbar
+    void RenderToolbar();
+    void OnScenePlay();
+    void OnSceneStop();
 };
 
 } // namespace MCEditor
