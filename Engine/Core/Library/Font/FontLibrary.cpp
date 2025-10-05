@@ -41,7 +41,7 @@ void MCEngine::FontLibrary::AddFont(const std::string &name, const std::string &
     LOG_ENGINE_INFO("Font added: " + name + " from path: " + path + " with size: " + std::to_string(size));
 }
 
-void MCEngine::FontLibrary::Init(float fontSize)
+void MCEngine::FontLibrary::Init(float fontSize, float thinScale)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -57,7 +57,7 @@ void MCEngine::FontLibrary::Init(float fontSize)
         if (entry.is_regular_file() && entry.path().extension() == ".ttf")
         {
             AddFont(entry.path().stem().string(), entry.path().string(), fontSize);
-            AddFont(entry.path().stem().string() + "-Half", entry.path().string(), fontSize * 0.5f);
+            AddFont(entry.path().stem().string() + "-Thin", entry.path().string(), fontSize * thinScale);
         }
     }
 }

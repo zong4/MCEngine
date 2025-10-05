@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Shader.hpp"
+#include "Renderer/Shader/Shader.hpp"
 
 namespace MCEngine
 {

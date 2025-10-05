@@ -88,7 +88,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
         }
 
         // Filename
-        ImGui::PushFont(MCEngine::FontLibrary::GetInstance().GetFont("Cute-Half"));
+        ImGui::PushFont(MCEngine::FontLibrary::GetInstance().GetFont("Cute-Thin"));
         float availWidth = ImGui::GetContentRegionAvail().x;
         float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
         if (textWidth > availWidth)

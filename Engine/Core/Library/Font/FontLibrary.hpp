@@ -16,7 +16,7 @@ public:
     void AddFont(const std::string &name, const std::string &path, float size);
 
 public:
-    void Init(float fontSize);
+    void Init(float fontSize, float thinScale);
 
 private:
     std::unordered_map<std::string, ImFont *> m_Fonts;

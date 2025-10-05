@@ -3,7 +3,7 @@
 #include "Event/EventDispatcher.hpp"
 #include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
-#include "FontLibrary.hpp"
+#include "Library/Font/FontLibrary.hpp"
 #include "Window/WindowUtility.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -104,7 +104,7 @@ void MCEngine::ImGuiLayer::OnAttach()
     float fontSize = 10.0f * dpiScale;
 
     // Set default font
-    FontLibrary::GetInstance().Init(fontSize);
+    FontLibrary::GetInstance().Init(fontSize, 0.8f);
     ImFont *customFont = FontLibrary::GetInstance().GetFont("Cute");
     if (!customFont)
     {
