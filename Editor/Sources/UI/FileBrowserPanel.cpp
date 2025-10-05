@@ -40,10 +40,13 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
     ImGui::Columns(columnCount, 0, false);
     for (auto &&directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
     {
-        // ID
         const auto &path = directoryEntry.path();
         auto &&relativePath = std::filesystem::relative(path, EditorConfig::GetInstance().GetAssetsPath());
+
+        // ID
         std::string filenameString = relativePath.filename().string();
+        if (filenameString.empty() || filenameString[0] == '.')
+            continue;
         ImGui::PushID(filenameString.c_str());
 
         // Icon
@@ -95,33 +98,6 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
     ImGui::Columns(1);
     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
     ImGui::SliderFloat("Padding", &padding, 0, 32);
-
-    // if (ImGui::BeginDragDropTarget())
-    // {
-    //     LOG_EDITOR_TRACE("Begin drag drop target");
-    //     if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-    //     {
-    //         LOG_EDITOR_TRACE("Accept payload: CONTENT_BROWSER_ITEM");
-    //         if (payload->Data)
-    //         {
-    //             const char *path = static_cast<const char *>(payload->Data);
-    //             std::filesystem::path filepath(path);
-    //             if (std::filesystem::is_directory(filepath))
-    //             {
-    //                 SetCurrentDirectory(filepath);
-    //                 LOG_EDITOR_TRACE("Open directory: " + filepath.string());
-    //             }
-    //             else
-    //             {
-    //                 if (filepath.extension() == ".mcsene")
-    //                 {
-    //                     SceneManager::GetInstance().OpenScene(path);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     ImGui::EndDragDropTarget();
-    // }
 
     ImGui::End();
 }

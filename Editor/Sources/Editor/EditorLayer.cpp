@@ -151,8 +151,38 @@ void MCEditor::EditorLayer::RenderImGui()
 
     m_FileBrowserPanel.OnImGuiRender();
 
+    ImGui::Begin("Game");
     m_GameViewport.OnImGuiRender();
+    ImGui::End();
+
+    ImGui::Begin("Scene");
     m_SceneViewport.OnImGuiRender(SceneManager::GetInstance().GetSelectedEntity(), m_GizmoType);
+
+    // Receive drag and drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+        {
+            if (payload->Data)
+            {
+                const char *path = static_cast<const char *>(payload->Data);
+                std::filesystem::path filepath(path);
+                if (std::filesystem::is_directory(filepath))
+                {
+                    m_FileBrowserPanel.SetCurrentDirectory(filepath);
+                }
+                else
+                {
+                    if (filepath.extension() == ".mcsene")
+                    {
+                        SceneManager::GetInstance().OpenScene(path);
+                    }
+                }
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+    ImGui::End();
 
     // Logic
     SetBlockEvents(!m_SceneViewport.IsFocused() && !m_SceneViewport.IsHovered());
