@@ -292,10 +292,6 @@ void MCEditor::EditorLayer::RenderToolbar()
 
     // Color
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    const auto &buttonHovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
-    const auto &buttonActive = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
     // Size and Position
     ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -314,7 +310,7 @@ void MCEditor::EditorLayer::RenderToolbar()
             OnSceneStop();
     }
 
-    ImGui::PopStyleColor(3);
+    ImGui::PopStyleColor(1);
     ImGui::End();
     ImGui::PopStyleVar(2);
 }

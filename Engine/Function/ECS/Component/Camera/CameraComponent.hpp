@@ -14,8 +14,8 @@ enum class CameraType
 class CameraComponent
 {
 public:
-    CameraComponent(CameraType type, float width = 1280.0f, float height = 720.0f, float fov = 45.0f,
-                    float nearClip = 0.1f, float farClip = 100.0f);
+    CameraComponent(CameraType type = CameraType::Perspective, float width = 1280.0f, float height = 720.0f,
+                    float fov = 45.0f, float nearClip = 0.1f, float farClip = 100.0f);
 
     // Getters
     CameraType GetType() const { return m_Type; }

@@ -301,6 +301,24 @@ void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::ve
     ImGui::PopID();
 }
 
+// clang-format off
+template <typename T>
+// clang-format on
+static void DisplayAddComponentEntry(const std::string &entryName)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto &&selectionContext = MCEditor::SceneManager::GetInstance().GetSelectedEntity();
+    if (!selectionContext.HasComponent<T>())
+    {
+        if (ImGui::MenuItem(entryName.c_str()))
+        {
+            selectionContext.AddComponent<T>();
+            ImGui::CloseCurrentPopup();
+        }
+    }
+}
+
 void MCEditor::InspectorPanel::DrawAddComponentButton(MCEngine::Entity entity)
 {
     ENGINE_PROFILE_FUNCTION();
@@ -312,43 +330,12 @@ void MCEditor::InspectorPanel::DrawAddComponentButton(MCEngine::Entity entity)
 
     if (ImGui::BeginPopup("AddComponent"))
     {
-        if (!entity.HasComponent<MCEngine::SpriteRendererComponent>())
-        {
-            if (ImGui::MenuItem("Sprite Renderer Component"))
-            {
-                entity.AddComponent<MCEngine::SpriteRendererComponent>(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO("Square"));
-                ImGui::CloseCurrentPopup();
-            }
-        }
+        DisplayAddComponentEntry<MCEngine::SpriteRendererComponent>("Sprite Renderer Component");
+        DisplayAddComponentEntry<MCEngine::MeshRendererComponent>("Mesh Renderer Component");
 
-        if (!entity.HasComponent<MCEngine::MeshRendererComponent>())
-        {
-            if (ImGui::MenuItem("Mesh Renderer Component"))
-            {
-                entity.AddComponent<MCEngine::MeshRendererComponent>(
-                    MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"));
-                ImGui::CloseCurrentPopup();
-            }
-        }
+        ImGui::Separator();
 
-        if (!entity.HasComponent<MCEngine::CameraComponent>())
-        {
-            if (ImGui::MenuItem("Orthographic Camera Component"))
-            {
-                entity.AddComponent<MCEngine::CameraComponent>(MCEngine::CameraType::Orthographic);
-                ImGui::CloseCurrentPopup();
-            }
-        }
-
-        if (!entity.HasComponent<MCEngine::CameraComponent>())
-        {
-            if (ImGui::MenuItem("Perspective Camera Component"))
-            {
-                entity.AddComponent<MCEngine::CameraComponent>(MCEngine::CameraType::Perspective);
-                ImGui::CloseCurrentPopup();
-            }
-        }
+        DisplayAddComponentEntry<MCEngine::CameraComponent>("Camera Component");
 
         if (!entity.HasComponent<MCEngine::LightComponent>())
         {
@@ -377,15 +364,7 @@ void MCEditor::InspectorPanel::DrawAddComponentButton(MCEngine::Entity entity)
             }
         }
 
-        if (!entity.HasComponent<MCEngine::SkyboxComponent>())
-        {
-            if (ImGui::MenuItem("Skybox Component"))
-            {
-                entity.AddComponent<MCEngine::SkyboxComponent>(
-                    MCEngine::TextureLibrary::GetInstance().GetTextureCube("Skybox"));
-                ImGui::CloseCurrentPopup();
-            }
-        }
+        DisplayAddComponentEntry<MCEngine::SkyboxComponent>("Skybox Component");
 
         ImGui::EndPopup();
     }
