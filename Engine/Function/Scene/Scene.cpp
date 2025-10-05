@@ -6,8 +6,7 @@ MCEngine::Scene::~Scene()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Registry.view<MCEngine::NativeScriptComponent>().each(
-        [&](auto &&entity, auto &&nsc) { nsc.Instance->OnDestroy(); });
+    m_Registry.view<MCEngine::NativeScriptComponent>().each([&](auto &&entity, auto &&nsc) { nsc.DestroyScript(); });
 }
 
 void MCEngine::Scene::Update(float deltaTime)
@@ -131,6 +130,37 @@ void MCEngine::Scene::Resize(float width, float height)
         auto &&camera = view.get<CameraComponent>(entity);
         camera.Resize(width, height);
     }
+}
+
+void MCEngine::Scene::DeleteEntity(const Entity &entity)
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    if (!entity || !entity.GetRegistry().valid(entity.GetHandle()))
+        return;
+
+    // Remove from parent's children list and Recursively delete children
+    if (entity.HasComponent<RelationshipComponent>())
+    {
+        auto &&relationship = entity.GetComponent<RelationshipComponent>();
+        if (relationship.GetParent() && relationship.GetParent().HasComponent<RelationshipComponent>())
+        {
+            auto &&parentRelationship = relationship.GetParent().GetComponent<RelationshipComponent>();
+            parentRelationship.RemoveChild(entity);
+        }
+        for (auto &&child : relationship.GetChildren())
+        {
+            DeleteEntity(child);
+        }
+    }
+
+    // Call OnDestroy for NativeScriptComponent
+    if (entity.HasComponent<NativeScriptComponent>())
+    {
+        entity.GetComponent<NativeScriptComponent>().DestroyScript();
+    }
+
+    m_Registry.destroy(entity.GetHandle());
 }
 
 MCEngine::Entity MCEngine::Scene::AddEmptyEntity(const std::string &name, const TransformComponent &transform)

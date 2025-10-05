@@ -37,6 +37,7 @@ public:
     void Resize(float width, float height);
 
     // Entity management
+    void DeleteEntity(const Entity &entity);
     Entity AddEmptyEntity(const std::string &name, const TransformComponent &transform = TransformComponent());
     Entity Add2DObject(const std::string &name, const TransformComponent &transform,
                        const SpriteRendererComponent &spriteRenderer =

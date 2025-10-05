@@ -13,7 +13,7 @@ public:
     virtual ~Entity() { m_Registry = nullptr; }
 
     // Operators
-    operator bool() const { return m_Entity != entt::null; }
+    operator bool() const { return m_Entity != entt::null && m_Registry && m_Registry->valid(m_Entity); }
     operator entt::entity() const { return m_Entity; }
     bool operator==(const Entity &other) const { return m_Entity == other.m_Entity; }
     bool operator!=(const Entity &other) const { return !(*this == other); }
@@ -38,6 +38,8 @@ public:
     // clang-format on
     T &GetComponent() const
     {
+        if (HasComponent<T>() == false)
+            LOG_ENGINE_INFO("Entity does not have component!");
         return m_Registry->get<T>(m_Entity);
     }
     // clang-format off

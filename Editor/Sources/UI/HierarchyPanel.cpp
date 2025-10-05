@@ -110,6 +110,16 @@ void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity)
     if (ImGui::IsItemClicked())
         SceneManager::GetInstance().SetSelectedEntity(entity);
 
+    if (ImGui::BeginPopupContextItem())
+    {
+        if (ImGui::MenuItem("Delete Entity"))
+        {
+            SceneManager::GetInstance().GetActiveScene()->DeleteEntity(entity);
+            SceneManager::GetInstance().SetSelectedEntity(MCEngine::Entity());
+        }
+        ImGui::EndPopup();
+    }
+
     if (opened)
     {
         for (auto &&child : children)
