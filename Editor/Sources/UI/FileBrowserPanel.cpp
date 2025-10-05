@@ -28,10 +28,8 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
         }
     }
 
-    static float padding = 10.0f;
     static float thumbnailSize = 60.0f;
-    float cellSize = thumbnailSize + padding;
-
+    float cellSize = thumbnailSize;
     float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1)
@@ -109,7 +107,6 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
     // Footer
     ImGui::Columns(1);
     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-    ImGui::SliderFloat("Padding", &padding, 0, 32);
 
     ImGui::End();
 }
