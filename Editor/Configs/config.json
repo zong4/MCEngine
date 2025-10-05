@@ -4,5 +4,24 @@
         "Assets": "Editor/Assets/",
         "Scenes": "Editor/Assets/Scenes/",
         "Icons": "Editor/Resources/Icons/"
+    },
+    "Extensions": {
+        "Scene": ".mcscene",
+        "Script": ".mcscript",
+        "Material": ".mcmaterial",
+        "Mesh": ".mcmesh",
+        "Texture": [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".bmp",
+            ".tga",
+            ".gif"
+        ],
+        "Audio": [
+            ".wav",
+            ".mp3",
+            ".ogg"
+        ]
     }
 }

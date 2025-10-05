@@ -72,7 +72,7 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
                 }
                 else
                 {
-                    if (relativePath.extension() == ".mcsene")
+                    if (relativePath.extension() == ".mcscene")
                     {
                         SceneManager::GetInstance().OpenScene(path.string());
                     }

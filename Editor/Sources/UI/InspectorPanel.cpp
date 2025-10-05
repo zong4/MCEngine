@@ -1,5 +1,6 @@
 #include "InspectorPanel.hpp"
 
+#include "Manager/ConfigManager.hpp"
 #include "Manager/SceneManager.hpp"
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -155,6 +156,33 @@ void MCEditor::InspectorPanel::OnImGuiRender() const
                 DrawTable2<MCEngine::SpriteRendererComponent>(
                     "Color", [&sprite]() { ImGui::ColorEdit4("##Color", glm::value_ptr(sprite.GetColor())); });
             });
+
+        // todo: Drag and Drop for Texture2D
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+            {
+                if (payload->Data)
+                {
+                    const char *path = static_cast<const char *>(payload->Data);
+                    std::filesystem::path filepath(path);
+                    std::string relativePath =
+                        std::filesystem::relative(filepath, ConfigManager::GetInstance().GetAssetsPath()).string();
+                    if (std::filesystem::is_regular_file(filepath))
+                    {
+                        if (filepath.extension() == ".jpg" || filepath.extension() == ".png")
+                        {
+                            if (selectedEntity)
+                            {
+                                selectedEntity.GetComponent<MCEngine::SpriteRendererComponent>().SetTexture(
+                                    MCEngine::TextureLibrary::GetInstance().GetTexture2D(relativePath));
+                            }
+                        }
+                    }
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
 
         // MeshRendererComponent
         DrawComponent<MCEngine::MeshRendererComponent>(

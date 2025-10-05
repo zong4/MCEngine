@@ -138,9 +138,9 @@ void MCEditor::EditorLayer::RenderImGui()
 
     RenderDockSpace();
 
+    m_FileBrowserPanel.OnImGuiRender();
     m_HierarchyPanel.OnImGuiRender();
     m_InspectorPanel.OnImGuiRender();
-    m_FileBrowserPanel.OnImGuiRender();
 
     ImGui::Begin("Game");
     m_GameViewport.OnImGuiRender();
@@ -164,7 +164,7 @@ void MCEditor::EditorLayer::RenderImGui()
                 }
                 else
                 {
-                    if (filepath.extension() == ".mcsene")
+                    if (filepath.extension() == ".mcscene")
                     {
                         SceneManager::GetInstance().OpenScene(path);
                     }

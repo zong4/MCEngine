@@ -72,7 +72,7 @@ void MCEditor::SceneViewport::RenderGizmos()
     ENGINE_PROFILE_FUNCTION();
 
     auto &&selectedEntity = SceneManager::GetInstance().GetSelectedEntity();
-    if (m_GizmoType != ImGuizmoType::None)
+    if (selectedEntity && m_GizmoType != ImGuizmoType::None)
     {
         ImGuizmo::BeginFrame();
         ImGuizmo::SetOrthographic(false);
