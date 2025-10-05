@@ -88,7 +88,19 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
         }
 
         // Filename
-        ImGui::TextWrapped("%s", filenameString.c_str());
+        ImGui::PushFont(MCEngine::FontLibrary::GetInstance().GetFont("Cute-Half"));
+        float availWidth = ImGui::GetContentRegionAvail().x;
+        float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
+        if (textWidth > availWidth)
+        {
+            while (!filenameString.empty() && ImGui::CalcTextSize((filenameString + "...").c_str()).x > availWidth)
+                filenameString.pop_back();
+            filenameString += "...";
+        }
+        float offsetX = (availWidth - ImGui::CalcTextSize(filenameString.c_str()).x) * 0.5f;
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+        ImGui::TextUnformatted(filenameString.c_str());
+        ImGui::PopFont();
 
         ImGui::PopID();
         ImGui::NextColumn();

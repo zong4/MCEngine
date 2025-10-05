@@ -7,6 +7,7 @@
 #include "Event/Key/KeyCodeLibrary.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
+#include "Layer/ImGui/FontLibrary.hpp"
 #include "Layer/ImGui/ImGuiLayer.hpp"
 #include "Renderer/Buffer/FrameBuffer/FrameBuffer.hpp"
 #include "Renderer/Buffer/UniformBuffer/UniformBufferLibrary.hpp"

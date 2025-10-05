@@ -3,6 +3,7 @@
 #include "Event/EventDispatcher.hpp"
 #include "Event/Key/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
+#include "FontLibrary.hpp"
 #include "Window/WindowUtility.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -97,23 +98,14 @@ void MCEngine::ImGuiLayer::OnAttach()
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-    // Fonts
+    // DPI Scaling
     float dpiScale = WindowUtility::GetDPIScale();
     LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
     float fontSize = 10.0f * dpiScale;
-    ImFont *fontChild = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf").c_str(),
-        fontSize);
-    ImFont *fontCute = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Delius/Delius-Regular.ttf").c_str(), fontSize);
-    ImFont *fontActive = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Regular.ttf").c_str(), fontSize);
-    ImFont *fontActiveBold = io.Fonts->AddFontFromFileTTF(
-        (std::string(PROJECT_ROOT) + "Engine/Assets/Fonts/Allan/Allan-Bold.ttf").c_str(), fontSize);
-    io.FontGlobalScale = 1.0f;
 
     // Set default font
-    ImFont *customFont = fontCute;
+    FontLibrary::GetInstance().Init(fontSize);
+    ImFont *customFont = FontLibrary::GetInstance().GetFont("Cute");
     if (!customFont)
     {
         LOG_EDITOR_INFO("Failed to load custom font! Using default font instead.");

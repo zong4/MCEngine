@@ -64,7 +64,12 @@ MCEngine::ShaderLibrary::ShaderLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Shaders/");
+    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Resources/Shaders/");
+    if (!std::filesystem::exists(path))
+    {
+        LOG_ENGINE_ERROR("Shader directory does not exist: " + path.string());
+        return;
+    }
 
     // Load common vertex shader if exists
     std::string commonVertexSource;

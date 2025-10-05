@@ -60,7 +60,13 @@ MCEngine::TextureLibrary::TextureLibrary()
 
     AddTexture("White", std::make_shared<Texture2D>(1, 1, new unsigned char[4]{255, 255, 255, 255}));
 
-    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Assets/Images/");
+    std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Resources/Images/");
+    if (!std::filesystem::exists(path))
+    {
+        LOG_ENGINE_ERROR("Texture directory does not exist: " + path.string());
+        return;
+    }
+
     for (auto &&entry : std::filesystem::directory_iterator(path))
     {
         if (entry.is_regular_file())
