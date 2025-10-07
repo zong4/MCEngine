@@ -23,16 +23,14 @@ public:
     // Setters
     void SetRunning(bool running) { m_Running = running; }
     void SetVSync(bool enabled);
+    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
+    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }
 
 public:
     // Main loop
     void OnEvent(Event &e);
     void Update(float deltaTime);
     void Render();
-
-    // Layer management
-    void AddLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PushLayer(layer); }
-    void RemoveLayer(const std::shared_ptr<Layer> &layer) { m_LayerStack.PopLayer(layer); }
 
 private:
     bool m_Running = true;

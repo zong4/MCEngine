@@ -28,11 +28,11 @@ void MCEngine::Window::SetVSync(bool enabled)
     LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
 
-void MCEngine::Window::OnEvent(Event &e)
+void MCEngine::Window::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_LayerStack.OnEvent(e);
+    m_LayerStack.OnEvent(event);
 }
 
 void MCEngine::Window::Update(float deltaTime)

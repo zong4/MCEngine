@@ -1,7 +1,7 @@
 #pragma once
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
 namespace MCEngine
 {

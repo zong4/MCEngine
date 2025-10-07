@@ -104,7 +104,7 @@ void MCEngine::FrameBuffer::BindBasicTexture(int width, int height)
 
     if (m_Type == FrameBufferType::Color)
     {
-        m_Texture = std::make_shared<Texture2D>(width, height, nullptr);
+        m_Texture = std::make_shared<Texture2D>(width, height, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture->GetRendererID(), 0);
     }
     else if (m_Type == FrameBufferType::Depth)

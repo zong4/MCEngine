@@ -1,5 +1,7 @@
 #include "TextureLibrary.hpp"
 
+#include <glad/glad.h>
+
 MCEngine::TextureLibrary &MCEngine::TextureLibrary::GetInstance()
 {
     static TextureLibrary instance;
@@ -58,7 +60,8 @@ MCEngine::TextureLibrary::TextureLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    AddTexture("White", std::make_shared<Texture2D>(1, 1, new unsigned char[4]{255, 255, 255, 255}));
+    AddTexture("White", std::make_shared<Texture2D>(1, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE,
+                                                    new unsigned char[4]{255, 255, 255, 255}));
 
     std::filesystem::path path(std::string(PROJECT_ROOT) + "/Engine/Resources/Images/");
     if (!std::filesystem::exists(path))

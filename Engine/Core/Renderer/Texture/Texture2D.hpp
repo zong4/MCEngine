@@ -8,9 +8,10 @@ namespace MCEngine
 class Texture2D : public Texture
 {
 public:
-    Texture2D(int width, int height, void *data);
+    // Texture2D(int width, int height, void *data);
+    Texture2D(int width, int height, unsigned int internalFormat, unsigned int format, unsigned int type,
+              void *data = nullptr);
     Texture2D(int width, int height, int samples);
-    Texture2D(int width, int height, unsigned int internalFormat, unsigned int format, unsigned int type);
     Texture2D(const std::string &path);
     virtual ~Texture2D() override;
 

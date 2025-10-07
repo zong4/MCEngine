@@ -2,17 +2,30 @@
 
 #include <glad/glad.h>
 
-MCEngine::Texture2D::Texture2D(int width, int height, void *data)
-    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_Format(GL_RGBA),
-      m_Type(GL_UNSIGNED_BYTE), m_Samples(0)
+MCEngine::Texture2D::Texture2D(int width, int height, unsigned int internalFormat, unsigned int format,
+                               unsigned int type, void *data)
+    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(internalFormat), m_Format(format), m_Type(type),
+      m_Samples(0)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    CreateTexture(width, height, m_InternalFormat, m_Format, m_Type, data);
+    CreateTexture(width, height, internalFormat, format, type, data);
 
     // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (m_Format == GL_DEPTH_COMPONENT)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    }
+    else if (m_Format == GL_RGBA)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -31,30 +44,6 @@ MCEngine::Texture2D::Texture2D(int width, int height, int samples)
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-}
-
-MCEngine::Texture2D::Texture2D(int width, int height, unsigned int internalFormat, unsigned int format,
-                               unsigned int type)
-    : Texture(), m_Width(width), m_Height(height), m_InternalFormat(internalFormat), m_Format(format), m_Type(type),
-      m_Samples(0)
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    CreateTexture(width, height, internalFormat, format, type, nullptr);
-
-    // Set texture parameters
-    if (m_Format == GL_DEPTH_COMPONENT)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    }
-    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Type(GL_UNSIGNED_BYTE), m_Samples(0)

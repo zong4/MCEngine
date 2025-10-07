@@ -64,6 +64,6 @@ std::pair<int, int> MCEngine::WindowUtility::GetScreenResolution()
 
 int MCEngine::WindowUtility::GetScreenResolutionScale()
 {
-    auto [width, height] = GetScreenResolution();
+    auto &&[width, height] = GetScreenResolution();
     return width / 1280;
 }
