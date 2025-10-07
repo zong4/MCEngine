@@ -12,7 +12,7 @@ public:
     ~Viewport() = default;
 
 public:
-    void Render(std::shared_ptr<MCEngine::Scene> scene) const;
+    void Render() const;
     void OnImGuiRender();
 
 private:

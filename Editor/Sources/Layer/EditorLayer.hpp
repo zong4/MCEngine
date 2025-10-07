@@ -4,17 +4,11 @@
 #include "UI/HierarchyPanel.hpp"
 #include "UI/InspectorPanel.hpp"
 #include "UI/SceneViewport.hpp"
+#include "UI/Toolbar.hpp"
 #include "UI/Viewport.hpp"
 
 namespace MCEditor
 {
-
-enum class EditorState
-{
-    Edit = 0,
-    Play,
-    Simulate
-};
 
 enum class EditorAction
 {
@@ -40,19 +34,15 @@ public:
 
 private:
     // Logic
-    EditorState m_State = EditorState::Edit;
     EditorAction m_Action = EditorAction::None;
 
     // Panels
+    Toolbar m_Toolbar;
     HierarchyPanel m_HierarchyPanel;
     InspectorPanel m_InspectorPanel;
     FileBrowserPanel m_FileBrowserPanel;
     Viewport m_GameViewport;
     SceneViewport m_SceneViewport;
-
-    // Toolbar
-    std::shared_ptr<MCEngine::Texture2D> m_PlayButtonIcon;
-    std::shared_ptr<MCEngine::Texture2D> m_StopButtonIcon;
 
 protected:
     void RenderImGui() override;

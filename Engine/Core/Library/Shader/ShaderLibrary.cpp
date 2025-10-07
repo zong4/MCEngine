@@ -73,7 +73,7 @@ MCEngine::ShaderLibrary::ShaderLibrary()
 
     // Load common vertex shader if exists
     std::string commonVertexSource;
-    std::filesystem::path commonVertexPath = path.string() + "Common.vs";
+    std::filesystem::path commonVertexPath = path / "Common.vs";
     if (std::filesystem::exists(commonVertexPath))
     {
         std::ifstream commonVertexFile(commonVertexPath);

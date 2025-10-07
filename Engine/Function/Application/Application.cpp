@@ -7,8 +7,7 @@ void MCEngine::Application::Run()
     Timer timer;
     while (!m_Window->IsRunning())
     {
-        float deltaTime = timer.GetElapsedSeconds();
-        m_Window->Update(deltaTime);
+        m_Window->Update(timer.GetElapsedSeconds());
         m_Window->Render();
     }
 }

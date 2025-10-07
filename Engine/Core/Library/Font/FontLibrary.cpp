@@ -20,7 +20,7 @@ ImFont *MCEngine::FontLibrary::GetFont(const std::string &name)
     return m_Fonts[name];
 }
 
-void MCEngine::FontLibrary::AddFont(const std::string &name, const std::filesystem::path &path, float size)
+void MCEngine::FontLibrary::AddFont(const std::string &name, const std::string &path, float size)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -30,15 +30,15 @@ void MCEngine::FontLibrary::AddFont(const std::string &name, const std::filesyst
         return;
     }
 
-    ImFont *font = ImGui::GetIO().Fonts->AddFontFromFileTTF(path.string().c_str(), size);
+    ImFont *font = ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(), size);
     if (!font)
     {
-        LOG_ENGINE_ERROR("Failed to load font from path: " + path.string());
+        LOG_ENGINE_ERROR("Failed to load font from path: " + path);
         return;
     }
 
     m_Fonts[name] = font;
-    LOG_ENGINE_TRACE("Font added: " + name + " from path: " + path.string() + " with size: " + std::to_string(size));
+    LOG_ENGINE_TRACE("Font added: " + name + " from path: " + path + " with size: " + std::to_string(size));
 }
 
 void MCEngine::FontLibrary::Init(float fontSize, float thinScale)
@@ -56,8 +56,8 @@ void MCEngine::FontLibrary::Init(float fontSize, float thinScale)
     {
         if (entry.is_regular_file() && entry.path().extension() == ".ttf")
         {
-            AddFont(entry.path().stem().string(), entry.path(), fontSize);
-            AddFont(entry.path().stem().string() + "-Thin", entry.path(), fontSize * thinScale);
+            AddFont(entry.path().stem().string(), entry.path().string(), fontSize);
+            AddFont(entry.path().stem().string() + "-Thin", entry.path().string(), fontSize * thinScale);
         }
     }
 

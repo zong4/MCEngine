@@ -1,10 +1,13 @@
 #include "Viewport.hpp"
 
+#include "Manager/SceneManager.hpp"
 #include <imgui.h>
 
-void MCEditor::Viewport::Render(std::shared_ptr<MCEngine::Scene> scene) const
+void MCEditor::Viewport::Render() const
 {
     ENGINE_PROFILE_FUNCTION();
+
+    auto &&scene = SceneManager::GetInstance().GetActiveScene();
 
     if (m_ViewportDirty)
     {
