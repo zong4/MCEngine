@@ -9,6 +9,8 @@ class WindowUtility
 {
 public:
     static float GetDPIScale();
+    static std::pair<int, int> GetScreenResolution();
+    static int GetScreenResolutionScale();
 };
 
 } // namespace MCEngine

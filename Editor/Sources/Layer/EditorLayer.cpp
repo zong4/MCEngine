@@ -11,9 +11,9 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
 
     // Load icons
     m_PlayButtonIcon =
-        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "PlayButton.png");
-    m_StopButtonIcon =
-        std::make_shared<MCEngine::Texture2D>(ConfigManager::GetInstance().GetIconsPath() / "StopButton.png");
+        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "PlayButton.png").string());
+    m_StopButtonIcon = std::make_shared<MCEngine::Texture2D>(
+        (ConfigManager::GetInstance().GetIconsPath() / "StopButton.png").string());
 }
 
 void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
