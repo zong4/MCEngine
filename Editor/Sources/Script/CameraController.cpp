@@ -1,20 +1,25 @@
 #include "CameraController.hpp"
 
 #include <imgui.h>
+// After import imgui
+#include "ImGuizmo/ImGuizmo.h"
 
 void MCEditor::CameraController::OnStart()
 {
     ENGINE_PROFILE_FUNCTION();
 
     auto &&transform = GetComponent<MCEngine::TransformComponent>();
-    transform.SetPosition(glm::vec3(0.0f, 0.0f, 15.0f));
-    transform.SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-    transform.SetScale(glm::vec3(1.0f));
+    // transform.SetPosition(glm::vec3(0.0f, 0.0f, 15.0f));
+    // transform.SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+    // transform.SetScale(glm::vec3(1.0f));
 }
 
 void MCEditor::CameraController::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
+
+    if (ImGuizmo::IsUsing())
+        return;
 
     auto &&transform = GetComponent<MCEngine::TransformComponent>();
     glm::vec2 mouseDelta = MCEngine::MouseLibrary::GetInstance().GetDeltaPosition();
@@ -26,7 +31,7 @@ void MCEditor::CameraController::OnUpdate(float deltaTime)
     }
     else if (MCEngine::MouseLibrary::GetInstance().IsButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
     {
-        transform.SetRotation(transform.GetRotation() +
+        transform.SetRotation(transform.GetRotation() -
                               glm::vec3(mouseDelta.y, mouseDelta.x, 0.0f) * m_RotateSpeed * deltaTime);
     }
 

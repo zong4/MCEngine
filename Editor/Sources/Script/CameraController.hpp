@@ -16,8 +16,8 @@ public:
     void OnUpdate(float deltaTime) override;
 
 private:
-    float m_MoveSpeed = 0.1f;
-    float m_RotateSpeed = 1.0f;
+    float m_MoveSpeed = 0.2f;
+    float m_RotateSpeed = 2.0f;
     float m_ZoomSpeed = 1.5f;
 };
 

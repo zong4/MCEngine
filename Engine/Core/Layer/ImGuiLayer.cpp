@@ -38,11 +38,6 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
             io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
             return io.WantCaptureMouse;
         });
-        dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
-            ImGuiIO &io = ImGui::GetIO();
-            io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
-            return io.WantCaptureMouse;
-        });
         dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
             io.AddMouseButtonEvent(event.GetCode(), event.GetAction() == 1 || event.GetAction() == 2);

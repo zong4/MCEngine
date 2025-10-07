@@ -4,6 +4,7 @@
 #include <imgui.h>
 // After import imgui
 #include "ImGuizmo/ImGuizmo.h"
+#include <iostream>
 
 MCEditor::SceneViewport::SceneViewport()
 {
@@ -83,13 +84,13 @@ void MCEditor::SceneViewport::RenderGizmos()
                           ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, m_ViewportSize.x,
                           m_ViewportSize.y);
 
-        // Camera
-        const glm::mat4 &cameraProjection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
-        const glm::mat4 &cameraView = m_Camera.GetComponent<MCEngine::TransformComponent>().GetViewMatrix();
-
         // Entity transform
         auto &&transformComponent = selectedEntity.GetComponent<MCEngine::TransformComponent>();
         glm::mat4 transform = transformComponent.GetTransformMatrix();
+
+        // Camera
+        const glm::mat4 &cameraView = m_Camera.GetComponent<MCEngine::TransformComponent>().GetViewMatrix();
+        const glm::mat4 &cameraProjection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
 
         ImGuizmo::OPERATION gizmoOperation;
         switch (m_GizmoType)
