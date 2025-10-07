@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pch.hpp"
+
 namespace MCEngine
 {
 
@@ -9,34 +11,34 @@ public:
     static MouseLibrary &GetInstance();
 
     // Getters
-    bool IsMouseButtonDown(int button) const;
-    bool IsMouseButtonPressed(int button) const;
-    bool IsMouseButtonReleased(int button) const;
-    std::pair<double, double> GetMousePosition() const { return {m_MouseX, m_MouseY}; }
-    double GetMouseX() const { return m_MouseX; }
-    double GetMouseY() const { return m_MouseY; }
-    double GetMouseDeltaX() const { return m_MouseDeltaX; }
-    double GetMouseDeltaY() const { return m_MouseDeltaY; }
+    bool IsButtonDown(int button) const;
+    bool IsButtonPressed(int button) const;
+    bool IsButtonReleased(int button) const;
+    const std::pair<double, double> &GetPosition() const { return m_Position; }
+    const std::pair<double, double> &GetLastPosition() const { return m_LastPosition; }
+    std::pair<double, double> GetDeltaPosition() const
+    {
+        return {m_Position.first - m_LastPosition.first, m_Position.second - m_LastPosition.second};
+    }
+    const std::pair<double, double> &GetScrollOffset() const { return m_ScrollOffset; }
 
     // Setters
-    void SetMouseButtonState(int button, int action);
-    void SetMousePosition(double x, double y);
-    void SetMouseScrollOffset(double xOffset, double yOffset)
+    void SetButtonState(int button, int action) { m_ButtonStates[button] = action; }
+    void SetPosition(double x, double y)
     {
-        m_MouseScrollXOffset = xOffset;
-        m_MouseScrollYOffset = yOffset;
+        m_LastPosition = m_Position;
+        m_Position = {x, y};
     }
-    void EndFrame();
+    void SetScrollOffset(double xOffset, double yOffset) { m_ScrollOffset = {xOffset, yOffset}; }
 
 private:
-    std::unordered_map<int, int> m_MouseButtonStateMap; // button, action
-    double m_MouseX = 0.0;
-    double m_MouseY = 0.0;
-    double m_LastMouseX = 0.0;
-    double m_LastMouseY = 0.0;
+    std::unordered_map<int, int> m_ButtonStates;
+    std::pair<double, double> m_Position = {0.0, 0.0};
+    std::pair<double, double> m_LastPosition = {0.0, 0.0};
+    std::pair<double, double> m_ScrollOffset = {0.0, 0.0};
 
 private:
-    MouseLibrary();
+    MouseLibrary() = default;
     ~MouseLibrary() = default;
 };
 

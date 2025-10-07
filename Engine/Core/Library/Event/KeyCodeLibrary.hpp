@@ -1,6 +1,6 @@
 #pragma once
 
-#include "KeyEvent.hpp"
+#include "pch.hpp"
 
 namespace MCEngine
 {
@@ -10,12 +10,16 @@ class KeyCodeLibrary
 public:
     static KeyCodeLibrary &GetInstance();
 
+    // Getters
     bool IsKeyDown(int keyCode) const;
-    int GetKeyAction(int keyCode) const;
-    void SetKeyAction(int keyCode, int action) { m_KeyStateMap[keyCode] = action; }
+    bool IsKeyPressed(int keyCode) const;
+    bool IsKeyReleased(int keyCode) const;
+
+    // Setters
+    void SetKeyAction(int keyCode, int action) { m_KeyStates[keyCode] = action; }
 
 private:
-    std::unordered_map<int, int> m_KeyStateMap;
+    std::unordered_map<int, int> m_KeyStates;
 
 private:
     KeyCodeLibrary() = default;

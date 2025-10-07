@@ -27,8 +27,24 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
     if (!event.IsHandled())
     {
         MCEngine::EventDispatcher dispatcher(event);
+
+        // KeyEvent
         dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
             MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
+            return false;
+        });
+
+        // MouseEvent
+        dispatcher.Dispatch<MCEngine::MouseButtonEvent>([this](MCEngine::MouseButtonEvent &e) {
+            MCEngine::MouseLibrary::GetInstance().SetButtonState(e.GetButton(), e.GetAction());
+            return false;
+        });
+        dispatcher.Dispatch<MCEngine::MouseMoveEvent>([this](MCEngine::MouseMoveEvent &e) {
+            MCEngine::MouseLibrary::GetInstance().SetPosition(e.GetX(), e.GetY());
+            return false;
+        });
+        dispatcher.Dispatch<MCEngine::MouseScrollEvent>([this](MCEngine::MouseScrollEvent &e) {
+            MCEngine::MouseLibrary::GetInstance().SetScrollOffset(e.GetXOffset(), e.GetYOffset());
             return false;
         });
     }

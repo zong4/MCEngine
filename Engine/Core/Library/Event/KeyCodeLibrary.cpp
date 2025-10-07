@@ -10,22 +10,34 @@ bool MCEngine::KeyCodeLibrary::IsKeyDown(int keyCode) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&it = m_KeyStateMap.find(keyCode);
-    if (it != m_KeyStateMap.end())
+    auto &&it = m_KeyStates.find(keyCode);
+    if (it != m_KeyStates.end())
     {
         return it->second == 1 || it->second == 2;
     }
     return false;
 }
 
-int MCEngine::KeyCodeLibrary::GetKeyAction(int keyCode) const
+bool MCEngine::KeyCodeLibrary::IsKeyPressed(int keyCode) const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&it = m_KeyStateMap.find(keyCode);
-    if (it != m_KeyStateMap.end())
+    auto &&it = m_KeyStates.find(keyCode);
+    if (it != m_KeyStates.end())
     {
-        return it->second;
+        return it->second == 1;
     }
-    return 0;
+    return false;
+}
+
+bool MCEngine::KeyCodeLibrary::IsKeyReleased(int keyCode) const
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    auto &&it = m_KeyStates.find(keyCode);
+    if (it != m_KeyStates.end())
+    {
+        return it->second == 0;
+    }
+    return false;
 }

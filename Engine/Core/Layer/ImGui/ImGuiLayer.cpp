@@ -1,7 +1,7 @@
 ﻿#include "ImGuiLayer.hpp"
 
 #include "Event/EventDispatcher.hpp"
-#include "Event/Key/KeyEvent.hpp"
+#include "Event/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Library/Font/FontLibrary.hpp"
 #include "Window/WindowUtility.hpp"

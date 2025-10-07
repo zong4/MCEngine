@@ -47,4 +47,25 @@ private:
     int m_Action;
 };
 
+class MouseScrollEvent : public MCEngine::Event
+{
+public:
+    MouseScrollEvent(double xOffset, double yOffset) : m_XOffset(xOffset), m_YOffset(yOffset) {}
+
+    double GetXOffset() const { return m_XOffset; }
+    double GetYOffset() const { return m_YOffset; }
+
+public:
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << "MouseScrollEvent: " << m_XOffset << ", " << m_YOffset;
+        return ss.str();
+    }
+
+private:
+    double m_XOffset;
+    double m_YOffset;
+};
+
 } // namespace MCEngine

@@ -5,7 +5,37 @@
 namespace MCEngine
 {
 
+/*! @ingroup input
+ */
 #define ENGINE_KEY_UNKNOWN            -1
+
+/*! @} */
+
+/*! @defgroup keys Keyboard key tokens
+ *  @brief Keyboard key tokens.
+ *
+ *  See [key input](@ref input_key) for how these are used.
+ *
+ *  These key codes are inspired by the _USB HID Usage Tables v1.12_ (p. 53-60),
+ *  but re-arranged to map to 7-bit ASCII for printable keys (function keys are
+ *  put in the 256+ range).
+ *
+ *  The naming of the key codes follow these rules:
+ *   - The US keyboard layout is used
+ *   - Names of printable alphanumeric characters are used (e.g. "A", "R",
+ *     "3", etc.)
+ *   - For non-alphanumeric characters, Unicode:ish names are used (e.g.
+ *     "COMMA", "LEFT_SQUARE_BRACKET", etc.). Note that some names do not
+ *     correspond to the Unicode standard (usually for brevity)
+ *   - Keys that lack a clear US mapping are named "WORLD_x"
+ *   - For non-printable keys, custom names are used (e.g. "F4",
+ *     "BACKSPACE", etc.)
+ *
+ *  @ingroup input
+ *  @{
+ */
+
+/* Printable keys */
 #define ENGINE_KEY_SPACE              32
 #define ENGINE_KEY_APOSTROPHE         39  /* ' */
 #define ENGINE_KEY_COMMA              44  /* , */
@@ -130,6 +160,29 @@ namespace MCEngine
 #define ENGINE_KEY_MENU               348
 
 #define ENGINE_KEY_LAST               ENGINE_KEY_MENU
+
+/*! @} */
+
+/*! @defgroup buttons Mouse buttons
+ *  @brief Mouse button IDs.
+ *
+ *  See [mouse button input](@ref input_mouse_button) for how these are used.
+ *
+ *  @ingroup input
+ *  @{ */
+#define ENGINE_MOUSE_BUTTON_1         0
+#define ENGINE_MOUSE_BUTTON_2         1
+#define ENGINE_MOUSE_BUTTON_3         2
+#define ENGINE_MOUSE_BUTTON_4         3
+#define ENGINE_MOUSE_BUTTON_5         4
+#define ENGINE_MOUSE_BUTTON_6         5
+#define ENGINE_MOUSE_BUTTON_7         6
+#define ENGINE_MOUSE_BUTTON_8         7
+#define ENGINE_MOUSE_BUTTON_LAST      ENGINE_MOUSE_BUTTON_8
+#define ENGINE_MOUSE_BUTTON_LEFT      ENGINE_MOUSE_BUTTON_1
+#define ENGINE_MOUSE_BUTTON_RIGHT     ENGINE_MOUSE_BUTTON_2
+#define ENGINE_MOUSE_BUTTON_MIDDLE    ENGINE_MOUSE_BUTTON_3
+/*! @} */
 
 } // namespace MCEngine
 

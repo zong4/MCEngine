@@ -1,7 +1,7 @@
 #include "Window.hpp"
 
 #include "Event/EventDispatcher.hpp"
-#include "Event/Key/KeyEvent.hpp"
+#include "Event/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
 #include "Renderer/RendererCommand.hpp"
@@ -156,4 +156,11 @@ void MCEngine::Window::SetCallbacks()
                                  MouseMoveEvent event(xPos, yPos);
                                  window->OnEvent(event);
                              });
+
+    glfwSetScrollCallback(static_cast<GLFWwindow *>(m_NativeWindow),
+                          [](GLFWwindow *nativeWindow, double xOffset, double yOffset) {
+                              Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
+                              MouseScrollEvent event(xOffset, yOffset);
+                              window->OnEvent(event);
+                          });
 }
