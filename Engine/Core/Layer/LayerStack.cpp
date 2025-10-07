@@ -4,7 +4,7 @@ MCEngine::LayerStack::~LayerStack()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    for (auto &&layer : m_Layers)
+    for (const std::shared_ptr<Layer> &layer : m_Layers)
     {
         layer->OnDetach();
     }
@@ -24,12 +24,11 @@ void MCEngine::LayerStack::PopLayer(const std::shared_ptr<Layer> &layer)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&it = std::find(m_Layers.begin(), m_Layers.end(), layer);
+    std::vector<std::shared_ptr<Layer>>::iterator it = std::find(m_Layers.begin(), m_Layers.end(), layer);
     if (it != m_Layers.end())
     {
-        (*it)->OnDetach();
+        it->get()->OnDetach();
         m_Layers.erase(it);
-
         LOG_ENGINE_INFO("Layer popped: " + layer->GetName());
         return;
     }
@@ -40,12 +39,11 @@ void MCEngine::LayerStack::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    for (auto &&it = m_Layers.rbegin(); it != m_Layers.rend(); it++)
+    for (std::vector<std::shared_ptr<Layer>>::reverse_iterator it = m_Layers.rbegin(); it != m_Layers.rend(); it++)
     {
-        if (event.IsHandled())
+        if (event.IsHandled()) // So do not need to check it again in each layer
             break;
-
-        (*it)->OnEvent(event);
+        it->get()->OnEvent(event);
     }
 }
 
@@ -53,7 +51,7 @@ void MCEngine::LayerStack::Update(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    for (auto &&layer : m_Layers)
+    for (const std::shared_ptr<Layer> &layer : m_Layers)
     {
         layer->OnUpdate(deltaTime);
     }
@@ -63,7 +61,7 @@ void MCEngine::LayerStack::Render()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    for (auto &&layer : m_Layers)
+    for (const std::shared_ptr<Layer> &layer : m_Layers)
     {
         layer->OnRender();
         layer->OnImGuiRender();

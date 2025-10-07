@@ -21,26 +21,32 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    if (!event.IsHandled() && m_BlockEvents)
+    if (m_BlockEvents)
     {
         EventDispatcher dispatcher(event);
 
-        dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
+        // Keyboard
+        dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
-            io.AddMouseButtonEvent(event.GetCode(), event.GetAction() == 1 || event.GetAction() == 2);
-            return io.WantCaptureMouse;
+            io.AddKeyEvent(static_cast<ImGuiKey>(event.GetCode()), event.GetAction() == 1 || event.GetAction() == 2);
+            return io.WantCaptureKeyboard;
         });
 
+        // Mouse
         dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
             io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
             return io.WantCaptureMouse;
         });
-
-        dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
+        dispatcher.Dispatch<MouseMoveEvent>([](MouseMoveEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
-            io.AddKeyEvent(static_cast<ImGuiKey>(event.GetCode()), event.GetAction() == 1 || event.GetAction() == 2);
-            return io.WantCaptureKeyboard;
+            io.AddMousePosEvent((float)event.GetX(), (float)event.GetY());
+            return io.WantCaptureMouse;
+        });
+        dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
+            ImGuiIO &io = ImGui::GetIO();
+            io.AddMouseButtonEvent(event.GetCode(), event.GetAction() == 1 || event.GetAction() == 2);
+            return io.WantCaptureMouse;
         });
     }
 }
@@ -72,6 +78,7 @@ void MCEngine::ImGuiLayer::EndRenderImGui() const
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+    // Update and Render additional Platform Windows
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         GLFWwindow *backup_current_context = glfwGetCurrentContext();
@@ -98,12 +105,12 @@ void MCEngine::ImGuiLayer::OnAttach()
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-    // DPI Scaling
-    float dpiScale = WindowUtility::GetDPIScale();
-    LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
+    // Set font size based on DPI scale and screen resolution
     std::pair<int, int> screenResolution = WindowUtility::GetScreenResolution();
     LOG_ENGINE_INFO("Screen Resolution: " + std::to_string(screenResolution.first) + "x" +
                     std::to_string(screenResolution.second));
+    float dpiScale = WindowUtility::GetDPIScale();
+    LOG_ENGINE_INFO("DPI Scale: " + std::to_string(dpiScale));
     float fontSize = 10.0f * dpiScale * WindowUtility::GetScreenResolutionScale();
 
     // Set default font
@@ -119,6 +126,7 @@ void MCEngine::ImGuiLayer::OnAttach()
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     // ImGui::StyleColorsClassic();
+    SetDarkThemeColors();
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
     // ones.
@@ -128,9 +136,6 @@ void MCEngine::ImGuiLayer::OnAttach()
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
-
-    // Custom theme
-    SetDarkThemeColors();
 
     // Read ini file
     ImGui::GetIO().IniFilename = m_ImGuiFilePath.string().c_str();
