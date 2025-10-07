@@ -133,7 +133,7 @@ MCEngine::VAOLibrary &MCEngine::VAOLibrary::GetInstance()
 
 std::string MCEngine::VAOLibrary::GetName(const std::shared_ptr<VertexArray> &vao) const
 {
-    for (const auto &[name, ptr] : m_VAOMap)
+    for (const auto &[name, ptr] : m_VAOs)
     {
         if (ptr == vao)
             return name;
@@ -151,7 +151,7 @@ std::shared_ptr<MCEngine::VertexArray> MCEngine::VAOLibrary::GetVAO(const std::s
         LOG_ENGINE_ERROR("VAO not found: " + name);
         return nullptr;
     }
-    return m_VAOMap[name];
+    return m_VAOs[name];
 }
 
 void MCEngine::VAOLibrary::AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao)
@@ -163,8 +163,8 @@ void MCEngine::VAOLibrary::AddVAO(const std::string &name, const std::shared_ptr
         LOG_ENGINE_WARN("VAO already exists: " + name);
         return;
     }
-    m_VAOMap[name] = vao;
-    LOG_ENGINE_INFO("VAO added: " + name);
+    m_VAOs[name] = vao;
+    LOG_ENGINE_TRACE("VAO added: " + name);
 }
 
 MCEngine::VAOLibrary::VAOLibrary()
@@ -192,4 +192,4 @@ MCEngine::VAOLibrary::VAOLibrary()
     LOG_ENGINE_INFO("VAO Library initialized");
 }
 
-bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOMap.find(name) != m_VAOMap.end(); }
+bool MCEngine::VAOLibrary::Exists(const std::string &name) const { return m_VAOs.find(name) != m_VAOs.end(); }

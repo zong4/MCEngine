@@ -15,7 +15,7 @@ public:
     void AddVAO(const std::string &name, const std::shared_ptr<VertexArray> &vao);
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VAOMap;
+    std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VAOs;
 
 private:
     VAOLibrary();

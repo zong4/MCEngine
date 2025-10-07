@@ -13,7 +13,7 @@ public:
     static FontLibrary &GetInstance();
 
     ImFont *GetFont(const std::string &name);
-    void AddFont(const std::string &name, const std::string &path, float size);
+    void AddFont(const std::string &name, const std::filesystem::path &path, float size);
 
 public:
     void Init(float fontSize, float thinScale);

@@ -8,7 +8,7 @@ MCEngine::TextureLibrary &MCEngine::TextureLibrary::GetInstance()
 
 std::string MCEngine::TextureLibrary::GetName(const std::shared_ptr<Texture> &texture) const
 {
-    for (const auto &[name, ptr] : m_TextureMap)
+    for (const auto &[name, ptr] : m_Textures)
     {
         if (ptr == texture)
             return name;
@@ -26,7 +26,7 @@ std::shared_ptr<MCEngine::Texture2D> MCEngine::TextureLibrary::GetTexture2D(cons
         LOG_ENGINE_ERROR("Texture not found: " + name);
         return nullptr;
     }
-    return std::dynamic_pointer_cast<Texture2D>(m_TextureMap[name]);
+    return std::dynamic_pointer_cast<Texture2D>(m_Textures[name]);
 }
 
 std::shared_ptr<MCEngine::TextureCube> MCEngine::TextureLibrary::GetTextureCube(const std::string &name)
@@ -38,7 +38,7 @@ std::shared_ptr<MCEngine::TextureCube> MCEngine::TextureLibrary::GetTextureCube(
         LOG_ENGINE_ERROR("Texture not found: " + name);
         return nullptr;
     }
-    return std::dynamic_pointer_cast<TextureCube>(m_TextureMap[name]);
+    return std::dynamic_pointer_cast<TextureCube>(m_Textures[name]);
 }
 
 void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::shared_ptr<Texture> &texture)
@@ -50,8 +50,8 @@ void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::sh
         LOG_ENGINE_ERROR("Texture already exists: " + name);
         return;
     }
-    m_TextureMap[name] = texture;
-    LOG_ENGINE_INFO("Texture added: " + name);
+    m_Textures[name] = texture;
+    LOG_ENGINE_TRACE("Texture added: " + name);
 }
 
 MCEngine::TextureLibrary::TextureLibrary()
@@ -73,8 +73,7 @@ MCEngine::TextureLibrary::TextureLibrary()
         {
             if (entry.path().extension() == ".png" || entry.path().extension() == ".jpg")
             {
-                std::string texturePath = entry.path().string();
-                AddTexture(entry.path().stem().string(), std::make_shared<Texture2D>(texturePath));
+                AddTexture(entry.path().stem().string(), std::make_shared<Texture2D>(entry.path().string()));
             }
         }
         else if (entry.is_directory())
@@ -83,12 +82,10 @@ MCEngine::TextureLibrary::TextureLibrary()
         }
     }
 
-    LOG_ENGINE_INFO("TextureLibrary initialized");
+    LOG_ENGINE_INFO("Texture Library initialized");
 }
 
 bool MCEngine::TextureLibrary::Exists(const std::string &name) const
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    return m_TextureMap.find(name) != m_TextureMap.end();
+    return m_Textures.find(name) != m_Textures.end();
 }

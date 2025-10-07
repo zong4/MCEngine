@@ -11,7 +11,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &window, const std::filesystem::path &filePath,
+MCEngine::ImGuiLayer::ImGuiLayer(const std::shared_ptr<Window> &window, const std::string &filePath,
                                  const std::string &name)
     : Layer(name), m_Window(window), m_ImGuiFilePath(filePath)
 {
@@ -138,8 +138,8 @@ void MCEngine::ImGuiLayer::OnAttach()
     }
 
     // Read ini file
-    ImGui::GetIO().IniFilename = m_ImGuiFilePath.string().c_str();
-    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.string().c_str());
+    ImGui::GetIO().IniFilename = m_ImGuiFilePath.c_str();
+    ImGui::LoadIniSettingsFromDisk(m_ImGuiFilePath.c_str());
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(m_Window->GetNativeWindow()), true);
@@ -153,7 +153,7 @@ void MCEngine::ImGuiLayer::OnDetach()
     ENGINE_PROFILE_FUNCTION();
 
     // Save ini file
-    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.string().c_str());
+    ImGui::SaveIniSettingsToDisk(m_ImGuiFilePath.c_str());
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();

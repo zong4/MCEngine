@@ -24,7 +24,7 @@ void MCEngine::LayerStack::PopLayer(const std::shared_ptr<Layer> &layer)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    std::vector<std::shared_ptr<Layer>>::iterator it = std::find(m_Layers.begin(), m_Layers.end(), layer);
+    auto &&it = std::find(m_Layers.begin(), m_Layers.end(), layer);
     if (it != m_Layers.end())
     {
         it->get()->OnDetach();
@@ -39,7 +39,7 @@ void MCEngine::LayerStack::OnEvent(Event &event)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    for (std::vector<std::shared_ptr<Layer>>::reverse_iterator it = m_Layers.rbegin(); it != m_Layers.rend(); it++)
+    for (auto &&it = m_Layers.rbegin(); it != m_Layers.rend(); it++)
     {
         if (event.IsHandled()) // So do not need to check it again in each layer
             break;

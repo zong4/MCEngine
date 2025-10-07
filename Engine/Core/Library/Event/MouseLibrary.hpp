@@ -14,28 +14,22 @@ public:
     bool IsButtonDown(int button) const;
     bool IsButtonPressed(int button) const;
     bool IsButtonReleased(int button) const;
-    const std::pair<double, double> &GetPosition() const { return m_Position; }
-    const std::pair<double, double> &GetLastPosition() const { return m_LastPosition; }
-    std::pair<double, double> GetDeltaPosition() const
-    {
-        return {m_Position.first - m_LastPosition.first, m_Position.second - m_LastPosition.second};
-    }
-    const std::pair<double, double> &GetScrollOffset() const { return m_ScrollOffset; }
+    const glm::vec2 &GetPosition() const { return m_Position; }
+    const glm::vec2 &GetLastPosition() const { return m_LastPosition; }
+    const glm::vec2 &GetDeltaPosition() const { return m_DeltaPosition; }
+    const glm::vec2 &GetScrollOffset() const { return m_ScrollOffset; }
 
     // Setters
     void SetButtonState(int button, int action) { m_ButtonStates[button] = action; }
-    void SetPosition(double x, double y)
-    {
-        m_LastPosition = m_Position;
-        m_Position = {x, y};
-    }
+    void SetPosition(double x, double y);
     void SetScrollOffset(double xOffset, double yOffset) { m_ScrollOffset = {xOffset, yOffset}; }
 
 private:
     std::unordered_map<int, int> m_ButtonStates;
-    std::pair<double, double> m_Position = {0.0, 0.0};
-    std::pair<double, double> m_LastPosition = {0.0, 0.0};
-    std::pair<double, double> m_ScrollOffset = {0.0, 0.0};
+    glm::vec2 m_Position = {0.0, 0.0};
+    glm::vec2 m_LastPosition = {0.0, 0.0};
+    glm::vec2 m_DeltaPosition = {0.0, 0.0};
+    glm::vec2 m_ScrollOffset = {0.0, 0.0};
 
 private:
     MouseLibrary() = default;

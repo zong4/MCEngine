@@ -17,7 +17,7 @@ public:
     void AddTexture(const std::string &name, const std::shared_ptr<Texture> &texture);
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<Texture>> m_TextureMap;
+    std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
 
 private:
     TextureLibrary();
