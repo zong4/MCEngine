@@ -27,7 +27,7 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
         dispatcher.Dispatch<MouseButtonEvent>([](MouseButtonEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
-            io.AddMouseButtonEvent(event.GetButton(), event.GetAction() == 1 || event.GetAction() == 2);
+            io.AddMouseButtonEvent(event.GetCode(), event.GetAction() == 1 || event.GetAction() == 2);
             return io.WantCaptureMouse;
         });
 
@@ -39,7 +39,7 @@ void MCEngine::ImGuiLayer::OnEvent(Event &event)
 
         dispatcher.Dispatch<KeyEvent>([](KeyEvent &event) {
             ImGuiIO &io = ImGui::GetIO();
-            io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), event.GetAction() == 1 || event.GetAction() == 2);
+            io.AddKeyEvent(static_cast<ImGuiKey>(event.GetCode()), event.GetAction() == 1 || event.GetAction() == 2);
             return io.WantCaptureKeyboard;
         });
     }

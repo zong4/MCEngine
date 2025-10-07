@@ -10,8 +10,8 @@ MCEditor::EditorLayer::EditorLayer(const std::shared_ptr<MCEngine::Window> &wind
     ENGINE_PROFILE_FUNCTION();
 
     // Load icons
-    m_PlayButtonIcon =
-        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "PlayButton.png").string());
+    m_PlayButtonIcon = std::make_shared<MCEngine::Texture2D>(
+        (ConfigManager::GetInstance().GetIconsPath() / "PlayButton.png").string());
     m_StopButtonIcon = std::make_shared<MCEngine::Texture2D>(
         (ConfigManager::GetInstance().GetIconsPath() / "StopButton.png").string());
 }
@@ -30,13 +30,13 @@ void MCEditor::EditorLayer::OnEvent(MCEngine::Event &event)
 
         // KeyEvent
         dispatcher.Dispatch<MCEngine::KeyEvent>([this](MCEngine::KeyEvent &e) {
-            MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetKeyCode(), e.GetAction());
+            MCEngine::KeyCodeLibrary::GetInstance().SetKeyAction(e.GetCode(), e.GetAction());
             return false;
         });
 
         // MouseEvent
         dispatcher.Dispatch<MCEngine::MouseButtonEvent>([this](MCEngine::MouseButtonEvent &e) {
-            MCEngine::MouseLibrary::GetInstance().SetButtonState(e.GetButton(), e.GetAction());
+            MCEngine::MouseLibrary::GetInstance().SetButtonState(e.GetCode(), e.GetAction());
             return false;
         });
         dispatcher.Dispatch<MCEngine::MouseMoveEvent>([this](MCEngine::MouseMoveEvent &e) {
@@ -63,7 +63,7 @@ bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
     // Key Pressed for imguizmo type change
     if (event.GetAction() == 1)
     {
-        switch (event.GetKeyCode())
+        switch (event.GetCode())
         {
         case ENGINE_KEY_Q:
             m_SceneViewport.SetGizmoType(ImGuizmoType::None);
@@ -92,7 +92,7 @@ bool MCEditor::EditorLayer::OnKeyEvent(MCEngine::KeyEvent &event)
         bool shift = MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_LEFT_SHIFT) ||
                      MCEngine::KeyCodeLibrary::GetInstance().IsKeyDown(ENGINE_KEY_RIGHT_SHIFT);
 
-        switch (event.GetKeyCode())
+        switch (event.GetCode())
         {
         case ENGINE_KEY_N:
             if (control)

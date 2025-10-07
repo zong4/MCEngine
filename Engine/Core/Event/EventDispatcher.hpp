@@ -11,17 +11,15 @@ public:
     EventDispatcher(Event &event) : m_Event(event) {}
 
 public:
-    template <typename T> bool Dispatch(const std::function<bool(T &)> &func)
+    // clang-format off
+    template <typename T>
+    // clang-format on
+    void Dispatch(const std::function<bool(T &)> &func)
     {
-        if (T *ev = dynamic_cast<T *>(&m_Event))
+        if (T *event = dynamic_cast<T *>(&m_Event))
         {
-            bool result = func(*ev);
-            m_Event.SetHandled(result);
-            // result ? LOG_ENGINE_TRACE("Event dispatched: " + m_Event.ToString())
-            //        : LOG_ENGINE_WARN("Event not handled: " + m_Event.ToString());
-            return result;
+            m_Event.SetHandled(func(*event));
         }
-        return false;
     }
 
 private:

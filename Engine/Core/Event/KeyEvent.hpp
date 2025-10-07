@@ -8,21 +8,21 @@ namespace MCEngine
 class KeyEvent : public Event
 {
 public:
-    KeyEvent(int keycode, int action) : m_KeyCode(keycode), m_Action(action) {}
+    KeyEvent(int code, int action) : m_Code(code), m_Action(action) {}
 
-    int GetKeyCode() const { return m_KeyCode; }
+    int GetCode() const { return m_Code; }
     int GetAction() const { return m_Action; }
 
 public:
     std::string ToString() const override
     {
         std::stringstream ss;
-        ss << "KeyEvent: " << m_KeyCode << ", " << m_Action;
+        ss << "KeyEvent: " << m_Code << ", " << m_Action;
         return ss.str();
     }
 
 protected:
-    int m_KeyCode;
+    int m_Code;
     int m_Action;
 };
 

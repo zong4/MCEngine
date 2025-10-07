@@ -17,6 +17,7 @@ public:
     std::string ToString() const override
     {
         std::stringstream ss;
+        ss << std::fixed << std::setprecision(2);
         ss << "MouseMoveEvent: " << m_X << ", " << m_Y;
         return ss.str();
     }
@@ -24,27 +25,6 @@ public:
 private:
     double m_X;
     double m_Y;
-};
-
-class MouseButtonEvent : public MCEngine::Event
-{
-public:
-    MouseButtonEvent(int button, int action) : m_Button(button), m_Action(action) {}
-
-    int GetButton() const { return m_Button; }
-    int GetAction() const { return m_Action; }
-
-public:
-    std::string ToString() const override
-    {
-        std::stringstream ss;
-        ss << "MouseButtonEvent: " << m_Button << ", " << m_Action;
-        return ss.str();
-    }
-
-private:
-    int m_Button;
-    int m_Action;
 };
 
 class MouseScrollEvent : public MCEngine::Event
@@ -59,6 +39,7 @@ public:
     std::string ToString() const override
     {
         std::stringstream ss;
+        ss << std::fixed << std::setprecision(2);
         ss << "MouseScrollEvent: " << m_XOffset << ", " << m_YOffset;
         return ss.str();
     }
@@ -66,6 +47,27 @@ public:
 private:
     double m_XOffset;
     double m_YOffset;
+};
+
+class MouseButtonEvent : public MCEngine::Event
+{
+public:
+    MouseButtonEvent(int code, int action) : m_Code(code), m_Action(action) {}
+
+    int GetCode() const { return m_Code; }
+    int GetAction() const { return m_Action; }
+
+public:
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << "MouseButtonEvent: " << m_Code << ", " << m_Action;
+        return ss.str();
+    }
+
+private:
+    int m_Code;
+    int m_Action;
 };
 
 } // namespace MCEngine
