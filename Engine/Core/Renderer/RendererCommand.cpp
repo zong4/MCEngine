@@ -14,6 +14,9 @@ void MCEngine::RendererCommand::Init()
     // Enable Gamma Correction
     glEnable(GL_FRAMEBUFFER_SRGB);
 
+    // Wireframe mode
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     LOG_ENGINE_INFO("RendererCommand initialized");
 }
 

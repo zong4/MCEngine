@@ -41,8 +41,7 @@ void MCEditor::HierarchyPanel::OnImGuiRender()
         {
             auto newEntity = SceneManager::GetInstance().GetActiveScene()->Add3DObject(
                 "Cube", MCEngine::TransformComponent(),
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                MCEngine::ShaderLibrary::GetInstance().GetShader("ShowNormal")));
+                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube")));
             SceneManager::GetInstance().SetSelectedEntity(newEntity);
         }
 
@@ -97,6 +96,9 @@ void MCEditor::HierarchyPanel::OnImGuiRender()
 void MCEditor::HierarchyPanel::DrawEntityNode(MCEngine::Entity entity)
 {
     ENGINE_PROFILE_FUNCTION();
+
+    if (!entity)
+        return;
 
     ImGui::PushID((int)(uint32_t)entity);
 

@@ -16,8 +16,9 @@ public:
     void OnUpdate(float deltaTime) override;
 
 private:
-    float m_CameraMoveSpeed = 3.0f;
-    float m_CameraRotateSpeed = 30.0f;
+    float m_MoveSpeed = 3.0f;
+    float m_RotateSpeed = 30.0f;
+    float m_ZoomSpeed = 2.0f;
 };
 
 } // namespace MCEditor
