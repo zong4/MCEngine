@@ -50,3 +50,10 @@ void MCEngine::MouseLibrary::SetPosition(double x, double y)
     m_Position = {x, y};
     m_DeltaPosition = m_Position - m_LastPosition;
 }
+
+void MCEngine::MouseLibrary::PostUpdate()
+{
+    ENGINE_PROFILE_FUNCTION();
+
+    m_DeltaPosition = {0.0f, 0.0f};
+}

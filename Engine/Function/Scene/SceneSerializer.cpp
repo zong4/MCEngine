@@ -312,21 +312,16 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     // TagComponent
     std::string name;
     const auto &tagComponentData = entity["TagComponent"];
+    const auto &transformComponentData = entity["TransformComponent"];
     if (tagComponentData)
     {
         name = tagComponentData["Tag"].as<std::string>();
     }
-    Entity deserializedEntity = scene->AddEmptyEntity(name);
+    Entity deserializedEntity =
+        scene->AddEmptyEntity(name, TransformComponent(transformComponentData["Position"].as<glm::vec3>(),
+                                                       transformComponentData["Rotation"].as<glm::vec3>(),
+                                                       transformComponentData["Scale"].as<glm::vec3>()));
     LOG_ENGINE_TRACE("Deserialized entity with ID = " + std::to_string(uuid) + ", name = " + name);
-
-    const auto &transformComponentData = entity["TransformComponent"];
-    if (transformComponentData)
-    {
-        auto &&transformComponent = deserializedEntity.GetComponent<TransformComponent>();
-        transformComponent.SetPosition(transformComponentData["Position"].as<glm::vec3>());
-        transformComponent.SetRotation(transformComponentData["Rotation"].as<glm::vec3>());
-        transformComponent.SetScale(transformComponentData["Scale"].as<glm::vec3>());
-    }
 
     const auto &cameraComponentData = entity["CameraComponent"];
     if (cameraComponentData)

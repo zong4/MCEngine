@@ -28,5 +28,3 @@
 // Third Party
 #include "Utility/Math.hpp"
 #include "Utility/libtinyfiledialogs/tinyfiledialogs.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>

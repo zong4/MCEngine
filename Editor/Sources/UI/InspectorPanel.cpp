@@ -94,12 +94,17 @@ void MCEditor::InspectorPanel::OnImGuiRender() const
             false);
 
         // TransformComponent
-        DrawComponent<MCEngine::TransformComponent>("Transform Component", selectedEntity,
-                                                    [](MCEngine::TransformComponent &transform) {
-                                                        DrawVec3Control("Position", transform.GetPosition(), 0.0f);
-                                                        DrawVec3Control("Rotation", transform.GetRotation(), 0.0f);
-                                                        DrawVec3Control("Scale", transform.GetScale(), 1.0f);
-                                                    });
+        DrawComponent<MCEngine::TransformComponent>(
+            "Transform Component", selectedEntity, [](MCEngine::TransformComponent &transform) {
+                DrawVec3Control(
+                    "Position", transform.GetPosition(), [&](const glm::vec3 &value) { transform.SetPosition(value); },
+                    0.0f);
+                DrawVec3Control(
+                    "Rotation", transform.GetRotation(),
+                    [&](const glm::vec3 &value) { transform.SetRotationEuler(value); }, 0.0f);
+                DrawVec3Control(
+                    "Scale", transform.GetScale(), [&](const glm::vec3 &value) { transform.SetScale(value); }, 1.0f);
+            });
 
         // CameraComponent
         DrawComponent<MCEngine::CameraComponent>(
@@ -240,7 +245,8 @@ void MCEditor::InspectorPanel::OnImGuiRender() const
     ImGui::End();
 }
 
-void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::vec3 &values, float resetValue)
+void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, const glm::vec3 &constValues,
+                                               std::function<void(const glm::vec3 &)> callback, float resetValue)
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -259,6 +265,8 @@ void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::ve
 
     float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
     ImVec2 buttonSize = {lineHeight + 3.0f, lineHeight};
+
+    glm::vec3 values = constValues;
 
     // X
     ImGui::TableSetColumnIndex(1);
@@ -295,6 +303,9 @@ void MCEditor::InspectorPanel::DrawVec3Control(const std::string &label, glm::ve
     ImGui::SameLine();
     ImGui::SetNextItemWidth(-FLT_MIN);
     ImGui::DragFloat("##Z", &values.z, 0.1f);
+
+    if (values != constValues)
+        callback(values);
 
     ImGui::EndTable();
 

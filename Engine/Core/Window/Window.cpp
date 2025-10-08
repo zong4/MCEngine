@@ -4,6 +4,7 @@
 #include "Event/KeyEvent.hpp"
 #include "Event/MouseEvent.hpp"
 #include "Event/WindowEvent.hpp"
+#include "Library/Event/MouseLibrary.hpp"
 #include "Renderer/RendererCommand.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -43,6 +44,7 @@ void MCEngine::Window::Update(float deltaTime)
     m_LayerStack.Update(deltaTime);
 
     // Post-update
+    MCEngine::MouseLibrary::GetInstance().PostUpdate();
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
     glfwPollEvents();
 }

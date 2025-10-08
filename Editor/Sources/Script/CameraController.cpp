@@ -31,8 +31,8 @@ void MCEditor::CameraController::OnUpdate(float deltaTime)
     }
     else if (MCEngine::MouseLibrary::GetInstance().IsButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
     {
-        transform.SetRotation(transform.GetRotation() -
-                              glm::vec3(mouseDelta.y, mouseDelta.x, 0.0f) * m_RotateSpeed * deltaTime);
+        transform.SetRotationEuler(transform.GetRotation() -
+                                   glm::vec3(mouseDelta.y, mouseDelta.x, 0.0f) * m_RotateSpeed * deltaTime);
     }
 
     const glm::vec2 &scrollOffset = MCEngine::MouseLibrary::GetInstance().GetScrollOffset();

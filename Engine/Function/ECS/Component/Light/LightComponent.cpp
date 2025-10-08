@@ -5,10 +5,10 @@ MCEngine::LightComponent::LightComponent(LightType type, const glm::vec3 &color,
     : m_Type(type), m_Color(color), m_Intensity(intensity), m_Constant(constant), m_Linear(linear),
       m_Quadratic(quadratic), m_InnerAngle(innerAngle), m_OuterAngle(outerAngle)
 {
-    LOG_ENGINE_INFO("Light Component created with Color: " + ToString(m_Color) +
-                    ", Intensity: " + std::to_string(m_Intensity) + ", Constant: " + std::to_string(m_Constant) +
-                    ", Linear: " + std::to_string(m_Linear) + ", Quadratic: " + std::to_string(m_Quadratic) +
-                    ", InnerAngle: " + std::to_string(m_InnerAngle) + ", OuterAngle: " + std::to_string(m_OuterAngle));
+    LOG_ENGINE_TRACE("Light Component created with Color: " + ToString(m_Color) +
+                     ", Intensity: " + std::to_string(m_Intensity) + ", Constant: " + std::to_string(m_Constant) +
+                     ", Linear: " + std::to_string(m_Linear) + ", Quadratic: " + std::to_string(m_Quadratic) +
+                     ", InnerAngle: " + std::to_string(m_InnerAngle) + ", OuterAngle: " + std::to_string(m_OuterAngle));
 }
 
 void MCEngine::LightComponent::SetAttenuation(float constant, float linear, float quadratic)

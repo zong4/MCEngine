@@ -20,8 +20,7 @@ void MCEngine::Scene::Update(float deltaTime)
         auto &&[transform, relationship] = view.get<TransformComponent, RelationshipComponent>(entity);
         if (!relationship.GetParent())
         {
-            transform.UpdateTransformMatrix(glm::mat4(1.0f), relationship);
-            transform.UpdateViewMatrix();
+            transform.UpdateTransformMatrix(glm::mat4(1.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f), relationship);
         }
     }
 
@@ -50,7 +49,8 @@ void MCEngine::Scene::RenderShadowMap() const
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
     shader->Bind();
 
-    shader->SetUniformMat4("u_LightView", m_MainLight.GetComponent<MCEngine::TransformComponent>().GetViewMatrix());
+    shader->SetUniformMat4("u_LightView",
+                           glm::inverse(m_MainLight.GetComponent<MCEngine::TransformComponent>().GetTransformMatrix()));
     shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto &&entity : meshView)
@@ -74,7 +74,8 @@ void MCEngine::Scene::Render(const Entity &camera) const
     UniformBufferLibrary::GetInstance().UpdateUniformBuffer(
         "UniformBuffer0",
         {
-            {glm::value_ptr(camera.GetComponent<TransformComponent>().GetViewMatrix()), sizeof(glm::mat4), 0},
+            {glm::value_ptr(glm::inverse(camera.GetComponent<TransformComponent>().GetTransformMatrix())),
+             sizeof(glm::mat4), 0},
             {glm::value_ptr(camera.GetComponent<CameraComponent>().GetProjectionMatrix()), sizeof(glm::mat4),
              sizeof(glm::mat4)},
             {glm::value_ptr(camera.GetComponent<TransformComponent>().GetPosition()), sizeof(glm::vec3),
@@ -244,8 +245,9 @@ void MCEngine::Scene::Render3D() const
         {
             shader->SetUniformInt("u_ShadowMap", 0);
             m_ShadowMap->GetTexture()->Bind(0);
-            shader->SetUniformMat4("u_LightView",
-                                   m_MainLight.GetComponent<MCEngine::TransformComponent>().GetViewMatrix());
+            shader->SetUniformMat4(
+                "u_LightView",
+                glm::inverse(m_MainLight.GetComponent<MCEngine::TransformComponent>().GetTransformMatrix()));
             shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
         }
 

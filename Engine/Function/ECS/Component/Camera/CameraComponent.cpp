@@ -5,9 +5,9 @@ MCEngine::CameraComponent::CameraComponent(CameraType type, float width, float h
     : m_Type(type), m_Width(width), m_Height(height), m_FOV(fov), m_NearClip(nearClip), m_FarClip(farClip)
 {
     UpdateProjectionMatrix();
-    LOG_ENGINE_INFO("CameraComponent created with type: " + std::to_string((int)m_Type) +
-                    ", FOV: " + std::to_string(m_FOV) + ", nearClip: " + std::to_string(m_NearClip) +
-                    ", farClip: " + std::to_string(m_FarClip));
+    LOG_ENGINE_TRACE("CameraComponent created with type: " + std::to_string((int)m_Type) +
+                     ", FOV: " + std::to_string(m_FOV) + ", nearClip: " + std::to_string(m_NearClip) +
+                     ", farClip: " + std::to_string(m_FarClip));
 }
 
 void MCEngine::CameraComponent::SetType(CameraType type)
