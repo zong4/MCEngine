@@ -41,6 +41,7 @@ void MCEngine::Scene::RenderShadowMap() const
 {
     ENGINE_PROFILE_FUNCTION();
 
+    RendererCommand::CullFrontFace();
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
     shader->Bind();
     auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
@@ -68,6 +69,7 @@ void MCEngine::Scene::RenderShadowMap() const
         break;
     }
     shader->Unbind();
+    RendererCommand::CullBackFace();
 }
 
 void MCEngine::Scene::Render(const Entity &camera) const

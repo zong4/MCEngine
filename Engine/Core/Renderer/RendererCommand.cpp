@@ -31,86 +31,39 @@ void MCEngine::RendererCommand::GetError(const std::string &functionName)
 
 void MCEngine::RendererCommand::SetClearColor(const glm::vec4 &color)
 {
-    ENGINE_PROFILE_FUNCTION();
-
     glClearColor(color.r, color.g, color.b, color.a);
 }
 
-void MCEngine::RendererCommand::Clear()
-{
-    ENGINE_PROFILE_FUNCTION();
+void MCEngine::RendererCommand::Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+void MCEngine::RendererCommand::ClearColorBuffer() { glClear(GL_COLOR_BUFFER_BIT); }
 
-void MCEngine::RendererCommand::ClearColorBuffer()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-void MCEngine::RendererCommand::ClearDepthBuffer()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glClear(GL_DEPTH_BUFFER_BIT);
-}
+void MCEngine::RendererCommand::ClearDepthBuffer() { glClear(GL_DEPTH_BUFFER_BIT); }
 
 void MCEngine::RendererCommand::EnableDepthTest()
 {
-    ENGINE_PROFILE_FUNCTION();
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 }
 
-void MCEngine::RendererCommand::DisableDepthTest()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glDepthFunc(GL_LEQUAL);
-}
+void MCEngine::RendererCommand::DisableDepthTest() { glDepthFunc(GL_LEQUAL); }
 
 void MCEngine::RendererCommand::EnableBlend()
 {
-    ENGINE_PROFILE_FUNCTION();
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void MCEngine::RendererCommand::DisableBlend()
-{
-    ENGINE_PROFILE_FUNCTION();
+void MCEngine::RendererCommand::DisableBlend() { glDisable(GL_BLEND); }
 
-    glDisable(GL_BLEND);
-}
+void MCEngine::RendererCommand::EnableFaceCulling() { glEnable(GL_CULL_FACE); }
 
-void MCEngine::RendererCommand::EnableFaceCulling()
-{
-    ENGINE_PROFILE_FUNCTION();
+void MCEngine::RendererCommand::CullFrontFace() { glCullFace(GL_FRONT); }
 
-    glEnable(GL_CULL_FACE);
-}
+void MCEngine::RendererCommand::CullBackFace() { glCullFace(GL_BACK); }
 
-void MCEngine::RendererCommand::DisableFaceCulling()
-{
-    ENGINE_PROFILE_FUNCTION();
+void MCEngine::RendererCommand::DisableFaceCulling() { glDisable(GL_CULL_FACE); }
 
-    glDisable(GL_CULL_FACE);
-}
+void MCEngine::RendererCommand::EnableMultisampling() { glEnable(GL_MULTISAMPLE); }
 
-void MCEngine::RendererCommand::EnableMultisampling()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glEnable(GL_MULTISAMPLE);
-}
-
-void MCEngine::RendererCommand::DisableMultisampling()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glDisable(GL_MULTISAMPLE);
-}
+void MCEngine::RendererCommand::DisableMultisampling() { glDisable(GL_MULTISAMPLE); }

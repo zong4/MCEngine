@@ -25,6 +25,8 @@ public:
     static void DisableBlend();
 
     static void EnableFaceCulling();
+    static void CullFrontFace();
+    static void CullBackFace();
     static void DisableFaceCulling();
 
     static void EnableMultisampling();
