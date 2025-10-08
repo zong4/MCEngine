@@ -2,6 +2,10 @@
 
 #include <nlohmann/json.hpp>
 
+// Set default window properties
+MCEngine::WindowProperty MCEditor::ConfigManager::s_WindowProperty =
+    MCEngine::WindowProperty("Minecraft Engine", 1280, 720, true, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+
 // Set default paths
 std::filesystem::path MCEditor::ConfigManager::s_ConfigsPath = "Editor/Configs/";
 std::filesystem::path MCEditor::ConfigManager::s_AssetsPath = "Editor/Assets/";
@@ -36,6 +40,26 @@ MCEditor::ConfigManager::ConfigManager()
     {
         nlohmann::json configJson;
         configFile >> configJson;
+
+        if (configJson.contains("Window"))
+        {
+            auto windowConfig = configJson["Window"];
+            std::string title = windowConfig.value("Title", s_WindowProperty.Title);
+            int width = windowConfig.value("Width", s_WindowProperty.Width);
+            int height = windowConfig.value("Height", s_WindowProperty.Height);
+            bool vsync = windowConfig.value("VSync", s_WindowProperty.VSync);
+            std::vector<float> clearColor = windowConfig.value(
+                "ClearColor", std::vector<float>{s_WindowProperty.ClearColor.r, s_WindowProperty.ClearColor.g,
+                                                 s_WindowProperty.ClearColor.b, s_WindowProperty.ClearColor.a});
+            if (clearColor.size() != 4)
+            {
+                LOG_ENGINE_WARN("Invalid ClearColor in config file. Using default clear color.");
+                clearColor = {s_WindowProperty.ClearColor.r, s_WindowProperty.ClearColor.g,
+                              s_WindowProperty.ClearColor.b, s_WindowProperty.ClearColor.a};
+            }
+            s_WindowProperty = MCEngine::WindowProperty(
+                title, width, height, vsync, glm::vec4(clearColor[0], clearColor[1], clearColor[2], clearColor[3]));
+        }
 
         if (configJson.contains("RelativePath"))
         {

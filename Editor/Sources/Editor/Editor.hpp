@@ -9,7 +9,7 @@ class Editor : public MCEngine::Application
 {
 public:
     Editor(const MCEngine::WindowProperty &props);
-    ~Editor() override;
+    ~Editor() override = default;
 };
 
 } // namespace MCEditor

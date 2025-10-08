@@ -171,6 +171,19 @@ MCEngine::VAOLibrary::VAOLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    // static int CubesCount = 10000;
+    // struct CubeInstanceData
+    // {
+    //     float modelMatrices[16 * CubesCount];
+    // };
+
+    // auto &&cubesVertexArray = std::make_shared<VertexArray>(
+    //     MCEngine::VertexBuffer(g_SkyboxCubeData.vertices, sizeof(g_SkyboxCubeData.vertices)),
+    //     std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)0},
+    //                                  {1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)(3 *
+    //                                  sizeof(float))}});
+    // AddVAO("Cubes", cubesVertexArray);
+
     auto &&vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},

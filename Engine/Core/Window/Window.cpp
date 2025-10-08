@@ -24,7 +24,7 @@ void MCEngine::Window::SetVSync(bool enabled)
 {
     ENGINE_PROFILE_FUNCTION();
 
-    m_Property.SetVSync(enabled);
+    m_Property.VSync = enabled;
     enabled ? glfwSwapInterval(1) : glfwSwapInterval(0);
     LOG_ENGINE_INFO("VSync " + std::string(enabled ? "enabled" : "disabled"));
 }
@@ -54,7 +54,7 @@ void MCEngine::Window::Render()
     ENGINE_PROFILE_FUNCTION();
 
     // Pre-render
-    MCEngine::RendererCommand::SetClearColor(m_Property.GetBackgroundColor());
+    MCEngine::RendererCommand::SetClearColor(m_Property.ClearColor);
     MCEngine::RendererCommand::Clear();
 
     // Render
@@ -78,19 +78,18 @@ void MCEngine::Window::Init()
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Create window
-    m_NativeWindow = glfwCreateWindow(m_Property.GetWidth(), m_Property.GetHeight(), m_Property.GetTitle().c_str(),
-                                      nullptr, nullptr);
+    m_NativeWindow = glfwCreateWindow(m_Property.Width, m_Property.Height, m_Property.Title.c_str(), nullptr, nullptr);
     if (!m_NativeWindow)
     {
         LOG_ENGINE_ERROR("Failed to create GLFW window");
         glfwTerminate();
     }
-    LOG_ENGINE_INFO("GLFW window created: " + m_Property.ToString());
+    LOG_ENGINE_INFO("GLFW window created: " + m_Property.Title);
 
     // Make context current
     glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_NativeWindow));
     SetCallbacks();
-    SetVSync(m_Property.IsVSync());
+    SetVSync(m_Property.VSync);
 
     // Initialize GLAD
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -130,8 +129,8 @@ void MCEngine::Window::SetCallbacks()
 
                                        // OnEvent
                                        Window *window = static_cast<Window *>(glfwGetWindowUserPointer(nativeWindow));
-                                       window->GetProperty().SetWidth(width);
-                                       window->GetProperty().SetHeight(height);
+                                       window->GetProperty().Width = width;
+                                       window->GetProperty().Height = height;
 
                                        // Notify event
                                        WindowResizeEvent event(width, height);

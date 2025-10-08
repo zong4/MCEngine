@@ -1,4 +1,16 @@
 {
+    "Window": {
+        "Title": "Minecraft Engine",
+        "Width": 1280,
+        "Height": 720,
+        "VSync": true,
+        "ClearColor": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ]
+    },
     "RelativePath": {
         "Configs": "Editor/Configs/",
         "Assets": "Editor/Assets/",

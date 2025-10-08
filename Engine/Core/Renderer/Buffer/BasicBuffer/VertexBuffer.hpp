@@ -8,6 +8,7 @@ namespace MCEngine
 class VertexBuffer : public BasicBuffer
 {
 public:
+    VertexBuffer(size_t size);
     VertexBuffer(const void *data, size_t size);
     VertexBuffer(const std::vector<float> &vertices);
     virtual ~VertexBuffer() override;

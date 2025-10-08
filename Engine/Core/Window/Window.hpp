@@ -2,10 +2,18 @@
 
 #include "Layer/LayerStack.hpp"
 #include "Renderer/RendererAPIProperty.hpp"
-#include "WindowProperty.hpp"
 
 namespace MCEngine
 {
+
+struct WindowProperty
+{
+    std::string Title;
+    int Width;
+    int Height;
+    bool VSync;
+    glm::vec4 ClearColor;
+};
 
 class Window
 {

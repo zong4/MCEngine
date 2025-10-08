@@ -2,6 +2,18 @@
 
 #include <glad/glad.h>
 
+MCEngine::VertexBuffer::VertexBuffer(size_t size) : BasicBuffer(static_cast<int>(size / sizeof(float)))
+{
+    glGenBuffers(1, &m_RendererID);
+    Bind();
+    glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+    RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
+    Unbind();
+
+    LOG_ENGINE_TRACE("VertexBuffer created with ID: " + std::to_string(m_RendererID) +
+                     " and count: " + std::to_string(m_Count));
+}
+
 MCEngine::VertexBuffer::VertexBuffer(const void *data, size_t size)
     : BasicBuffer(static_cast<int>(size / sizeof(float)))
 {
@@ -28,8 +40,8 @@ MCEngine::VertexBuffer::VertexBuffer(VertexBuffer &&other)
     // Move data
     m_RendererID = other.m_RendererID;
     m_Count = other.m_Count;
-    LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
-                    " and count: " + std::to_string(m_Count));
+    LOG_ENGINE_TRACE("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
+                     " and count: " + std::to_string(m_Count));
 
     // Invalidate the moved-from object
     other.m_RendererID = 0;
@@ -47,8 +59,8 @@ MCEngine::VertexBuffer &MCEngine::VertexBuffer::operator=(VertexBuffer &&other)
         // Move data
         m_RendererID = other.m_RendererID;
         m_Count = other.m_Count;
-        LOG_ENGINE_INFO("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
-                        " and count: " + std::to_string(m_Count));
+        LOG_ENGINE_TRACE("VertexBuffer move-assigned with ID: " + std::to_string(m_RendererID) +
+                         " and count: " + std::to_string(m_Count));
 
         // Invalidate the moved-from object
         other.m_RendererID = 0;
@@ -79,7 +91,7 @@ void MCEngine::VertexBuffer::SetData(const void *data, size_t size, size_t offse
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
-    LOG_ENGINE_INFO("VertexBuffer data updated for ID: " + std::to_string(m_RendererID));
+    LOG_ENGINE_TRACE("VertexBuffer data updated for ID: " + std::to_string(m_RendererID));
 }
 
 void MCEngine::VertexBuffer::CreateBuffer(const void *data, size_t size)
@@ -92,6 +104,6 @@ void MCEngine::VertexBuffer::CreateBuffer(const void *data, size_t size)
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
 
-    LOG_ENGINE_INFO("VertexBuffer created with ID: " + std::to_string(m_RendererID) +
-                    " and count: " + std::to_string(m_Count));
+    LOG_ENGINE_TRACE("VertexBuffer created with ID: " + std::to_string(m_RendererID) +
+                     " and count: " + std::to_string(m_Count));
 }
