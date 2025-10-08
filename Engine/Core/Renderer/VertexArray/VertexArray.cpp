@@ -16,12 +16,7 @@ MCEngine::VertexArray::VertexArray(VertexBuffer &&vertexBuffer, const std::vecto
                     ", Instance Count: " + std::to_string(m_InstanceCount));
 }
 
-MCEngine::VertexArray::~VertexArray()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    glDeleteVertexArrays(1, &m_RendererID);
-}
+MCEngine::VertexArray::~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
 
 MCEngine::VertexArray::VertexArray(VertexArray &&other)
     : m_RendererID(other.m_RendererID), m_AttributeCount(other.m_AttributeCount),

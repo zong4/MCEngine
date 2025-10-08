@@ -4,7 +4,7 @@
 // After import imgui
 #include "ImGuizmo/ImGuizmo.h"
 
-void MCEditor::CameraController::OnStart(float deltaTime)
+void MCEditor::CameraController::OnStart()
 {
     auto &&transform = GetComponent<MCEngine::TransformComponent>();
     transform.SetPosition(glm::vec3(0.0f, 10.0f, 20.0f));
