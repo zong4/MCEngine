@@ -36,8 +36,7 @@ private:
 class MeshRendererComponent
 {
 public:
-    MeshRendererComponent(const std::shared_ptr<VertexArray> &vao = VAOLibrary::GetInstance().GetVAO("Cube"),
-                          const std::shared_ptr<Shader> &shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
+    MeshRendererComponent(const std::shared_ptr<Shader> &shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
                           const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
 
     // Getters

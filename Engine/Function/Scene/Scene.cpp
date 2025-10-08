@@ -41,35 +41,36 @@ void MCEngine::Scene::RenderShadowMap() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    RendererCommand::CullFrontFace();
-    auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
-    shader->Bind();
-    auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
-    for (auto &&lightEntity : lightView)
-    {
-        m_ShadowMap->Bind();
-        RendererCommand::ClearDepthBuffer();
+    // RendererCommand::CullFrontFace();
+    // auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ShadowMap");
+    // shader->Bind();
+    // auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
+    // for (auto &&lightEntity : lightView)
+    // {
+    //     m_ShadowMap->Bind();
+    //     RendererCommand::ClearDepthBuffer();
 
-        auto &&[transform, light] = lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(lightEntity);
-        shader->SetUniformMat4("u_LightView", glm::inverse(transform.GetTransformMatrix()));
-        shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
+    //     auto &&[transform, light] = lightView.get<MCEngine::TransformComponent,
+    //     MCEngine::LightComponent>(lightEntity); shader->SetUniformMat4("u_LightView",
+    //     glm::inverse(transform.GetTransformMatrix())); shader->SetUniformMat4("u_LightProjection",
+    //     glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
 
-        auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-        for (auto &&meshEntity : meshView)
-        {
-            auto &&[transform, mesh] =
-                meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(meshEntity);
-            shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-            mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
-        }
+    //     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+    //     for (auto &&meshEntity : meshView)
+    //     {
+    //         auto &&[transform, mesh] =
+    //             meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(meshEntity);
+    //         shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+    //         mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
+    //     }
 
-        m_ShadowMap->Unbind();
+    //     m_ShadowMap->Unbind();
 
-        // todo
-        break;
-    }
-    shader->Unbind();
-    RendererCommand::CullBackFace();
+    //     // todo
+    //     break;
+    // }
+    // shader->Unbind();
+    // RendererCommand::CullBackFace();
 }
 
 void MCEngine::Scene::Render(const Entity &camera) const
@@ -90,9 +91,9 @@ void MCEngine::Scene::Render(const Entity &camera) const
              sizeof(glm::mat4) + sizeof(glm::mat4)},
         });
 
-    Render2D();
+    // Render2D();
     Render3D();
-    RenderSkybox();
+    // RenderSkybox();
 }
 
 void MCEngine::Scene::RenderColorID(const Entity &camera) const
@@ -117,14 +118,14 @@ void MCEngine::Scene::RenderColorID(const Entity &camera) const
     }
 
     // Pick 3D
-    auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
-    for (auto &&entity : meshView)
-    {
-        auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
-        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-        shader->SetUniformUInt("u_EntityID", static_cast<unsigned int>(entity) + 1); // 0 = no entity
-        mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
-    }
+    // auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
+    // for (auto &&entity : meshView)
+    // {
+    //     auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent,
+    //     MCEngine::MeshRendererComponent>(entity); shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+    //     shader->SetUniformUInt("u_EntityID", static_cast<unsigned int>(entity) + 1); // 0 = no entity
+    //     mesh.GetVAO()->Render(MCEngine::RendererType::Triangles);
+    // }
 
     shader->Unbind();
 }
@@ -250,61 +251,71 @@ void MCEngine::Scene::Render3D() const
 {
     ENGINE_PROFILE_FUNCTION();
 
-    auto &&shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong");
+    auto &&shader = ShaderLibrary::GetInstance().GetShader("ShowNormal");
     shader->Bind();
 
     // Light
-    int lightIndex = 0;
-    auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
-    for (auto &&entity : lightView)
-    {
-        auto &&[transform, light] = lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(entity);
+    // int lightIndex = 0;
+    // auto &&lightView = m_Registry.view<MCEngine::TransformComponent, MCEngine::LightComponent>();
+    // for (auto &&entity : lightView)
+    // {
+    //     auto &&[transform, light] = lightView.get<MCEngine::TransformComponent, MCEngine::LightComponent>(entity);
 
-        // Light
-        shader->SetUniformInt("u_Light[" + std::to_string(lightIndex) + "].Type", static_cast<int>(light.GetType()));
-        shader->SetUniformVec3("u_Light[" + std::to_string(lightIndex) + "].Position", transform.GetPosition());
-        shader->SetUniformVec3("u_Light[" + std::to_string(lightIndex) + "].Color",
-                               light.GetColor() * light.GetIntensity());
-        shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Constant", light.GetConstant());
-        shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Linear", light.GetLinear());
-        shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Quadratic", light.GetQuadratic());
-        shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].CutOff",
-                                glm::cos(glm::radians(light.GetInnerAngle())));
-        shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].OuterCutOff",
-                                glm::cos(glm::radians(light.GetOuterAngle())));
+    //     // Light
+    //     shader->SetUniformInt("u_Light[" + std::to_string(lightIndex) + "].Type", static_cast<int>(light.GetType()));
+    //     shader->SetUniformVec3("u_Light[" + std::to_string(lightIndex) + "].Position", transform.GetPosition());
+    //     shader->SetUniformVec3("u_Light[" + std::to_string(lightIndex) + "].Color",
+    //                            light.GetColor() * light.GetIntensity());
+    //     shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Constant", light.GetConstant());
+    //     shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Linear", light.GetLinear());
+    //     shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].Quadratic", light.GetQuadratic());
+    //     shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].CutOff",
+    //                             glm::cos(glm::radians(light.GetInnerAngle())));
+    //     shader->SetUniformFloat("u_Light[" + std::to_string(lightIndex) + "].OuterCutOff",
+    //                             glm::cos(glm::radians(light.GetOuterAngle())));
 
-        // Shadow
-        shader->SetUniformMat4("u_LightView[" + std::to_string(lightIndex) + "]",
-                               glm::inverse(transform.GetTransformMatrix()));
-        shader->SetUniformMat4("u_LightProjection[" + std::to_string(lightIndex) + "]",
-                               glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
-        shader->SetUniformInt("u_ShadowMap[" + std::to_string(lightIndex) + "]", lightIndex);
-        m_ShadowMap->GetTexture()->Bind(lightIndex);
+    //     // Shadow
+    //     shader->SetUniformMat4("u_LightView[" + std::to_string(lightIndex) + "]",
+    //                            glm::inverse(transform.GetTransformMatrix()));
+    //     shader->SetUniformMat4("u_LightProjection[" + std::to_string(lightIndex) + "]",
+    //                            glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
+    //     shader->SetUniformInt("u_ShadowMap[" + std::to_string(lightIndex) + "]", lightIndex);
+    //     m_ShadowMap->GetTexture()->Bind(lightIndex);
 
-        lightIndex++;
+    //     lightIndex++;
 
-        // todo
-        break;
-    }
-    shader->SetUniformInt("u_NumLights", lightIndex);
+    //     // todo
+    //     break;
+    // }
+    // shader->SetUniformInt("u_NumLights", lightIndex);
 
-    // Skybox
-    auto &&view = m_Registry.view<SkyboxComponent>();
-    if (!view.empty())
-    {
-        if (view.size() > 1)
-            LOG_ENGINE_WARN("Multiple SkyboxComponents detected! Only the first one will be rendered.");
+    // // Skybox
+    // auto &&view = m_Registry.view<SkyboxComponent>();
+    // if (!view.empty())
+    // {
+    //     if (view.size() > 1)
+    //         LOG_ENGINE_WARN("Multiple SkyboxComponents detected! Only the first one will be rendered.");
 
-        auto &&skybox = m_Registry.get<SkyboxComponent>(view.front());
-        shader->SetUniformInt("u_Skybox", lightIndex);
-        skybox.GetTextureCube()->Bind(lightIndex);
-    }
+    //     auto &&skybox = m_Registry.get<SkyboxComponent>(view.front());
+    //     shader->SetUniformInt("u_Skybox", lightIndex);
+    //     skybox.GetTextureCube()->Bind(lightIndex);
+    // }
 
+    std::vector<CubeVertex> vertices;
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto &&entity : meshView)
     {
         auto &&[transform, mesh] = meshView.get<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>(entity);
-        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
+        for (int i = 0; i < 36; ++i)
+        {
+            glm::mat4 u_Model = transform.GetTransformMatrix();
+            vertices.push_back(
+                {glm::vec3(u_Model * glm::vec4(g_IdentityCubeData.Positions[i], 1.0f)),
+                 glm::normalize(glm::transpose(glm::inverse(glm::mat3(u_Model))) * g_IdentityCubeData.Normals[i]),
+                 mesh.GetMaterial().GetColor(),
+                 glm::vec4(mesh.GetMaterial().GetAmbientStrength(), mesh.GetMaterial().GetDiffuseStrength(),
+                           mesh.GetMaterial().GetSpecularStrength(), mesh.GetMaterial().GetShininess())});
+        }
 
         // auto &&offsets = mesh.GetOffsets();
         // if (offsets.empty())
@@ -320,10 +331,12 @@ void MCEngine::Scene::Render3D() const
         //                                offsets[instanceCount] * transform.GetTransformMatrix());
         //     }
         // }
-
-        mesh.GetMaterial().Bind(shader, "u_Material");
-        mesh.GetVAO()->Render();
     }
+
+    VAOLibrary::GetInstance().GetVAO("Cubes")->GetVertexBuffer().SetData(vertices.data(),
+                                                                         vertices.size() * sizeof(CubeVertex), 0);
+    VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles,
+                                                      static_cast<unsigned int>(vertices.size() * 3));
 
     shader->Unbind();
 }

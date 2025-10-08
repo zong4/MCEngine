@@ -40,8 +40,7 @@ void MCEditor::HierarchyPanel::OnImGuiRender()
         if (ImGui::MenuItem("Create Cube"))
         {
             auto newEntity = SceneManager::GetInstance().GetActiveScene()->Add3DObject(
-                "Cube", MCEngine::TransformComponent(),
-                MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube")));
+                "Cube", MCEngine::TransformComponent(), MCEngine::MeshRendererComponent());
             SceneManager::GetInstance().SetSelectedEntity(newEntity);
         }
 

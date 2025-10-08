@@ -10,17 +10,9 @@ MCEngine::SpriteRendererComponent::SpriteRendererComponent(const std::shared_ptr
         ", color: " + ToString(m_Color) + ", textureID: " + std::to_string((uint32_t)m_Texture->GetRendererID()));
 }
 
-MCEngine::MeshRendererComponent::MeshRendererComponent(const std::shared_ptr<VertexArray> &vao,
-                                                       const std::shared_ptr<Shader> &shader, const Material &material)
-    : m_VAO(vao), m_Shader(shader), m_Material(material)
+MCEngine::MeshRendererComponent::MeshRendererComponent(const std::shared_ptr<Shader> &shader, const Material &material)
+    : m_Shader(shader), m_Material(material)
 {
-    LOG_ENGINE_TRACE(
-        "MeshRendererComponent created with RendererID: " + std::to_string((uint32_t)m_VAO->GetRendererID()) +
-        ", ShaderID: " + std::to_string((uint32_t)m_Shader->GetRendererID()) + ", " + m_Material.ToString());
-}
-
-void MCEngine::MeshRendererComponent::AddOffset(const glm::mat4 &offset)
-{
-    m_Offsets.push_back(offset);
-    m_VAO->SetInstanceCount(static_cast<int>(m_Offsets.size()));
+    LOG_ENGINE_TRACE("MeshRendererComponent created with ShaderID: " +
+                     std::to_string((uint32_t)m_Shader->GetRendererID()) + ", " + m_Material.ToString());
 }

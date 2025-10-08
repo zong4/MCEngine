@@ -104,11 +104,10 @@ void MCEditor::ExampleScene::WelcomeToMCEngine()
                 if (positions.find({x, y, z}) != positions.end())
                     continue;
 
-                MCEngine::Entity cube = Add3DObject(
-                    "Cube" + std::to_string(x) + std::to_string(y) + std::to_string(z),
-                    MCEngine::TransformComponent(glm::vec3(x - center, y - center, z - center)),
-                    MCEngine::MeshRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Cube"),
-                                                    MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong")));
+                MCEngine::Entity cube =
+                    Add3DObject("Cube" + std::to_string(x) + std::to_string(y) + std::to_string(z),
+                                MCEngine::TransformComponent(glm::vec3(x - center, y - center, z - center)),
+                                MCEngine::ShaderLibrary::GetInstance().GetShader("BlinnPhong"));
                 cube.GetComponent<MCEngine::RelationshipComponent>().SetParent(cubes);
                 cubes.GetComponent<MCEngine::RelationshipComponent>().AddChild(cube);
             }

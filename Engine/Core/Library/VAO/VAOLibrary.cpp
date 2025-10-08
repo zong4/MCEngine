@@ -21,57 +21,6 @@ struct IdentitySquareData
 };
 inline const IdentitySquareData g_IdentitySquareData;
 
-struct IdentityCubeData
-{
-    float vertices[216] = {
-        // clang-format off
-        // positions          // normals
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, // back face
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, // front face
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, // left face
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, // right face
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, // bottom face
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, // top face
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-        // clang-format on
-    };
-};
-inline const IdentityCubeData g_IdentityCubeData;
-
 struct SkyboxCubeData
 {
     float vertices[108] = {
@@ -171,18 +120,23 @@ MCEngine::VAOLibrary::VAOLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
+    static int MaxCubesNumber = 10000;
+
+    auto &&cubesVAO = std::make_shared<VertexArray>(
+        VertexBuffer(MaxCubesNumber * sizeof(CubeVertex) * 36),
+        std::vector<VertexAttribute>{
+            {0, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)0},
+            {1, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(3 * sizeof(float))},
+            {2, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(6 * sizeof(float))},
+            {3, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(10 * sizeof(float))}});
+    AddVAO("Cubes", cubesVAO);
+
     auto &&vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},
                                      {1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)(3 * sizeof(float))}},
         MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)));
     AddVAO("Square", vertexArray);
-
-    vertexArray = std::make_shared<VertexArray>(
-        MCEngine::VertexBuffer(g_IdentityCubeData.vertices, sizeof(g_IdentityCubeData.vertices)),
-        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)0},
-                                     {1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void *)(3 * sizeof(float))}});
-    AddVAO("Cube", vertexArray);
 
     vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_SkyboxCubeData.vertices, sizeof(g_SkyboxCubeData.vertices)),

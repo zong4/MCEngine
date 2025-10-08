@@ -76,7 +76,7 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
                     " set with new IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
 }
 
-void MCEngine::VertexArray::Render(RendererType renderType) const
+void MCEngine::VertexArray::Render(RendererType renderType, int number) const
 {
     ENGINE_PROFILE_FUNCTION();
 
@@ -84,10 +84,10 @@ void MCEngine::VertexArray::Render(RendererType renderType) const
     m_VertexBuffer.Bind();
     if (m_IndexBuffer.GetRendererID() == 0)
     {
-        m_InstanceCount == 1
-            ? glDrawArrays(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount)
-            : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0, m_VertexBuffer.GetCount() / m_AttributeCount,
-                                    m_InstanceCount);
+        m_InstanceCount == 1 ? glDrawArrays(static_cast<GLenum>(renderType), 0,
+                                            number == 0 ? m_VertexBuffer.GetCount() / m_AttributeCount : number)
+                             : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0,
+                                                     m_VertexBuffer.GetCount() / m_AttributeCount, m_InstanceCount);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     }
     else

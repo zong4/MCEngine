@@ -215,17 +215,6 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
         out << YAML::BeginMap;
 
         auto &meshRendererComponent = entity.GetComponent<MCEngine::MeshRendererComponent>();
-        out << YAML::Key << "VAO" << YAML::Value
-            << MCEngine::VAOLibrary::GetInstance().GetName(meshRendererComponent.GetVAO());
-
-        // Instance
-        out << YAML::Key << "Offsets";
-        out << YAML::BeginSeq;
-        for (auto &&offset : meshRendererComponent.GetOffsets())
-        {
-            out << (YAML::Node)offset;
-        }
-        out << YAML::EndSeq;
 
         out << YAML::Key << "Material";
         out << YAML::BeginMap;
@@ -351,21 +340,10 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     {
         const auto &materialData = meshRendererComponentData["Material"];
         auto &&meshRendererComponent = deserializedEntity.AddComponent<MeshRendererComponent>(
-            MCEngine::VAOLibrary::GetInstance().GetVAO(meshRendererComponentData["VAO"].as<std::string>()),
             MCEngine::ShaderLibrary::GetInstance().GetShader(meshRendererComponentData["Shader"].as<std::string>()),
             Material(materialData["Color"].as<glm::vec4>(), materialData["AmbientStrength"].as<float>(),
                      materialData["DiffuseStrength"].as<float>(), materialData["SpecularStrength"].as<float>(),
                      materialData["Shininess"].as<float>()));
-
-        // Instance
-        const auto &offsetsData = meshRendererComponentData["Offsets"];
-        if (offsetsData && offsetsData.IsSequence())
-        {
-            for (const auto &offsetData : offsetsData)
-            {
-                meshRendererComponent.AddOffset(offsetData.as<glm::mat4>());
-            }
-        }
     }
 
     const auto &lightComponentData = entity["LightComponent"];

@@ -38,6 +38,7 @@ public:
 
     // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
+    VertexBuffer &GetVertexBuffer() { return m_VertexBuffer; }
 
     // Setters
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);
@@ -45,7 +46,7 @@ public:
     void SetInstanceCount(int instanceCount) { m_InstanceCount = instanceCount; }
 
 public:
-    void Render(RendererType renderType = RendererType::Triangles) const;
+    void Render(RendererType renderType = RendererType::Triangles, int number = 0) const;
 
 private:
     unsigned int m_RendererID = 0;

@@ -41,9 +41,8 @@ public:
     Entity Add2DObject(const std::string &name, const TransformComponent &transform,
                        const SpriteRendererComponent &spriteRenderer =
                            SpriteRendererComponent(VAOLibrary::GetInstance().GetVAO("Square")));
-    Entity Add3DObject(
-        const std::string &name, const TransformComponent &transform,
-        const MeshRendererComponent &meshRenderer = MeshRendererComponent(VAOLibrary::GetInstance().GetVAO("Cube")));
+    Entity Add3DObject(const std::string &name, const TransformComponent &transform,
+                       const MeshRendererComponent &meshRenderer = MeshRendererComponent());
     Entity AddCamera(const std::string &name, const TransformComponent &transform,
                      const CameraComponent &cameraComponent);
     Entity AddLight(const std::string &name, const TransformComponent &transform, const LightComponent &lightComponent);
