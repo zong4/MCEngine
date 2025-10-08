@@ -84,13 +84,12 @@ void MCEditor::SceneViewport::RenderGizmos()
                           ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, m_ViewportSize.x,
                           m_ViewportSize.y);
 
-        // Entity transform
+        // MVP
         auto &&transformComponent = selectedEntity.GetComponent<MCEngine::TransformComponent>();
         glm::mat4 transform = transformComponent.GetTransformMatrix();
-
-        // Camera
-        const glm::mat4 &cameraView = m_Camera.GetComponent<MCEngine::TransformComponent>().GetViewMatrix();
-        const glm::mat4 &cameraProjection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
+        const glm::mat4 &view =
+            glm::inverse(m_Camera.GetComponent<MCEngine::TransformComponent>().GetTransformMatrix());
+        const glm::mat4 &projection = m_Camera.GetComponent<MCEngine::CameraComponent>().GetProjectionMatrix();
 
         ImGuizmo::OPERATION gizmoOperation;
         switch (m_GizmoType)
@@ -115,16 +114,32 @@ void MCEditor::SceneViewport::RenderGizmos()
         if (gizmoOperation == ImGuizmo::OPERATION::ROTATE)
             snapValue = 45.0f; // Snap to 45 degrees for rotation
         float snapValues[3] = {snapValue, snapValue, snapValue};
-        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), gizmoOperation,
-                             ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+        ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), gizmoOperation, ImGuizmo::LOCAL,
+                             glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
 
         if (ImGuizmo::IsUsing())
         {
-            glm::vec3 position, rotation, scale;
-            MCEngine::Math::DecomposeTransform(transform, position, rotation, scale);
-            transformComponent.SetPosition(position);
-            transformComponent.SetRotation(glm::degrees(rotation));
-            transformComponent.SetScale(scale);
+            auto &&relationship = selectedEntity.GetComponent<MCEngine::RelationshipComponent>();
+            if (relationship.GetParent())
+            {
+                glm::mat4 parentTransform =
+                    relationship.GetParent().GetComponent<MCEngine::TransformComponent>().GetTransformMatrix();
+                glm::mat4 localTransform = glm::inverse(parentTransform) * transform;
+
+                glm::vec3 position, rotation, scale;
+                MCEngine::Math::DecomposeTransform(localTransform, position, rotation, scale); // todo: rotation bug
+                transformComponent.SetPosition(position);
+                transformComponent.SetRotationEuler(glm::degrees(rotation));
+                transformComponent.SetScale(scale);
+            }
+            else
+            {
+                glm::vec3 position, rotation, scale;
+                MCEngine::Math::DecomposeTransform(transform, position, rotation, scale); // todo: rotation bug
+                transformComponent.SetPosition(position);
+                transformComponent.SetRotationEuler(glm::degrees(rotation));
+                transformComponent.SetScale(scale);
+            }
         }
     }
 }
