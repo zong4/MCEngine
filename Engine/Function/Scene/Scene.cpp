@@ -155,7 +155,9 @@ void MCEngine::Scene::DeleteEntity(const Entity &entity)
             auto &&parentRelationship = relationship.GetParent().GetComponent<RelationshipComponent>();
             parentRelationship.RemoveChild(entity);
         }
-        for (auto &&child : relationship.GetChildren())
+
+        auto children = relationship.GetChildren();
+        for (auto &&child : children)
         {
             DeleteEntity(child);
         }
@@ -210,6 +212,13 @@ MCEngine::Entity MCEngine::Scene::AddLight(const std::string &name, const Transf
 {
     Entity entity = AddEmptyEntity(name, transform);
     entity.AddComponent<LightComponent>(lightComponent);
+    return entity;
+}
+
+MCEngine::Entity MCEngine::Scene::AddSkybox(const std::string &name, const SkyboxComponent &skyboxComponent)
+{
+    Entity entity = AddEmptyEntity(name);
+    entity.AddComponent<SkyboxComponent>(skyboxComponent);
     return entity;
 }
 
@@ -276,6 +285,18 @@ void MCEngine::Scene::Render3D() const
         break;
     }
     shader->SetUniformInt("u_NumLights", lightIndex);
+
+    // Skybox
+    auto &&view = m_Registry.view<SkyboxComponent>();
+    if (!view.empty())
+    {
+        if (view.size() > 1)
+            LOG_ENGINE_WARN("Multiple SkyboxComponents detected! Only the first one will be rendered.");
+
+        auto &&skybox = m_Registry.get<SkyboxComponent>(view.front());
+        shader->SetUniformInt("u_Skybox", lightIndex);
+        skybox.GetTextureCube()->Bind(lightIndex);
+    }
 
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto &&entity : meshView)

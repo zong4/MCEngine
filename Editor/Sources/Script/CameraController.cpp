@@ -4,16 +4,6 @@
 // After import imgui
 #include "ImGuizmo/ImGuizmo.h"
 
-void MCEditor::CameraController::OnStart()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    auto &&transform = GetComponent<MCEngine::TransformComponent>();
-    transform.SetPosition(glm::vec3(-5.0f, 0.0f, 15.0f));
-    transform.SetRotationEuler(glm::vec3(0.0f, 0.0f, 0.0f));
-    transform.SetScale(glm::vec3(1.0f));
-}
-
 void MCEditor::CameraController::OnUpdate(float deltaTime)
 {
     ENGINE_PROFILE_FUNCTION();

@@ -12,7 +12,7 @@ public:
     virtual ~CameraController() override = default;
 
 public:
-    void OnStart() override;
+    void OnStart() override {}
     void OnUpdate(float deltaTime) override;
 
 private:

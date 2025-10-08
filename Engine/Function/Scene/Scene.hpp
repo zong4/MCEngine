@@ -47,6 +47,7 @@ public:
     Entity AddCamera(const std::string &name, const TransformComponent &transform,
                      const CameraComponent &cameraComponent);
     Entity AddLight(const std::string &name, const TransformComponent &transform, const LightComponent &lightComponent);
+    Entity AddSkybox(const std::string &name, const SkyboxComponent &skyboxComponent);
 
 protected:
     std::string m_Name;

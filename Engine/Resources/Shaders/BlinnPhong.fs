@@ -122,8 +122,10 @@ void main()
 
     // Skybox
     vec3 resultSkybox = vec3(0.0);
-    // resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(fs_in.Normal))).rgb * u_Material.SpecularStrength;
-    // resultSkybox += texture(u_Skybox, refract(-viewDir, normalize(fs_in.Normal), 1.00 / 1.52)).rgb * 0.5;
+    resultSkybox += texture(u_Skybox, fs_in.Normal).rgb * u_Material.AmbientStrength * u_Material.Color.rgb;
+    // resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(fs_in.Normal))).rgb *
+    // u_Material.SpecularStrength; resultSkybox += texture(u_Skybox, refract(-viewDir,
+    // normalize(fs_in.Normal), 1.00 / 1.52)).rgb * 0.5;
     result += resultSkybox;
 
     // HDR tonemapping
