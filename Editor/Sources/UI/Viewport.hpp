@@ -12,7 +12,7 @@ public:
     ~Viewport() = default;
 
 public:
-    void Render() const;
+    void Render();
     void OnImGuiRender();
 
 private:

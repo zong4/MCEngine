@@ -6,13 +6,10 @@
 
 MCEditor::FileBrowserPanel::FileBrowserPanel() : m_CurrentDirectory(ConfigManager::GetInstance().GetAssetsPath())
 {
-    ENGINE_PROFILE_FUNCTION();
-
-    // Load icons
-    m_DirectoryIcon =
-        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "Directory.png").string());
     m_FileIcon =
         std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "File.png").string());
+    m_DirectoryIcon =
+        std::make_shared<MCEngine::Texture2D>((ConfigManager::GetInstance().GetIconsPath() / "Directory.png").string());
 }
 
 void MCEditor::FileBrowserPanel::OnImGuiRender()
@@ -82,7 +79,6 @@ void MCEditor::FileBrowserPanel::OnImGuiRender()
             }
             else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
-                // Handle file selection (e.g., open the file or display its properties)
                 LOG_EDITOR_TRACE("Selected file: " + path.string());
             }
         }

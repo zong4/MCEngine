@@ -18,18 +18,17 @@ public:
     Toolbar();
     ~Toolbar() = default;
 
-    void SetState(EditorState state) { m_State = state; }
-
 public:
     void OnImGuiRender();
-
-    void OnScenePlay();
-    void OnSceneStop();
 
 private:
     EditorState m_State = EditorState::Edit;
     std::shared_ptr<MCEngine::Texture2D> m_PlayButtonIcon;
     std::shared_ptr<MCEngine::Texture2D> m_StopButtonIcon;
+
+private:
+    void OnScenePlay();
+    void OnSceneStop();
 };
 
 } // namespace MCEditor

@@ -10,6 +10,7 @@ public:
     InspectorPanel() = default;
     ~InspectorPanel() = default;
 
+public:
     void OnImGuiRender() const;
 
 protected:

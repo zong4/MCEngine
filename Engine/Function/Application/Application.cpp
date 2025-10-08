@@ -12,18 +12,6 @@ void MCEngine::Application::Run()
     }
 }
 
-void MCEngine::Application::Init(const WindowProperty &props)
-{
-    ENGINE_PROFILE_FUNCTION();
+void MCEngine::Application::Init(const WindowProperty &props) { m_Window = std::make_shared<Window>(props); }
 
-    m_Window = std::make_shared<Window>(props);
-    LOG_ENGINE_INFO("Application initialized");
-}
-
-void MCEngine::Application::Shutdown()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_Window.reset();
-    LOG_ENGINE_INFO("Application shutdown");
-}
+void MCEngine::Application::Shutdown() { m_Window.reset(); }

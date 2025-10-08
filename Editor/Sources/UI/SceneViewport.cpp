@@ -6,12 +6,7 @@
 #include "ImGuizmo/ImGuizmo.h"
 #include <iostream>
 
-MCEditor::SceneViewport::SceneViewport()
-{
-    ENGINE_PROFILE_FUNCTION();
-
-    m_Camera = SceneManager::GetInstance().GetEditorScene()->GetMainCamera();
-}
+MCEditor::SceneViewport::SceneViewport() { m_Camera = SceneManager::GetInstance().GetEditorScene()->GetMainCamera(); }
 
 void MCEditor::SceneViewport::SetGizmoType(ImGuizmoType type)
 {
@@ -25,12 +20,12 @@ void MCEditor::SceneViewport::Render()
 
     if (m_ViewportDirty)
     {
+        // Resize EditorScene is also OK
         m_Camera.GetComponent<MCEngine::CameraComponent>().Resize(m_ViewportSize.x, m_ViewportSize.y);
+
         m_FBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         m_MultisampleFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
         m_EntityPickingFBO->Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
-        LOG_EDITOR_TRACE("SceneViewport resized to: (" + std::to_string((int)m_ViewportSize.x) + ", " +
-                         std::to_string((int)m_ViewportSize.y) + ")");
 
         m_ViewportDirty = false;
     }
@@ -148,13 +143,15 @@ void MCEditor::SceneViewport::PickEntity()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    ImVec2 mouseInViewport = {ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetWindowContentRegionMin().x,
-                              ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetWindowContentRegionMin().y};
     if (m_Hovered && !ImGuizmo::IsUsing() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
+        // ImVec2 mouseInViewport = ImGui::GetMousePos() - ImGui::GetWindowPos() - ImGui::GetWindowContentRegionMin();
         SceneManager::GetInstance().SetSelectedEntity(
-            (entt::entity)(m_EntityPickingFBO->PickPixel((int)mouseInViewport.x,
-                                                         (int)(m_ViewportSize.y - mouseInViewport.y)) -
+            (entt::entity)(m_EntityPickingFBO->PickPixel(
+                               (int)(ImGui::GetMousePos().x - ImGui::GetWindowPos().x -
+                                     ImGui::GetWindowContentRegionMin().x),
+                               (int)(m_ViewportSize.y - (ImGui::GetMousePos().y - ImGui::GetWindowPos().y -
+                                                         ImGui::GetWindowContentRegionMin().y))) -
                            1));
     }
 }

@@ -21,7 +21,7 @@ void MCEditor::HierarchyPanel::OnImGuiRender()
     {
         if (ImGui::MenuItem("Create Empty Entity"))
         {
-            auto newEntity = SceneManager::GetInstance().GetActiveScene()->AddEmptyEntity("Empty Entity");
+            auto newEntity = SceneManager::GetInstance().GetActiveScene()->AddEmptyEntity("EmptyEntity");
             SceneManager::GetInstance().SetSelectedEntity(newEntity);
         }
 
