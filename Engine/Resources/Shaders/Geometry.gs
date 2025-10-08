@@ -5,7 +5,7 @@ layout(triangle_strip, max_vertices = 3) out;
 
 in VS_OUT
 {
-    vec3 GlobalPosition;
+    vec3 Position;
     vec3 Normal;
     vec3 CameraPosition;
 }
@@ -13,7 +13,7 @@ gs_in[];
 
 out GS_OUT
 {
-    vec3 GlobalPosition;
+    vec3 Position;
     vec3 Normal;
     vec3 CameraPosition;
 }
@@ -32,21 +32,21 @@ void main()
 {
     // gl_Position = explode(gl_in[0].gl_Position, GetNormal());
     gl_Position = gl_in[0].gl_Position;
-    gs_out.GlobalPosition = gs_in[0].GlobalPosition;
+    gs_out.Position = gs_in[0].Position;
     gs_out.Normal = gs_in[0].Normal;
     gs_out.CameraPosition = gs_in[0].CameraPosition;
     EmitVertex();
 
     // gl_Position = explode(gl_in[1].gl_Position, GetNormal());
     gl_Position = gl_in[1].gl_Position;
-    gs_out.GlobalPosition = gs_in[1].GlobalPosition;
+    gs_out.Position = gs_in[1].Position;
     gs_out.Normal = gs_in[1].Normal;
     gs_out.CameraPosition = gs_in[1].CameraPosition;
     EmitVertex();
 
     // gl_Position = explode(gl_in[2].gl_Position, GetNormal());
     gl_Position = gl_in[2].gl_Position;
-    gs_out.GlobalPosition = gs_in[2].GlobalPosition;
+    gs_out.Position = gs_in[2].Position;
     gs_out.Normal = gs_in[2].Normal;
     gs_out.CameraPosition = gs_in[2].CameraPosition;
     EmitVertex();

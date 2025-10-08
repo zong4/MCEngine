@@ -380,10 +380,6 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
                                       lightComponentData["Quadratic"].as<float>());
         lightComponent.SetAngles(lightComponentData["InnerAngle"].as<float>(),
                                  lightComponentData["OuterAngle"].as<float>());
-
-        // todo
-        if (lightComponent.GetType() == LightType::Directional)
-            scene->SetMainLight(deserializedEntity);
     }
 
     const auto &skyboxComponentData = entity["SkyboxComponent"];

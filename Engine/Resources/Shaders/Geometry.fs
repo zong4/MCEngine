@@ -5,7 +5,7 @@ out vec4 FragColor;
 
 in GS_OUT
 {
-    vec3 GlobalPosition;
+    vec3 Position;
     vec3 Normal;
     vec3 CameraPosition;
 }

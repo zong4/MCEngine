@@ -25,7 +25,6 @@ public:
     // Setters
     void SetName(const std::string &name) { m_Name = name; }
     void SetMainCamera(const Entity &camera) { m_MainCamera = camera; }
-    void SetMainLight(const Entity &light) { m_MainLight = light; }
 
 public:
     // Main loop
@@ -57,7 +56,6 @@ protected:
     Entity m_MainCamera;
 
     // Lighting
-    Entity m_MainLight;
     std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMap =
         std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
 

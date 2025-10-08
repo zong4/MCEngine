@@ -6,7 +6,6 @@ layout(location = 0) in vec3 aPosition;
 // Uniforms
 layout(std140) uniform UniformBuffer0
 {
-    // Position
     mat4 u_View;
     mat4 u_Projection;
 };
