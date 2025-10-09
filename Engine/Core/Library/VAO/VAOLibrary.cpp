@@ -127,8 +127,9 @@ MCEngine::VAOLibrary::VAOLibrary()
         std::vector<VertexAttribute>{
             {0, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)0},
             {1, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(3 * sizeof(float))},
-            {2, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(6 * sizeof(float))},
-            {3, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(10 * sizeof(float))}});
+            {2, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(CubeVertex), (const void *)(6 * sizeof(float))},
+            {3, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(7 * sizeof(float))},
+            {4, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(11 * sizeof(float))}});
     AddVAO("Cubes", cubesVAO);
 
     auto &&vertexArray = std::make_shared<VertexArray>(

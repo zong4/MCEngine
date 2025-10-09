@@ -1,10 +1,5 @@
 #include "BasicComponent.hpp"
 
-MCEngine::TagComponent::TagComponent(const std::string &tag) : m_Tag(tag)
-{
-    LOG_ENGINE_TRACE("Tag Component created with Tag: " + m_Tag);
-}
-
 void MCEngine::RelationshipComponent::RemoveChild(Entity child)
 {
     ENGINE_PROFILE_FUNCTION();

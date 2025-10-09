@@ -44,8 +44,9 @@ void MCEngine::Window::Update(float deltaTime)
     m_LayerStack.Update(deltaTime);
 
     // Post-update
-    MCEngine::MouseLibrary::GetInstance().PostUpdate();
     glfwSwapBuffers(static_cast<GLFWwindow *>(m_NativeWindow));
+
+    MCEngine::MouseLibrary::GetInstance().PostUpdate();
     glfwPollEvents();
 }
 

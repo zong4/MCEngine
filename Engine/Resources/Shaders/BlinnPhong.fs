@@ -26,26 +26,18 @@ uniform mat4 u_LightView[MAX_LIGHTS];
 uniform mat4 u_LightProjection[MAX_LIGHTS];
 uniform sampler2D u_ShadowMap[MAX_LIGHTS];
 
-// Material
-struct Material
-{
-    vec4 Color;
-    float AmbientStrength;
-    float DiffuseStrength;
-    float SpecularStrength;
-    float Shininess;
-};
-uniform Material u_Material;
-
 // Skybox
 uniform samplerCube u_Skybox;
 
 // Inputs
 in VS_OUT
 {
+    vec3 CameraPosition;
     vec3 Position;
     vec3 Normal;
-    vec3 CameraPosition;
+    flat uint EntityID;
+    vec4 Color;
+    vec4 Material;
 }
 fs_in;
 
@@ -99,9 +91,9 @@ void main()
 
     // Skybox
     vec3 resultSkybox = vec3(0.0);
-    resultSkybox += texture(u_Skybox, fs_in.Normal).rgb * u_Material.AmbientStrength * u_Material.Color.rgb;
+    resultSkybox += texture(u_Skybox, fs_in.Normal).rgb * fs_in.Material[0] * fs_in.Color.rgb;
     // resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(fs_in.Normal))).rgb *
-    // u_Material.SpecularStrength; resultSkybox += texture(u_Skybox, refract(-viewDir,
+    // fs_in.Material[2]; resultSkybox += texture(u_Skybox, refract(-viewDir,
     // normalize(fs_in.Normal), 1.00 / 1.52)).rgb * 0.5;
     result += resultSkybox;
 
@@ -109,7 +101,7 @@ void main()
     float exposure = 1.0;
     result = vec3(1.0) - exp(-result * exposure);
 
-    FragColor = vec4(result, u_Material.Color.a);
+    FragColor = vec4(result, fs_in.Color.a);
 }
 
 // No ambient light calculation
@@ -118,9 +110,9 @@ vec3 CalcLight(vec3 lightDir, vec3 viewDir)
     float diff = max(dot(fs_in.Normal, lightDir), 0.0);
 
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), u_Material.Shininess);
+    float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), fs_in.Material[3]);
 
-    return (u_Material.DiffuseStrength * diff) * u_Material.Color.rgb + u_Material.SpecularStrength * spec;
+    return (fs_in.Material[0] * diff) * fs_in.Color.rgb + fs_in.Material[2] * spec;
 }
 
 float CalcShadow(int index, vec4 fragPosLightSpace, vec3 lightDir)

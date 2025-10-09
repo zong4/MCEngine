@@ -36,28 +36,13 @@ private:
 class MeshRendererComponent
 {
 public:
-    MeshRendererComponent(const std::shared_ptr<Shader> &shader = ShaderLibrary::GetInstance().GetShader("BlinnPhong"),
-                          const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
+    MeshRendererComponent(const Material &material = Material(glm::vec4(1.0f), 0.3f, 1.0f, 0.5f, 32.0f));
 
-    // Getters
-    std::shared_ptr<VertexArray> GetVAO() const { return m_VAO; }
-    const std::vector<glm::mat4> &GetOffsets() const { return m_Offsets; }
-    std::shared_ptr<Shader> GetShader() const { return m_Shader; }
     Material &GetMaterial() { return m_Material; }
     const Material &GetMaterial() const { return m_Material; }
-
-    // Setters
-    void SetVAO(const std::shared_ptr<VertexArray> &vao) { m_VAO = vao; }
-    void SetShader(const std::shared_ptr<Shader> &shader) { m_Shader = shader; }
     void SetMaterial(const Material &material) { m_Material = material; }
 
-public:
-    void AddOffset(const glm::mat4 &offset);
-
 private:
-    std::shared_ptr<VertexArray> m_VAO;
-    std::vector<glm::mat4> m_Offsets;
-    std::shared_ptr<Shader> m_Shader;
     Material m_Material;
 };
 

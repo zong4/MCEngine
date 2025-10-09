@@ -76,27 +76,27 @@ void MCEngine::VertexArray::SetIndexBuffer(IndexBuffer &&indexBuffer)
                     " set with new IndexBuffer ID: " + std::to_string(m_IndexBuffer.GetRendererID()));
 }
 
-void MCEngine::VertexArray::Render(RendererType renderType, int number) const
+void MCEngine::VertexArray::Render(RendererType renderType, size_t positionCount) const
 {
     ENGINE_PROFILE_FUNCTION();
 
     Bind();
     m_VertexBuffer.Bind();
+
     if (m_IndexBuffer.GetRendererID() == 0)
     {
-        m_InstanceCount == 1 ? glDrawArrays(static_cast<GLenum>(renderType), 0,
-                                            number == 0 ? m_VertexBuffer.GetCount() / m_AttributeCount : number)
-                             : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0,
-                                                     m_VertexBuffer.GetCount() / m_AttributeCount, m_InstanceCount);
+        size_t vertexCount = positionCount == 0 ? m_VertexBuffer.GetCount() / m_AttributeCount : positionCount;
+        m_InstanceCount == 1 ? glDrawArrays(static_cast<GLenum>(renderType), 0, vertexCount)
+                             : glDrawArraysInstanced(static_cast<GLenum>(renderType), 0, vertexCount, m_InstanceCount);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     }
     else
     {
         m_IndexBuffer.Bind();
-        m_InstanceCount == 1
-            ? glDrawElements(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0)
-            : glDrawElementsInstanced(static_cast<GLenum>(renderType), m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, 0,
-                                      m_InstanceCount);
+        size_t vertexCount = positionCount == 0 ? m_IndexBuffer.GetCount() : positionCount;
+        m_InstanceCount == 1 ? glDrawElements(static_cast<GLenum>(renderType), vertexCount, GL_UNSIGNED_INT, 0)
+                             : glDrawElementsInstanced(static_cast<GLenum>(renderType), vertexCount, GL_UNSIGNED_INT, 0,
+                                                       m_InstanceCount);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
         m_IndexBuffer.Unbind();
     }

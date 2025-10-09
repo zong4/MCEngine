@@ -46,7 +46,7 @@ public:
     void SetInstanceCount(int instanceCount) { m_InstanceCount = instanceCount; }
 
 public:
-    void Render(RendererType renderType = RendererType::Triangles, int number = 0) const;
+    void Render(RendererType renderType = RendererType::Triangles, size_t positionCount = 0) const;
 
 private:
     unsigned int m_RendererID = 0;

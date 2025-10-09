@@ -10,9 +10,7 @@ MCEngine::SpriteRendererComponent::SpriteRendererComponent(const std::shared_ptr
         ", color: " + ToString(m_Color) + ", textureID: " + std::to_string((uint32_t)m_Texture->GetRendererID()));
 }
 
-MCEngine::MeshRendererComponent::MeshRendererComponent(const std::shared_ptr<Shader> &shader, const Material &material)
-    : m_Shader(shader), m_Material(material)
+MCEngine::MeshRendererComponent::MeshRendererComponent(const Material &material) : m_Material(material)
 {
-    LOG_ENGINE_TRACE("MeshRendererComponent created with ShaderID: " +
-                     std::to_string((uint32_t)m_Shader->GetRendererID()) + ", " + m_Material.ToString());
+    LOG_ENGINE_TRACE("MeshRendererComponent created with " + m_Material.ToString());
 }

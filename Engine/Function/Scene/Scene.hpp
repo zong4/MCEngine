@@ -29,9 +29,10 @@ public:
 public:
     // Main loop
     void Update(float deltaTime);
+    void PreRender();
     void RenderShadowMap() const;
     void Render(const Entity &camera) const;
-    void RenderColorID(const Entity &camera) const;
+    void RenderColorID() const;
 
     void Resize(float width, float height);
 
@@ -54,6 +55,7 @@ protected:
     // Scene data
     entt::registry m_Registry = {};
     Entity m_MainCamera;
+    size_t m_CubeVertexCount = 0;
 
     // Lighting
     std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMap =

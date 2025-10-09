@@ -1,7 +1,18 @@
 #version 330 core
 
+// Output
 out uvec4 FragColor;
 
-uniform uint u_EntityID;
+// Inputs
+in VS_OUT
+{
+    vec3 CameraPosition;
+    vec3 Position;
+    vec3 Normal;
+    flat uint EntityID;
+    vec4 Color;
+    vec4 Material;
+}
+fs_in;
 
-void main() { FragColor = uvec4(u_EntityID, 0, 0, 1); }
+void main() { FragColor = uvec4(fs_in.EntityID, 0, 0, 1); }

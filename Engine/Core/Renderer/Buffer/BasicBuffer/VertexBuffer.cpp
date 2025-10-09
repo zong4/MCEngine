@@ -90,8 +90,6 @@ void MCEngine::VertexBuffer::SetData(const void *data, size_t size, size_t offse
     glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
     RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     Unbind();
-
-    LOG_ENGINE_TRACE("VertexBuffer data updated for ID: " + std::to_string(m_RendererID));
 }
 
 void MCEngine::VertexBuffer::CreateBuffer(const void *data, size_t size)

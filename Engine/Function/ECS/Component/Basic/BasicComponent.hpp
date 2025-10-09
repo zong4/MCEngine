@@ -8,7 +8,7 @@ namespace MCEngine
 class TagComponent
 {
 public:
-    TagComponent(const std::string &tag);
+    TagComponent(const std::string &tag) : m_Tag(tag) { LOG_ENGINE_TRACE("Tag Component created with Tag: " + m_Tag); }
 
     const std::string &GetTag() const { return m_Tag; }
     void SetTag(const std::string &tag) { m_Tag = tag; }

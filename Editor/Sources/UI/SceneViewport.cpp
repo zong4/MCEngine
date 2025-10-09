@@ -38,7 +38,7 @@ void MCEditor::SceneViewport::Render()
 
     m_EntityPickingFBO->Bind();
     MCEngine::RendererCommand::Clear();
-    SceneManager::GetInstance().GetActiveScene()->RenderColorID(m_Camera);
+    SceneManager::GetInstance().GetActiveScene()->RenderColorID();
     m_EntityPickingFBO->Unbind();
 }
 

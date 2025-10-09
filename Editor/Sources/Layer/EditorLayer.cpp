@@ -141,6 +141,7 @@ void MCEditor::EditorLayer::OnRender()
     auto &&sceneManager = SceneManager::GetInstance();
 
     // Once per frame
+    sceneManager.GetActiveScene()->PreRender();
     sceneManager.GetActiveScene()->RenderShadowMap();
 
     // Render viewports

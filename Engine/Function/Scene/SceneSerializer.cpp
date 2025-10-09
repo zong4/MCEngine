@@ -216,6 +216,9 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
 
         auto &meshRendererComponent = entity.GetComponent<MCEngine::MeshRendererComponent>();
 
+        // out << YAML::Key << "Shader" << YAML::Value
+        //     << MCEngine::ShaderLibrary::GetInstance().GetName(meshRendererComponent.GetShader());
+
         out << YAML::Key << "Material";
         out << YAML::BeginMap;
         {
@@ -229,9 +232,6 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
             out << YAML::Key << "Shininess" << YAML::Value << meshRendererComponent.GetMaterial().GetShininess();
         }
         out << YAML::EndMap;
-
-        out << YAML::Key << "Shader" << YAML::Value
-            << MCEngine::ShaderLibrary::GetInstance().GetName(meshRendererComponent.GetShader());
 
         out << YAML::EndMap;
     }
@@ -340,7 +340,6 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     {
         const auto &materialData = meshRendererComponentData["Material"];
         auto &&meshRendererComponent = deserializedEntity.AddComponent<MeshRendererComponent>(
-            MCEngine::ShaderLibrary::GetInstance().GetShader(meshRendererComponentData["Shader"].as<std::string>()),
             Material(materialData["Color"].as<glm::vec4>(), materialData["AmbientStrength"].as<float>(),
                      materialData["DiffuseStrength"].as<float>(), materialData["SpecularStrength"].as<float>(),
                      materialData["Shininess"].as<float>()));

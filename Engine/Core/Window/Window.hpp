@@ -13,6 +13,12 @@ struct WindowProperty
     int Height;
     bool VSync;
     glm::vec4 ClearColor;
+
+public:
+    WindowProperty(const std::string &title, int width, int height, bool vsync, const glm::vec4 &clearColor)
+        : Title(title), Width(width), Height(height), VSync(vsync), ClearColor(clearColor)
+    {
+    }
 };
 
 class Window

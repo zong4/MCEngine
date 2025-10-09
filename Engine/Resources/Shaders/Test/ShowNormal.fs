@@ -6,9 +6,12 @@ out vec4 FragColor;
 // Inputs
 in VS_OUT
 {
+    vec3 CameraPosition;
     vec3 Position;
     vec3 Normal;
-    vec3 CameraPosition;
+    flat uint EntityID;
+    vec4 Color;
+    vec4 Material;
 }
 fs_in;
 

@@ -21,6 +21,7 @@ public:
 
 private:
     static MCEngine::WindowProperty s_WindowProperty;
+
     static std::filesystem::path s_ConfigsPath;
     static std::filesystem::path s_AssetsPath;
     static std::filesystem::path s_ScenesPath;
