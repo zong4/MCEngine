@@ -1,27 +1,26 @@
 # Minecraft Engine
 
-A game engine created for Minecraft-like games.
+A game engine created for games like Minecraft and Terraria.
 
 ![Minecraft Engine Editor](./Assets/Editor.png)
 
 ## Why is it
 
-As I said, it's a game engine created for Minecraft-like games which means it wouldn't support some amazing features that other game engines support like Unity or Unreal Engine. So I can more focus on improving the performance of the engine and make it more suitable for Minecraft-like games.
+Like I said, this engine is made for Minecraft-like games, so it doesn’t have some of the fancy features you’d find in Unity or Unreal Engine. But that also means I can focus more on performance and make it run perfectly for Minecraft-style gameplay.
 
 ## What I do
 
-### Graphics
-
-Support rendering squares and cubes with OpenGL with Blinn-Phong lighting model.
+- [x] Implemented rendering of squares and cubes in OpenGL using the Blinn–Phong lighting model with a single draw call.
+- [x] Added basic UI support via [Dear ImGui](https://github.com/ocornut/imgui).
 
 ## How to use
 
-1. Clone the repository
+1. Clone the repository.
    ```bash
    git clone https://github.com/zong4/MinecraftEngine.git
    ```
-2. Download and install [XMake](https://xmake.io/guide/quick-start.html)
-3. Build and run the project 
+2. Install [XMake](https://xmake.io/guide/quick-start.html) if you haven’t already.
+3. Build and run the project, xmake will automatically download and build the dependencies for you.
    ```bash
    cd MinecraftEngine
    xmake run -y
@@ -29,10 +28,11 @@ Support rendering squares and cubes with OpenGL with Blinn-Phong lighting model.
 
 ## What we plan
 
-- [ ] Support rendering other basic shapes like sphere, cylinder, cone, etc.
-- [ ] Provide some generation algorithms like Perlin Noise, Simplex Noise, etc.
-- [ ] Provide some world generation algorithms like Chunked LOD, Greedy Meshing, etc.
+- [ ] Add support for additional basic shapes such as spheres, cylinders, and cones, etc.
+- [ ] Implement common procedural generation algorithms, including Perlin Noise and Simplex Noise, etc.
+- [ ] Implement world generation techniques such as Chunked LOD and Greedy Meshing, etc.
 
 ## References:
+
 - [OpenGL](https://learnopengl.com)
 - [Game Engine Architecture](https://github.com/TheCherno/Hazel)
