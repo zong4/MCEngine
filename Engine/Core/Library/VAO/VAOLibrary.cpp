@@ -125,9 +125,9 @@ MCEngine::VAOLibrary::VAOLibrary()
     auto &&cubesVAO = std::make_shared<VertexArray>(
         VertexBuffer(MaxCubesNumber * sizeof(CubeVertex) * 36),
         std::vector<VertexAttribute>{
-            {0, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)0},
-            {1, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(3 * sizeof(float))},
-            {2, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(CubeVertex), (const void *)(6 * sizeof(float))},
+            {0, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(CubeVertex), (const void *)(0 * sizeof(float))},
+            {1, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(1 * sizeof(float))},
+            {2, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(4 * sizeof(float))},
             {3, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(7 * sizeof(float))},
             {4, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(11 * sizeof(float))}});
     AddVAO("Cubes", cubesVAO);

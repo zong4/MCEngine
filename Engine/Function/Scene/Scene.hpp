@@ -55,6 +55,7 @@ protected:
     // Scene data
     entt::registry m_Registry = {};
     Entity m_MainCamera;
+    size_t m_SquareVertexCount = 0;
     size_t m_CubeVertexCount = 0;
 
     // Lighting

@@ -7,9 +7,9 @@ namespace MCEngine
 
 struct CubeVertex
 {
+    unsigned int EntityID;
     glm::vec3 Position;
     glm::vec3 Normal;
-    unsigned int EntityID;
     glm::vec4 Color;
     glm::vec4 Material; // ambient, diffuse, specular , shininess
 };
