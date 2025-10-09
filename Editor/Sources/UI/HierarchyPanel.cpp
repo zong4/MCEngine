@@ -30,8 +30,7 @@ void MCEditor::HierarchyPanel::OnImGuiRender()
         if (ImGui::MenuItem("Create Square"))
         {
             auto newEntity = SceneManager::GetInstance().GetActiveScene()->Add2DObject(
-                "Square", MCEngine::TransformComponent(),
-                MCEngine::SpriteRendererComponent(MCEngine::VAOLibrary::GetInstance().GetVAO("Square")));
+                "Square", MCEngine::TransformComponent(), MCEngine::SpriteRendererComponent());
             SceneManager::GetInstance().SetSelectedEntity(newEntity);
         }
 

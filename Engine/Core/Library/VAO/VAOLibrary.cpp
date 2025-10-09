@@ -5,22 +5,6 @@
 namespace MCEngine
 {
 
-struct IdentitySquareData
-{
-    float vertices[20] = {
-        0.5f,  0.5f,  0.0f, 1.0, 1.0, // top right
-        0.5f,  -0.5f, 0.0f, 1.0, 0.0, // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0, 0.0, // bottom left
-        -0.5f, 0.5f,  0.0f, 0.0, 1.0, // top left
-    };
-    unsigned int indices[6] = {
-        // note that we start from 0!
-        0, 3, 1, // first Triangle
-        1, 3, 2  // second Triangle
-    };
-};
-inline const IdentitySquareData g_IdentitySquareData;
-
 struct SkyboxCubeData
 {
     float vertices[108] = {
@@ -120,26 +104,30 @@ MCEngine::VAOLibrary::VAOLibrary()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    static int MaxCubesNumber = 10000;
-
-    auto &&cubesVAO = std::make_shared<VertexArray>(
-        VertexBuffer(MaxCubesNumber * sizeof(CubeVertex) * 36),
+    static int MaxSquaresNumber = 10000;
+    auto &&squaresVAO = std::make_shared<VertexArray>(
+        VertexBuffer(MaxSquaresNumber * sizeof(Vertex2D) * 4),
         std::vector<VertexAttribute>{
-            {0, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(CubeVertex), (const void *)(0 * sizeof(float))},
-            {1, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(1 * sizeof(float))},
-            {2, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(4 * sizeof(float))},
-            {3, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(7 * sizeof(float))},
-            {4, 4, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (const void *)(11 * sizeof(float))}});
+            {0, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex2D), (const void *)(0 * sizeof(float))},
+            {1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void *)(1 * sizeof(float))},
+            {2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void *)(4 * sizeof(float))},
+            {3, 1, GL_INT, GL_FALSE, sizeof(Vertex2D), (const void *)(6 * sizeof(float))},
+            {4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void *)(7 * sizeof(float))}},
+        IndexBuffer(MaxSquaresNumber * sizeof(unsigned int) * 6));
+    AddVAO("Squares", squaresVAO);
+
+    static int MaxCubesNumber = 10000;
+    auto &&cubesVAO = std::make_shared<VertexArray>(
+        VertexBuffer(MaxCubesNumber * sizeof(Vertex3D) * 36),
+        std::vector<VertexAttribute>{
+            {0, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex3D), (const void *)(0 * sizeof(float))},
+            {1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(1 * sizeof(float))},
+            {2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(4 * sizeof(float))},
+            {3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(7 * sizeof(float))},
+            {4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(11 * sizeof(float))}});
     AddVAO("Cubes", cubesVAO);
 
     auto &&vertexArray = std::make_shared<VertexArray>(
-        MCEngine::VertexBuffer(g_IdentitySquareData.vertices, sizeof(g_IdentitySquareData.vertices)),
-        std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)0},
-                                     {1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void *)(3 * sizeof(float))}},
-        MCEngine::IndexBuffer(g_IdentitySquareData.indices, sizeof(g_IdentitySquareData.indices)));
-    AddVAO("Square", vertexArray);
-
-    vertexArray = std::make_shared<VertexArray>(
         MCEngine::VertexBuffer(g_SkyboxCubeData.vertices, sizeof(g_SkyboxCubeData.vertices)),
         std::vector<VertexAttribute>{{0, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0}});
     AddVAO("Skybox", vertexArray);

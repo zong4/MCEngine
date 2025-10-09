@@ -41,7 +41,36 @@ void MCEngine::Scene::PreRender()
 {
     ENGINE_PROFILE_FUNCTION();
 
-    std::vector<CubeVertex> cubesVertices;
+    int squareIndex = 0;
+    std::vector<Vertex2D> squaresVertices;
+    std::vector<unsigned int> squaresIndices;
+    auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
+    for (auto &&entity : spriteView)
+    {
+        auto &&[transform, sprite] =
+            spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
+        for (int i = 0; i < 4; i++)
+        {
+            glm::mat4 u_Model = transform.GetTransformMatrix();
+            squaresVertices.push_back(
+                {(uint32_t)entity + 1, glm::vec3(u_Model * glm::vec4(g_IdentitySquareData.Positions[i], 1.0f)),
+                 g_IdentitySquareData.TexCoords[i], TextureLibrary::GetInstance().GetTextureSlot(sprite.GetTexture()),
+                 sprite.GetColor()});
+        }
+        for (int i = 0; i < 6; i++)
+        {
+            squaresIndices.push_back(g_IdentitySquareData.Indices[i] + squareIndex * 4);
+        }
+        squareIndex++;
+    }
+    m_SquaresCount = squareIndex;
+    VAOLibrary::GetInstance().GetVAO("Squares")->GetVertexBuffer().SetData(squaresVertices.data(),
+                                                                           m_SquaresCount * 4 * sizeof(Vertex2D), 0);
+    VAOLibrary::GetInstance().GetVAO("Squares")->GetIndexBuffer().SetData(squaresIndices.data(),
+                                                                          m_SquaresCount * 6 * sizeof(unsigned int), 0);
+
+    int cubeIndex = 0;
+    std::vector<Vertex3D> cubesVertices;
     auto &&meshView = m_Registry.view<MCEngine::TransformComponent, MCEngine::MeshRendererComponent>();
     for (auto &&entity : meshView)
     {
@@ -56,10 +85,11 @@ void MCEngine::Scene::PreRender()
                  glm::vec4(mesh.GetMaterial().GetAmbientStrength(), mesh.GetMaterial().GetDiffuseStrength(),
                            mesh.GetMaterial().GetSpecularStrength(), mesh.GetMaterial().GetShininess())});
         }
+        cubeIndex++;
     }
-    m_CubeVertexCount = cubesVertices.size();
+    m_CubesCount = cubeIndex;
     VAOLibrary::GetInstance().GetVAO("Cubes")->GetVertexBuffer().SetData(cubesVertices.data(),
-                                                                         m_CubeVertexCount * sizeof(CubeVertex), 0);
+                                                                         m_CubesCount * 36 * sizeof(Vertex3D), 0);
 }
 
 void MCEngine::Scene::RenderShadowMap() const
@@ -79,7 +109,7 @@ void MCEngine::Scene::RenderShadowMap() const
         shader->SetUniformMat4("u_LightView", glm::inverse(transform.GetTransformMatrix()));
         shader->SetUniformMat4("u_LightProjection", glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f));
 
-        VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubeVertexCount * 3);
+        VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubesCount * 36);
 
         m_ShadowMap->Unbind();
 
@@ -120,18 +150,8 @@ void MCEngine::Scene::RenderColorID() const
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("ColorIDPicking");
     shader->Bind();
 
-    // Pick 2D
-    auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
-    for (auto &&entity : spriteView)
-    {
-        auto &&[transform, sprite] =
-            spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
-        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-        shader->SetUniformUInt("u_EntityID", static_cast<unsigned int>(entity) + 1); // 0 = no entity
-        sprite.GetVAO()->Render();
-    }
-
-    VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubeVertexCount * 3);
+    VAOLibrary::GetInstance().GetVAO("Squares")->Render(MCEngine::RendererType::Triangles, m_SquaresCount * 6);
+    VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubesCount * 36);
 
     shader->Unbind();
 }
@@ -238,18 +258,16 @@ void MCEngine::Scene::Render2D() const
     auto &&shader = MCEngine::ShaderLibrary::GetInstance().GetShader("Texture");
     shader->Bind();
 
-    auto &&spriteView = m_Registry.view<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>();
+    auto &&spriteView = m_Registry.view<MCEngine::SpriteRendererComponent>();
     for (auto &&entity : spriteView)
     {
-        auto &&[transform, sprite] =
-            spriteView.get<MCEngine::TransformComponent, MCEngine::SpriteRendererComponent>(entity);
-        shader->SetUniformMat4("u_Model", transform.GetTransformMatrix());
-        shader->SetUniformVec4("u_Color", sprite.GetColor());
-        shader->SetUniformInt("u_Texture", 0);
-        sprite.GetTexture()->Bind(0);
-        sprite.GetVAO()->Render();
+        auto &&sprite = spriteView.get<MCEngine::SpriteRendererComponent>(entity);
+        int texID = TextureLibrary::GetInstance().GetTextureSlot(sprite.GetTexture());
+        if (texID != -1)
+            sprite.GetTexture()->Bind(texID);
     }
-
+    VAOLibrary::GetInstance().GetVAO("Squares")->Render(MCEngine::RendererType::Triangles, m_SquaresCount * 6);
+    TextureLibrary::GetInstance().ClearTextureSlots();
     shader->Unbind();
 }
 
@@ -307,7 +325,7 @@ void MCEngine::Scene::Render3D() const
         skybox.GetTextureCube()->Bind(lightIndex);
     }
 
-    VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubeVertexCount * 3);
+    VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubesCount * 36);
     shader->Unbind();
 }
 

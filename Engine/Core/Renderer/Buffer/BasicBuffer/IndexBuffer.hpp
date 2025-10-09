@@ -9,6 +9,7 @@ class IndexBuffer : public BasicBuffer
 {
 public:
     // IndexBuffer() = default;
+    IndexBuffer(size_t size);
     IndexBuffer(const void *data, size_t size);
     IndexBuffer(const std::vector<uint32_t> &indices);
     virtual ~IndexBuffer() override;

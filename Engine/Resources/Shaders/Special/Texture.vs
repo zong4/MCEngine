@@ -1,8 +1,10 @@
 #version 330 core
 
 // Layouts
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec2 aTexCoord;
+layout(location = 1) in vec3 aPosition;
+layout(location = 2) in vec2 aTexCoord;
+layout(location = 3) in int aTexID;
+layout(location = 4) in vec4 aColor;
 
 // Uniforms
 uniform mat4 u_Model;
@@ -14,14 +16,22 @@ layout(std140) uniform UniformBuffer0
 };
 
 // Outputs
-out vec2 v_TexCoord;
+out VS_OUT
+{
+    vec2 TexCoord;
+    flat int TexID;
+    vec4 Color;
+}
+vs_out;
 
 // Main
 void main()
 {
     // Outputs
-    v_TexCoord = aTexCoord;
+    vs_out.TexCoord = aTexCoord;
+    vs_out.TexID = aTexID;
+    vs_out.Color = aColor;
 
     // Final vertex position
-    gl_Position = u_Projection * u_View * u_Model * vec4(aPosition, 1.0);
+    gl_Position = u_Projection * u_View * vec4(aPosition, 1.0);
 }

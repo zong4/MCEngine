@@ -199,8 +199,6 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
         out << YAML::BeginMap;
 
         auto &spriteRendererComponent = entity.GetComponent<MCEngine::SpriteRendererComponent>();
-        out << YAML::Key << "VAO" << YAML::Value
-            << MCEngine::VAOLibrary::GetInstance().GetName(spriteRendererComponent.GetVAO());
         out << YAML::Key << "Color" << YAML::Value << (YAML::Node)spriteRendererComponent.GetColor();
         out << YAML::Key << "Texture" << YAML::Value
             << MCEngine::TextureLibrary::GetInstance().GetName(spriteRendererComponent.GetTexture());
@@ -329,7 +327,6 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     if (spriteRendererComponentData)
     {
         deserializedEntity.AddComponent<SpriteRendererComponent>(
-            MCEngine::VAOLibrary::GetInstance().GetVAO(spriteRendererComponentData["VAO"].as<std::string>()),
             spriteRendererComponentData["Color"].as<glm::vec4>(),
             MCEngine::TextureLibrary::GetInstance().GetTexture2D(
                 spriteRendererComponentData["Texture"].as<std::string>()));

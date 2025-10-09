@@ -39,6 +39,7 @@ public:
     // Getters
     unsigned int GetRendererID() const { return m_RendererID; }
     VertexBuffer &GetVertexBuffer() { return m_VertexBuffer; }
+    IndexBuffer &GetIndexBuffer() { return m_IndexBuffer; }
 
     // Setters
     void SetVertexBuffer(VertexBuffer &&vertexBuffer, const std::vector<VertexAttribute> &attributes);

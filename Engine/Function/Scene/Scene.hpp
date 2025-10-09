@@ -40,8 +40,7 @@ public:
     void DeleteEntity(const Entity &entity);
     Entity AddEmptyEntity(const std::string &name, const TransformComponent &transform = TransformComponent());
     Entity Add2DObject(const std::string &name, const TransformComponent &transform,
-                       const SpriteRendererComponent &spriteRenderer =
-                           SpriteRendererComponent(VAOLibrary::GetInstance().GetVAO("Square")));
+                       const SpriteRendererComponent &spriteRenderer = SpriteRendererComponent());
     Entity Add3DObject(const std::string &name, const TransformComponent &transform,
                        const MeshRendererComponent &meshRenderer = MeshRendererComponent());
     Entity AddCamera(const std::string &name, const TransformComponent &transform,
@@ -55,12 +54,12 @@ protected:
     // Scene data
     entt::registry m_Registry = {};
     Entity m_MainCamera;
-    size_t m_SquareVertexCount = 0;
-    size_t m_CubeVertexCount = 0;
+    size_t m_SquaresCount = 0;
+    size_t m_CubesCount = 0;
 
     // Lighting
     std::unique_ptr<MCEngine::FrameBuffer> m_ShadowMap =
-        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 2048, 2048);
+        std::make_unique<MCEngine::FrameBuffer>(MCEngine::FrameBufferType::Depth, 1024, 1024);
 
 protected:
     void Render2D() const;

@@ -5,7 +5,38 @@
 namespace MCEngine
 {
 
-struct CubeVertex
+struct Vertex2D
+{
+    unsigned int EntityID;
+    glm::vec3 Position;
+    glm::vec2 TexCoord;
+    int TexIndex;
+    glm::vec4 Color;
+};
+
+struct IdentitySquareData
+{
+    glm::vec3 Positions[4] = {
+        {0.5f, 0.5f, 0.0f},   // top right
+        {0.5f, -0.5f, 0.0f},  // bottom right
+        {-0.5f, -0.5f, 0.0f}, // bottom left
+        {-0.5f, 0.5f, 0.0f},  // top left
+    };
+    glm::vec2 TexCoords[4] = {
+        {1.0f, 1.0f},
+        {1.0f, 0.0f},
+        {0.0f, 0.0f},
+        {0.0f, 1.0f},
+    };
+    unsigned int Indices[6] = {
+        // note that we start from 0!
+        0, 3, 1, // first Triangle
+        1, 3, 2  // second Triangle
+    };
+};
+inline const IdentitySquareData g_IdentitySquareData;
+
+struct Vertex3D
 {
     unsigned int EntityID;
     glm::vec3 Position;

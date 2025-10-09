@@ -8,6 +8,30 @@ MCEngine::TextureLibrary &MCEngine::TextureLibrary::GetInstance()
     return instance;
 }
 
+int MCEngine::TextureLibrary::GetTextureSlot(const std::shared_ptr<Texture> &texture)
+{
+    for (size_t i = 0; i < m_TextureSlots.size(); ++i)
+    {
+        if (m_TextureSlots[i] == GetName(texture))
+        {
+            return static_cast<int>(i);
+        }
+    }
+
+    // Find an empty slot
+    for (size_t i = 0; i < m_TextureSlots.size(); ++i)
+    {
+        if (m_TextureSlots[i].empty())
+        {
+            m_TextureSlots[i] = GetName(texture);
+            return static_cast<int>(i);
+        }
+    }
+
+    LOG_ENGINE_WARN("No available texture slots");
+    return -1;
+}
+
 std::string MCEngine::TextureLibrary::GetName(const std::shared_ptr<Texture> &texture) const
 {
     for (const auto &[name, ptr] : m_Textures)
@@ -55,6 +79,8 @@ void MCEngine::TextureLibrary::AddTexture(const std::string &name, const std::sh
     m_Textures[name] = texture;
     LOG_ENGINE_TRACE("Texture added: " + name);
 }
+
+void MCEngine::TextureLibrary::ClearTextureSlots() { m_TextureSlots.fill(""); }
 
 MCEngine::TextureLibrary::TextureLibrary()
 {
