@@ -2,7 +2,7 @@
 
 A game engine created for games like Minecraft and Terraria.
 
-![Logo](./Assets/Logo.png)
+![Logo](./Assets/Logo1.png)
 
 ## Why is it
 
