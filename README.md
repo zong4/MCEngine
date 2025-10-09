@@ -2,7 +2,7 @@
 
 A game engine created for games like Minecraft and Terraria.
 
-![My GitHub stats](https://github-readme-stats.vercel.app/api?username=zong4&show_icons=true&theme=tokyonight)
+![Logo](./Assets/Logo.png)
 
 ## Why is it
 
@@ -10,7 +10,7 @@ Like I said, this engine is made for Minecraft-like games, so it doesn’t have 
 
 ## What I do
 
-![Minecraft Engine Editor](./Assets/Editor.png)
+![Editor](./Assets/Editor.png)
 
 - [x] Implemented rendering of squares and cubes in OpenGL using the Blinn–Phong lighting model with a single draw call.
 - [x] Added basic UI support via [Dear ImGui](https://github.com/ocornut/imgui).
@@ -23,7 +23,7 @@ Like I said, this engine is made for Minecraft-like games, so it doesn’t have 
    ```
 2. Install [XMake](https://xmake.io/guide/quick-start.html) if you haven’t already.
 3. Build and run the project, xmake will automatically download and build the dependencies for you.
-   ```bash
+   ```bashfind . -name "*.cpp" -o -name "*.h" | xargs wc -l
    cd MinecraftEngine
    xmake run -y
    ```
