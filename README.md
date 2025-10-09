@@ -2,7 +2,10 @@
 
 A game engine created for games like Minecraft and Terraria.
 
-![Logo](./Assets/Logo1.png)
+<!-- ![Logo](./Assets/Logo1.png) -->
+<p align="center">
+  <img src="./Assets/Logo.png" alt="Logo" width="200">
+</p>
 
 ## Why is it
 
