@@ -2,13 +2,15 @@
 
 A game engine created for games like Minecraft and Terraria.
 
-![Minecraft Engine Editor](./Assets/Editor.png)
+![My GitHub stats](https://github-readme-stats.vercel.app/api?username=zong4&show_icons=true&theme=tokyonight)
 
 ## Why is it
 
 Like I said, this engine is made for Minecraft-like games, so it doesn’t have some of the fancy features you’d find in Unity or Unreal Engine. But that also means I can focus more on performance and make it run perfectly for Minecraft-style gameplay.
 
 ## What I do
+
+![Minecraft Engine Editor](./Assets/Editor.png)
 
 - [x] Implemented rendering of squares and cubes in OpenGL using the Blinn–Phong lighting model with a single draw call.
 - [x] Added basic UI support via [Dear ImGui](https://github.com/ocornut/imgui).
