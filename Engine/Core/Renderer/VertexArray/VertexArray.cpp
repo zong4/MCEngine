@@ -127,8 +127,12 @@ void MCEngine::VertexArray::SetVertexAttributes(const std::vector<VertexAttribut
     m_AttributeCount = static_cast<int>(attributes.size());
     for (const auto &attribute : attributes)
     {
-        glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
-                              static_cast<GLsizei>(attribute.stride), attribute.offset);
+        if (attribute.type == GL_INT || attribute.type == GL_UNSIGNED_INT)
+            glVertexAttribIPointer(attribute.location, attribute.count, attribute.type, attribute.stride,
+                                   attribute.offset);
+        else
+            glVertexAttribPointer(attribute.location, attribute.count, attribute.type, attribute.normalized,
+                                  static_cast<GLsizei>(attribute.stride), attribute.offset);
         glEnableVertexAttribArray(attribute.location);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
     }
