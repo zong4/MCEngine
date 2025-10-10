@@ -5,9 +5,14 @@ layout(triangle_strip, max_vertices = 3) out;
 
 in VS_OUT
 {
+    vec3 CameraPosition;
+
+    flat uint EntityID;
     vec3 Position;
     vec3 Normal;
-    vec3 CameraPosition;
+    vec3 TexCoord;
+    vec4 Color;
+    vec4 Material;
 }
 gs_in[];
 
