@@ -22,7 +22,8 @@ protected:
     unsigned int m_RendererID = 0;
 
 protected:
-    unsigned char *LoadImage(const std::string &path, int &width, int &height, int &channels, bool flipVertically);
+    unsigned char *LoadImage(const std::string &path, int &width, int &height, unsigned int &internalFormat,
+                             unsigned int &format, bool flipVertically);
     void FreeImage(unsigned char *data);
 };
 

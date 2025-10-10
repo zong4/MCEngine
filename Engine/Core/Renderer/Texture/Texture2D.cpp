@@ -55,34 +55,10 @@ MCEngine::Texture2D::Texture2D(const std::string &path) : Texture(), m_Type(GL_U
 
     // Load image
     {
-        int channels;
-        unsigned char *data = LoadImage(path, m_Width, m_Height, channels, true);
-
-        if (channels == 1)
-        {
-            m_Format = GL_RED;
-            m_InternalFormat = GL_R8;
-        }
-        else if (channels == 3)
-        {
-            m_Format = GL_RGB;
-            m_InternalFormat = GL_RGB8;
-        }
-        else if (channels == 4)
-        {
-            m_Format = GL_RGBA;
-            m_InternalFormat = GL_RGBA8;
-        }
-        else
-        {
-            LOG_ENGINE_ERROR("Unsupported number of channels: " + std::to_string(channels) + " in texture: " + path);
-            FreeImage(data);
-            return;
-        }
+        unsigned char *data = LoadImage(path, m_Width, m_Height, m_InternalFormat, m_Format, true);
         glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_Format, m_Type, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         RendererCommand::GetError(std::string(FUNCTION_SIGNATURE));
-
         FreeImage(data);
     }
 

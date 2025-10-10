@@ -8,8 +8,12 @@ namespace MCEngine
 class SkyboxComponent
 {
 public:
-    SkyboxComponent(const std::shared_ptr<TextureCube> &textureCube =
-                        MCEngine::TextureLibrary::GetInstance().GetTextureCube("Skybox"));
+    SkyboxComponent(
+        const std::shared_ptr<TextureCube> &textureCube = MCEngine::TextureLibrary::GetInstance().GetTextureCube("3"))
+        : m_TextureCube(textureCube)
+    {
+        LOG_ENGINE_TRACE("Skybox Component created");
+    }
 
     // Getters
     std::shared_ptr<TextureCube> &GetTextureCube() { return m_TextureCube; }

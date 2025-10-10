@@ -98,16 +98,38 @@ MCEngine::TextureLibrary::TextureLibrary()
 
     for (auto &&entry : std::filesystem::directory_iterator(path))
     {
-        if (entry.is_regular_file())
+        if (entry.is_directory())
+        {
+            auto findFile = [&](const std::filesystem::path &dir, const std::string &baseName) -> std::string {
+                static const std::vector<std::string> exts = {".png", ".jpg"};
+                for (auto &ext : exts)
+                {
+                    auto filePath = dir / (baseName + ext);
+                    if (std::filesystem::exists(filePath))
+                        return filePath.string();
+                }
+                return "";
+            };
+
+            auto &&right = findFile(entry.path(), "right");
+            if (right != "")
+            {
+                auto &&left = findFile(entry.path(), "left");
+                auto &&top = findFile(entry.path(), "top");
+                auto &&bottom = findFile(entry.path(), "bottom");
+                auto &&front = findFile(entry.path(), "front");
+                auto &&back = findFile(entry.path(), "back");
+
+                AddTexture(entry.path().stem().string(), std::make_shared<TextureCube>(std::array<std::string, 6>{
+                                                             right, left, top, bottom, front, back}));
+            }
+        }
+        else if (entry.is_regular_file())
         {
             if (entry.path().extension() == ".png" || entry.path().extension() == ".jpg")
             {
                 AddTexture(entry.path().stem().string(), std::make_shared<Texture2D>(entry.path().string()));
             }
-        }
-        else if (entry.is_directory())
-        {
-            AddTexture(entry.path().stem().string(), std::make_shared<TextureCube>(entry.path().string()));
         }
     }
 
