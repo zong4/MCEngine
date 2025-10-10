@@ -36,6 +36,8 @@ Like I said, this engine is made for Minecraft-like games, so it doesn’t have 
 - [ ] Add support for additional basic shapes such as spheres, cylinders, and cones, etc.
 - [ ] Implement common procedural generation algorithms, including Perlin Noise and Simplex Noise, etc.
 - [ ] Implement world generation techniques such as Chunked LOD and Greedy Meshing, etc.
+- [ ] Implement basic physics systems (rigid bodies, collisions, forces, etc.)
+- [ ] Implement physics-driven animation (ragdoll, procedural motion, and dynamic interaction)
 
 ## References:
 
