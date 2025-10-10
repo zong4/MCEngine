@@ -123,8 +123,9 @@ MCEngine::VAOLibrary::VAOLibrary()
             {0, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex3D), (const void *)(0 * sizeof(float))},
             {1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(1 * sizeof(float))},
             {2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(4 * sizeof(float))},
-            {3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(7 * sizeof(float))},
-            {4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(11 * sizeof(float))}});
+            {3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(7 * sizeof(float))},
+            {4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(10 * sizeof(float))},
+            {5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void *)(14 * sizeof(float))}});
     AddVAO("Cubes", cubesVAO);
 
     auto &&vertexArray = std::make_shared<VertexArray>(

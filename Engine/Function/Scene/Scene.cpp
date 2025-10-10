@@ -81,7 +81,7 @@ void MCEngine::Scene::PreRender()
             cubesVertices.push_back(
                 {(uint32_t)entity + 1, glm::vec3(u_Model * glm::vec4(g_IdentityCubeData.Positions[i], 1.0f)),
                  glm::normalize(glm::transpose(glm::inverse(glm::mat3(u_Model))) * g_IdentityCubeData.Normals[i]),
-                 mesh.GetMaterial().GetColor(),
+                 g_IdentityCubeData.Positions[i], mesh.GetMaterial().GetColor(),
                  glm::vec4(mesh.GetMaterial().GetAmbientStrength(), mesh.GetMaterial().GetDiffuseStrength(),
                            mesh.GetMaterial().GetSpecularStrength(), mesh.GetMaterial().GetShininess())});
         }
@@ -325,7 +325,10 @@ void MCEngine::Scene::Render3D() const
         skybox.GetTextureCube()->Bind(lightIndex);
     }
 
+    TextureLibrary::GetInstance().GetTextureCube("GrassBlock")->Bind(lightIndex + 1);
+    shader->SetUniformInt("u_Texture", lightIndex + 1);
     VAOLibrary::GetInstance().GetVAO("Cubes")->Render(MCEngine::RendererType::Triangles, m_CubesCount * 36);
+    TextureLibrary::GetInstance().ClearTextureSlots();
     shader->Unbind();
 }
 

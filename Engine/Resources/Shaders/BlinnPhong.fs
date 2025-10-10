@@ -29,13 +29,18 @@ uniform sampler2D u_ShadowMap[MAX_LIGHTS];
 // Skybox
 uniform samplerCube u_Skybox;
 
+// Test
+uniform samplerCube u_Texture;
+
 // Inputs
 in VS_OUT
 {
     vec3 CameraPosition;
+
+    flat uint EntityID;
     vec3 Position;
     vec3 Normal;
-    flat uint EntityID;
+    vec3 TexCoord;
     vec4 Color;
     vec4 Material;
 }
@@ -91,7 +96,8 @@ void main()
 
     // Skybox
     vec3 resultSkybox = vec3(0.0);
-    resultSkybox += texture(u_Skybox, fs_in.Normal).rgb * fs_in.Material[0] * fs_in.Color.rgb;
+    resultSkybox += texture(u_Skybox, fs_in.Normal).rgb * fs_in.Material[0] * texture(u_Texture, fs_in.TexCoord).rgb *
+                    fs_in.Color.rgb;
     // resultSkybox += texture(u_Skybox, reflect(-viewDir, normalize(fs_in.Normal))).rgb *
     // fs_in.Material[2]; resultSkybox += texture(u_Skybox, refract(-viewDir,
     // normalize(fs_in.Normal), 1.00 / 1.52)).rgb * 0.5;
@@ -112,7 +118,8 @@ vec3 CalcLight(vec3 lightDir, vec3 viewDir)
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), fs_in.Material[3]);
 
-    return (fs_in.Material[0] * diff) * fs_in.Color.rgb + fs_in.Material[2] * spec;
+    return (fs_in.Material[0] * diff) * texture(u_Texture, fs_in.TexCoord).rgb * fs_in.Color.rgb +
+           fs_in.Material[2] * spec;
 }
 
 float CalcShadow(int index, vec4 fragPosLightSpace, vec3 lightDir)
