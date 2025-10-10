@@ -265,8 +265,7 @@ void MCEngine::SceneSerializer::SerializeEntity(YAML::Emitter &out, MCEngine::En
         out << YAML::BeginMap;
 
         auto &skyboxComponent = entity.GetComponent<MCEngine::SkyboxComponent>();
-        out << YAML::Key << "Texture" << YAML::Value
-            << MCEngine::TextureLibrary::GetInstance().GetName(skyboxComponent.GetTextureCube());
+        out << YAML::Key << "Texture" << YAML::Value << skyboxComponent.GetTextureCubeName();
 
         out << YAML::EndMap;
     }
@@ -359,8 +358,7 @@ MCEngine::Entity MCEngine::SceneSerializer::DeserializeEntity(std::shared_ptr<Sc
     const auto &skyboxComponentData = entity["SkyboxComponent"];
     if (skyboxComponentData)
     {
-        deserializedEntity.AddComponent<SkyboxComponent>(
-            MCEngine::TextureLibrary::GetInstance().GetTextureCube(skyboxComponentData["Texture"].as<std::string>()));
+        deserializedEntity.AddComponent<SkyboxComponent>(skyboxComponentData["Texture"].as<std::string>());
     }
 
     const auto &relationshipComponentData = entity["RelationshipComponent"];

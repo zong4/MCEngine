@@ -94,7 +94,7 @@ void MCEditor::ExampleScene::WelcomeToMCEngine()
     int size = 9;
     float center = size / 2.0f;
     MCEngine::Entity cubes = AddEmptyEntity(
-        "Cubes", MCEngine::TransformComponent(glm::vec3(0.0f), glm::vec3(0, 45.0f, 0.0f), glm::vec3(1.0f)));
+        "Cubes", MCEngine::TransformComponent(glm::vec3(0.0f), glm::vec3(0, 50.0f, 0.0f), glm::vec3(1.0f)));
     for (int x = 0; x < size; x++)
     {
         for (int y = 0; y < size; y++)

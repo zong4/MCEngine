@@ -239,6 +239,20 @@ void MCEditor::InspectorPanel::OnImGuiRender() const
             }
         });
 
+        // SkyboxComponent
+        DrawComponent<MCEngine::SkyboxComponent>(
+            "Skybox Component", selectedEntity, [](MCEngine::SkyboxComponent &skybox) {
+                DrawTable2<MCEngine::SkyboxComponent>("Texture", [&skybox]() {
+                    char buffer[256];
+                    memset(buffer, 0, sizeof(buffer));
+                    strncpy(buffer, skybox.GetTextureCubeName().c_str(), sizeof(buffer) - 1);
+                    if (ImGui::InputText("##Texture", buffer, sizeof(buffer)))
+                    {
+                        skybox.SetTextureCubeName(std::string(buffer));
+                    }
+                });
+            });
+
         DrawAddComponentButton(selectedEntity);
     }
 
